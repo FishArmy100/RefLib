@@ -88,6 +88,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)src; $(ProjectDir)src/vendor; </AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -102,6 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)src; $(ProjectDir)src/vendor; </AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,9 +147,20 @@
     <None Include=".gitignore" />
     <None Include="LICENSE" />
     <None Include="README.md" />
+    <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Types\Type.cpp" />
+    <ClCompile Include="src\Types\TypeData.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Types\TypeId.h" />
+    <ClInclude Include="src\TypeUtils.h" />
+    <ClInclude Include="src\vendor\rttr\core_prerequisites.h" />
+    <ClInclude Include="src\vendor\rttr\type_name.h" />
+    <ClInclude Include="src\Types\Type.h" />
+    <ClInclude Include="src\Types\TypeData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
