@@ -150,17 +150,19 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="examples\main.cpp" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
+    <ClCompile Include="src\Types\TypeLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Types\TypeId.h" />
-    <ClInclude Include="src\TypeUtils.h" />
+    <ClInclude Include="src\Types\TypeUtils.h" />
     <ClInclude Include="src\vendor\rttr\core_prerequisites.h" />
     <ClInclude Include="src\vendor\rttr\type_name.h" />
     <ClInclude Include="src\Types\Type.h" />
     <ClInclude Include="src\Types\TypeData.h" />
+    <ClInclude Include="src\Types\TypeLibrary.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

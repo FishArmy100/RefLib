@@ -22,13 +22,16 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="examples\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Types\Type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Types\TypeData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Types\TypeLibrary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -39,7 +42,7 @@
     <ClInclude Include="src\vendor\rttr\core_prerequisites.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\TypeUtils.h">
+    <ClInclude Include="src\Types\TypeUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Types\Type.h">
@@ -49,6 +52,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Types\TypeData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Types\TypeLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

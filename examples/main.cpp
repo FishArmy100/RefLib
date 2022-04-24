@@ -1,5 +1,7 @@
 #include <iostream>
-#include "TypeUtils.h"
+#include "Types/TypeUtils.h"
+#include <type_traits>
+#include "Types/Type.h"
 
 struct Position
 {
@@ -35,5 +37,6 @@ private:
 
 int main()
 {
-	std::cout << RefLib::Utils::GetTypeName<Person>() << std::endl;
+	RefLib::Type::Get<Person>();
+	RefLib::Type::Get<Person>();
 }
