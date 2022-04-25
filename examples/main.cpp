@@ -2,6 +2,9 @@
 #include "Types/TypeUtils.h"
 #include <type_traits>
 #include "Types/Type.h"
+#include "Reference/Reference.h"
+#include "Varient/Varient.h"
+#include "Property/PropertyData.h"
 
 struct Position
 {
@@ -35,8 +38,16 @@ private:
 	std::string m_Name;
 };
 
+using namespace RefLib;
+
 int main()
 {
-	RefLib::Type::Get<Person>();
-	RefLib::Type::Get<Person>();
+	Position pos{};
+	pos.x = 3;
+
+	PropertyData data = PropertyData("x", &Position::x);
+	Varient v = 5;
+	data.Set(pos, v);
+
+	std::cout << data.Get(pos).TryConvert<int>().value();
 }

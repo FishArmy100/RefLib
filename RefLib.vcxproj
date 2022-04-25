@@ -151,11 +151,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="examples\main.cpp" />
+    <ClCompile Include="src\Property\PropertyData.cpp" />
+    <ClCompile Include="src\Property\Property.cpp" />
+    <ClCompile Include="src\Reference\Reference.cpp" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeLibrary.cpp" />
+    <ClCompile Include="src\Varient\Varient.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Property\PropertyData.h" />
+    <ClInclude Include="src\Property\Property.h" />
+    <ClInclude Include="src\Reference\Reference.h" />
     <ClInclude Include="src\Types\TypeId.h" />
     <ClInclude Include="src\Types\TypeUtils.h" />
     <ClInclude Include="src\vendor\rttr\core_prerequisites.h" />
@@ -163,6 +170,7 @@
     <ClInclude Include="src\Types\Type.h" />
     <ClInclude Include="src\Types\TypeData.h" />
     <ClInclude Include="src\Types\TypeLibrary.h" />
+    <ClInclude Include="src\Varient\Varient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -10,6 +10,7 @@ namespace RefLib
 	{
 	public:
 		TypeData(const std::string& name, TypeId id) : m_Name(name), m_Id(id), m_IsRegistered(false) {}
+		TypeData(const std::string& name, TypeId id, bool isRegistered) : m_Name(name), m_Id(id), m_IsRegistered(isRegistered) {}
 		TypeData() : m_Id(NoneType), m_Name(""), m_IsRegistered(false) {}
 		
 		std::string_view GetName() const { return m_Name; }
