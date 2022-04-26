@@ -157,7 +157,7 @@
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeLibrary.cpp" />
-    <ClCompile Include="src\Varient\Varient.cpp" />
+    <ClCompile Include="src\Variant\Variant.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Property\PropertyData.h" />
@@ -170,7 +170,7 @@
     <ClInclude Include="src\Types\Type.h" />
     <ClInclude Include="src\Types\TypeData.h" />
     <ClInclude Include="src\Types\TypeLibrary.h" />
-    <ClInclude Include="src\Varient\Varient.h" />
+    <ClInclude Include="src\Variant\Variant.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

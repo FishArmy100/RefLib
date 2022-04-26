@@ -1,10 +1,10 @@
-#include "Varient.h"
+#include "Variant.h"
 #include "Reference/Reference.h"
 
 namespace RefLib
 {
 	template<>
-	Varient::Varient(const Reference ref) : m_Type(ref.GetType())
+	Variant::Variant(const Reference ref) : m_Type(ref.GetType())
 	{
 		*this = ref.AsVarient();
 	}

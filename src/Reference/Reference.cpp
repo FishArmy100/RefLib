@@ -4,5 +4,5 @@
 namespace RefLib
 {
 	template<>
-	Reference::Reference(Varient& v) : m_Type(v.GetType()), m_Data(v.GetRawData()) {}
+	Reference::Reference(Variant& v) : m_Type(v.GetType()), m_Data(v.GetRawData()) {}
 }

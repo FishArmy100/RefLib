@@ -17,16 +17,16 @@ namespace RefLib
 		PropertyData(std::string_view name, TProp TClass::* prop)
 			: m_DeclaringType(Type::Get<TClass>()), m_Type(Type::Get<TProp>()), m_Name(name) 
 		{
-			m_GetFunc = [=](Type t, void* data) -> Varient
+			m_GetFunc = [=](Type t, void* data) -> Variant
 			{
 				if (t == Type::Get<TClass>())
 				{
 					TClass* castObj = (TClass*)data;
 					TProp& data = *(castObj).*prop;
-					return Varient(data);
+					return Variant(data);
 				}
 
-				return Varient(); // invalid varient
+				return Variant(); // invalid varient
 			};
 
 			m_SetFunc = [=](Type objT, void* objData, Type valT, void* data)
@@ -38,10 +38,10 @@ namespace RefLib
 					(*castObj).*prop = *val;
 					return true;
 				}
-				else if(objT == Type::Get<TClass>() && (valT == Type::Get<Varient>() || valT == Type::Get<Varient&>()))
+				else if(objT == Type::Get<TClass>() && (valT == Type::Get<Variant>() || valT == Type::Get<Variant&>()))
 				{
 					TClass* castObj = (TClass*)objData;
-					Varient* val = (Varient*)data;
+					Variant* val = (Variant*)data;
 					auto convData = (*val).TryConvert<TProp>();
 					if (!convData.has_value())
 						return false;
@@ -55,7 +55,7 @@ namespace RefLib
 			};
 		}
 
-		Varient Get(Reference obj) 
+		Variant Get(Reference obj) 
 		{
 			return m_GetFunc(obj.GetType(), obj.GetRawData());
 		}
@@ -75,7 +75,7 @@ namespace RefLib
 		Type m_Type;
 		std::string m_Name;
 
-		std::function<Varient(Type, void*)> m_GetFunc;
+		std::function<Variant(Type, void*)> m_GetFunc;
 		std::function<bool(Type, void*, Type, void*)> m_SetFunc;
 	};
 }

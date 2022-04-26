@@ -1,10 +1,10 @@
 #pragma once
 #include "Types/Type.h"
-#include "Varient/Varient.h"
+#include "Variant/Variant.h"
 
 namespace RefLib
 {
-	class Varient;
+	class Variant;
 
 	class Reference
 	{
@@ -12,7 +12,7 @@ namespace RefLib
 		template<typename T>
 		Reference(T& data) : m_Type(Type::Get<T>()), m_Data(&data)
 		{
-			m_AsVarientFunc = [](void* d) { return Varient(*(T*)d); };
+			m_AsVarientFunc = [](void* d) { return Variant(*(T*)d); };
 		}
 
 		//Reference(Reference& ref) = default;
@@ -21,7 +21,7 @@ namespace RefLib
 		Reference(Reference& ref) = default;
 
 		template<>
-		Reference(Varient& v);
+		Reference(Variant& v);
 
 		template<typename T>
 		T* TryConvert()
@@ -32,7 +32,7 @@ namespace RefLib
 			return nullptr;
 		}
 
-		Varient AsVarient() const { return m_AsVarientFunc(m_Data); }
+		Variant AsVarient() const { return m_AsVarientFunc(m_Data); }
 
 		Type GetType() const { return m_Type; }
 		void* GetRawData() { return m_Data; }
@@ -40,7 +40,7 @@ namespace RefLib
 	private:
 		Type m_Type;
 		void* m_Data;
-		Varient(*m_AsVarientFunc)(void*);
+		Variant(*m_AsVarientFunc)(void*);
 	};
 }
 

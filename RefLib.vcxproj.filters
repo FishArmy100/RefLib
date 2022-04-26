@@ -40,7 +40,7 @@
     <ClCompile Include="src\Property\Property.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Varient\Varient.cpp">
+    <ClCompile Include="src\Variant\Variant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Property\PropertyData.cpp">
@@ -75,7 +75,7 @@
     <ClInclude Include="src\Property\Property.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Varient\Varient.h">
+    <ClInclude Include="src\Variant\Variant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Property\PropertyData.h">

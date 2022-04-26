@@ -6,21 +6,21 @@ namespace RefLib
 {
 	class Reference;
 
-	class Varient
+	class Variant
 	{
 	public:
-		Varient() : m_Type(Type::Invalid()), m_Data(nullptr), m_IsValid(false),
+		Variant() : m_Type(Type::Invalid()), m_Data(nullptr), m_IsValid(false),
 					m_CopyData(nullptr), m_DeleteData(nullptr) 
 		{}
 
 		template<typename T>
-		Varient(const T data) : m_Type(Type::Get<T>()), m_Data(new T(data)), m_IsValid(true)
+		Variant(const T data) : m_Type(Type::Get<T>()), m_Data(new T(data)), m_IsValid(true)
 		{
 			m_DeleteData = [](void* ptr) { delete(T*)ptr; };
 			m_CopyData = [](void* ptr) { return (void*)new T(*(T*)ptr); };
 		}
 
-		Varient(const Varient& other) : 
+		Variant(const Variant& other) : 
 			m_Type(other.m_Type), 
 			m_DeleteData(other.m_DeleteData),
 			m_CopyData(other.m_CopyData),
@@ -29,7 +29,7 @@ namespace RefLib
 			m_Data = m_CopyData(other.m_Data);
 		}
 
-		Varient& operator=(const Varient& other)
+		Variant& operator=(const Variant& other)
 		{
 			if (this == &other)
 				return *this;
@@ -44,9 +44,9 @@ namespace RefLib
 		}
 
 		template<>
-		Varient(const Reference ref);
+		Variant(const Reference ref);
 
-		Varient(Varient&&) = delete;
+		Variant(Variant&&) = delete;
 
 		template<typename T>
 		std::optional<T> TryConvert() const
@@ -61,7 +61,7 @@ namespace RefLib
 		void* GetRawData() const { return m_Data; }
 		bool IsValid() { return m_IsValid; }
 
-		~Varient()
+		~Variant()
 		{
 			m_DeleteData(m_Data);
 		}

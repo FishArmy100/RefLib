@@ -46,7 +46,7 @@ int main()
 	pos.x = 3;
 
 	PropertyData data = PropertyData("x", &Position::x);
-	Varient v = 5;
+	Variant v = 5;
 	data.Set(pos, v);
 
 	std::cout << data.Get(pos).TryConvert<int>().value();
