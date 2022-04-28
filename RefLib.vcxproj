@@ -151,18 +151,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="examples\main.cpp" />
+    <ClCompile Include="src\Argument\Argument.cpp" />
     <ClCompile Include="src\Property\PropertyData.cpp" />
     <ClCompile Include="src\Property\Property.cpp" />
     <ClCompile Include="src\Reference\Reference.cpp" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
+    <ClCompile Include="src\Types\TypeFlags.cpp" />
     <ClCompile Include="src\Types\TypeLibrary.cpp" />
     <ClCompile Include="src\Variant\Variant.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Argument\Argument.h" />
     <ClInclude Include="src\Property\PropertyData.h" />
     <ClInclude Include="src\Property\Property.h" />
     <ClInclude Include="src\Reference\Reference.h" />
+    <ClInclude Include="src\Types\TypeFlags.h" />
     <ClInclude Include="src\Types\TypeId.h" />
     <ClInclude Include="src\Types\TypeUtils.h" />
     <ClInclude Include="src\vendor\rttr\core_prerequisites.h" />

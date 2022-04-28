@@ -3,7 +3,7 @@
 #include <type_traits>
 #include "Types/Type.h"
 #include "Reference/Reference.h"
-#include "Varient/Varient.h"
+#include "Variant/Variant.h"
 #include "Property/PropertyData.h"
 
 struct Position
@@ -40,14 +40,23 @@ private:
 
 using namespace RefLib;
 
+template <typename type>
+std::enable_if_t<std::is_pointer_v<type>> IsPointer();
+template <typename type>
+std::enable_if_t<!std::is_pointer_v<type>> IsPointer();
+
+template <typename type>
+std::enable_if_t<std::is_pointer_v<type>> IsPointer() {
+	std::puts("[pointer]");
+	IsPointer<typename std::remove_pointer<type>::type>();
+}
+
+template <typename type>
+std::enable_if_t<!std::is_pointer_v<type>> IsPointer() {
+	std::puts("[...]");
+}
+
 int main()
 {
-	Position pos{};
-	pos.x = 3;
-
-	PropertyData data = PropertyData("x", &Position::x);
-	Variant v = 5;
-	data.Set(pos, v);
-
-	std::cout << data.Get(pos).TryConvert<int>().value();
+	IsPointer<int****>();
 }

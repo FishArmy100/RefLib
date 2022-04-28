@@ -11,15 +11,7 @@ namespace RefLib
 		template<typename T>
 		static Type Get()
 		{
-			static TypeId id = NoneType;
-			if (id == NoneType)
-			{
-				id = s_CurrentId++;
-				std::string name = Utils::GetTypeName<T>();
-				s_Library.AddData(TypeData(name, id));
-			}
-
-			return Type(s_Library.GetData(id));
+			return InternalGet<T>();
 		}
 
 		template<typename T>
@@ -35,6 +27,7 @@ namespace RefLib
 
 	public:
 		Type(const TypeData* data) : m_Data(data) {}
+		Type() : m_Data(nullptr) {}
 
 		std::string_view GetName() const { return m_Data->GetName(); }
 		TypeId GetId() const { return m_Data->GetId(); }
@@ -53,6 +46,21 @@ namespace RefLib
 		}
 
 		bool IsValid() { return m_Data != nullptr; }
+
+	private:
+		template<typename T>
+		static Type InternalGet()
+		{
+			static TypeId id = NoneType;
+			if (id == NoneType)
+			{
+				id = s_CurrentId++;
+				std::string name = Utils::GetTypeName<T>();
+				//s_Library.AddData(TypeData(name, id));
+			}
+
+			return Type(s_Library.GetData(id));
+		}
 
 	private:
 		static TypeId s_CurrentId;

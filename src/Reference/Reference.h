@@ -1,6 +1,7 @@
 #pragma once
 #include "Types/Type.h"
 #include "Variant/Variant.h"
+#include <functional>
 
 namespace RefLib
 {
@@ -8,20 +9,23 @@ namespace RefLib
 
 	class Reference
 	{
+	private:
+		template<typename T, typename Tp = Utils::decay_t<T>>
+		using decay_reference_t = Utils::enable_if_t<!std::is_same<Reference, Tp>::value &&
+													 !std::is_same<Variant, Tp>::value, T>;
+
 	public:
-		template<typename T>
+		Reference(const Reference& ref) = default;
+		Reference(const Variant & v);
+
+		template<typename T, typename Tp = decay_reference_t<T>>
 		Reference(T& data) : m_Type(Type::Get<T>()), m_Data(&data)
 		{
-			m_AsVarientFunc = [](void* d) { return Variant(*(T*)d); };
+			m_AsVarientFunc = [&]() { return Variant(*(T*)m_Data); };
 		}
 
 		//Reference(Reference& ref) = default;
 		~Reference() = default;
-
-		Reference(Reference& ref) = default;
-
-		template<>
-		Reference(Variant& v);
 
 		template<typename T>
 		T* TryConvert()
@@ -32,7 +36,7 @@ namespace RefLib
 			return nullptr;
 		}
 
-		Variant AsVarient() const { return m_AsVarientFunc(m_Data); }
+		Variant AsVarient() const { return m_AsVarientFunc(); }
 
 		Type GetType() const { return m_Type; }
 		void* GetRawData() { return m_Data; }
@@ -40,7 +44,7 @@ namespace RefLib
 	private:
 		Type m_Type;
 		void* m_Data;
-		Variant(*m_AsVarientFunc)(void*);
+		std::function<Variant()> m_AsVarientFunc;
 	};
 }
 
