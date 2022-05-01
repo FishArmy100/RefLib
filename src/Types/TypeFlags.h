@@ -6,13 +6,13 @@ namespace RefLib
 {
 	enum class TypeFlags : uint8_t
 	{
-		None		= 0b00000000,
-		Const		= 0b00000001,
-		LValue		= 0b00000010,
-		RValue		= 0b00000100,
-		Volatile	= 0b00001000,
-		Pointer		= 0b00010000,
-		Invalid		= 0b10000000
+		None				= 0b00000000,
+		Const				= 0b00000001,
+		LValueReference		= 0b00000010,
+		RValueReference		= 0b00000100,
+		Volatile			= 0b00001000,
+		Pointer				= 0b00010000,
+		Invalid				= 0b10000000
 	};
 
 	TypeFlags operator|(TypeFlags lhs, TypeFlags rhs);
@@ -21,6 +21,19 @@ namespace RefLib
 	namespace Utils 
 	{
 		bool IsTypeFlag(TypeFlags flags, TypeFlags flag);
+
+		TypeFlags ApplyFlagIfTrue(bool condition, TypeFlags initial, TypeFlags applied);
+
+		template<typename T>
+		TypeFlags GetFlagsFromType()
+		{
+			TypeFlags flags = TypeFlags::None;
+			flags = ApplyFlagIfTrue(std::is_const_v<T>, flags, TypeFlags::Const);
+			flags = ApplyFlagIfTrue(std::is_volatile_v<T>, flags, TypeFlags::Volatile);
+			flags = ApplyFlagIfTrue(std::is_lvalue_reference_v<T>, flags, TypeFlags::LValueReference);
+			flags = ApplyFlagIfTrue(std::is_rvalue_reference_v<T>, flags, TypeFlags::RValueReference);
+			return flags;
+		}
 	}
 }
 

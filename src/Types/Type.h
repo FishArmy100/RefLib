@@ -1,7 +1,6 @@
 #pragma once
 #include <inttypes.h>
 #include "TypeData.h"
-#include "TypeLibrary.h"
 
 namespace RefLib
 {
@@ -21,7 +20,7 @@ namespace RefLib
 			if (t.IsRegistered())
 				return false;
 
-			s_Library.AddData(TypeData(name, t.GetId(), true));
+			s_TypeDatas.emplace_back(TypeData(name, t.GetId(), t.GetFlags(), true));
 			return true;
 		}
 
@@ -31,9 +30,16 @@ namespace RefLib
 
 		std::string_view GetName() const { return m_Data->GetName(); }
 		TypeId GetId() const { return m_Data->GetId(); }
+		TypeFlags GetFlags() const { return m_Data->GetFlags(); }
 		bool IsRegistered() const { return m_Data->GetIsRegistered(); }
 
 		static Type Invalid() { return Type(nullptr); }
+
+		bool IsFlag(TypeFlags flag) { return (bool)(m_Data->GetFlags() & flag); }
+		bool IsConst() { return IsFlag(TypeFlags::Const); }
+		bool IsVolotile() { return IsFlag(TypeFlags::Volatile); }
+		bool IsLValue() { return IsFlag(TypeFlags::LValueReference); }
+		bool IsRValue() { return IsFlag(TypeFlags::RValueReference); }
 
 		bool operator==(const Type& other) const
 		{
@@ -54,17 +60,17 @@ namespace RefLib
 			static TypeId id = NoneType;
 			if (id == NoneType)
 			{
-				id = s_CurrentId++;
+				id = s_TypeDatas.size();
 				std::string name = Utils::GetTypeName<T>();
-				//s_Library.AddData(TypeData(name, id));
+				TypeFlags flags = Utils::GetFlagsFromType<T>();
+				s_TypeDatas.push_back(new TypeData(name, id, flags));
 			}
 
-			return Type(s_Library.GetData(id));
+			return Type(s_TypeDatas[id]);
 		}
 
 	private:
-		static TypeId s_CurrentId;
-		static TypeLibrary s_Library;
+		static std::vector<TypeData*> s_TypeDatas;
 
 	private:
 		const TypeData* m_Data;

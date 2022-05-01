@@ -22,6 +22,11 @@ namespace RefLib
 	{
 		return (bool)(flags & flag);
 	}
+
+	TypeFlags Utils::ApplyFlagIfTrue(bool condition, TypeFlags initial, TypeFlags added)
+	{
+		return initial | (condition ? added : TypeFlags::Invalid);
+	}
 }
 
 

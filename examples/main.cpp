@@ -4,7 +4,7 @@
 #include "Types/Type.h"
 #include "Reference/Reference.h"
 #include "Variant/Variant.h"
-#include "Property/PropertyData.h"
+#include "Property/Property.h"
 
 struct Position
 {
@@ -40,23 +40,8 @@ private:
 
 using namespace RefLib;
 
-template <typename type>
-std::enable_if_t<std::is_pointer_v<type>> IsPointer();
-template <typename type>
-std::enable_if_t<!std::is_pointer_v<type>> IsPointer();
-
-template <typename type>
-std::enable_if_t<std::is_pointer_v<type>> IsPointer() {
-	std::puts("[pointer]");
-	IsPointer<typename std::remove_pointer<type>::type>();
-}
-
-template <typename type>
-std::enable_if_t<!std::is_pointer_v<type>> IsPointer() {
-	std::puts("[...]");
-}
-
 int main()
 {
-	IsPointer<int****>();
+	Type type = Type::Get<const volatile int>();
+	std::cout << std::boolalpha << type.IsVolotile() << " " << type.IsConst();
 }

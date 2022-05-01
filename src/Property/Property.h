@@ -2,11 +2,11 @@
 #include <string>
 #include <string_view>
 #include "PropertyData.h"
+#include "Types/Type.h"
 
 namespace RefLib
 {
 	class PropertyData;
-	class Type;
 	class Reference;
 	class Variant;
 

@@ -16,16 +16,16 @@ namespace RefLib
 	class TypeData
 	{
 	public:
-		TypeData(const std::string& name, TypeId id, TypeFlags flags, TypeData* wrappedType = nullptr, bool isRegistered = false) : 
-			m_Name(name), m_Id(id), m_Flags(flags), m_WrappedType(wrappedType), 
-			m_IsRegistered(isRegistered) {}
+		TypeData(const std::string& name, TypeId id, TypeFlags flags = TypeFlags::None, bool isRegistered = false) : 
+			m_Name(name), m_Id(id), m_Flags(flags), m_IsRegistered(isRegistered) {}
 
-		TypeData() : m_Id(NoneType), m_Name(""), m_Flags(TypeFlags::None), m_WrappedType(nullptr), m_IsRegistered(false) {}
+		TypeData() : m_Id(NoneType), m_Name(""), m_Flags(TypeFlags::None), m_IsRegistered(false) {}
 
 		virtual ~TypeData();
 		
 		std::string_view GetName() const { return m_Name; }
 		TypeId GetId() const { return m_Id; }
+		TypeFlags GetFlags() const { return m_Flags; }
 		bool GetIsRegistered() const { return m_IsRegistered; }
 
 		Property GetProperty(std::string_view name);
@@ -35,10 +35,7 @@ namespace RefLib
 	private:
 		std::string m_Name;
 		TypeId m_Id;
-
-		TypeData* m_WrappedType;
 		TypeFlags m_Flags;
-
 		bool m_IsRegistered;
 
 		std::vector<PropertyData*> m_Properties{};
