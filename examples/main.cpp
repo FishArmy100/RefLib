@@ -8,9 +8,9 @@
 
 struct Position
 {
-	int x{};
-	float y{};
-	float z{};
+	int x = 0;
+	float y = 0;
+	float z = 0;
 };
 
 struct Entity 
@@ -50,5 +50,8 @@ using namespace RefLib;
 
 int main()
 {
-
+	PropertyData prop = PropertyData("x", &Test::X);
+	Test t = Test(5, 6);
+	prop.Set(t, 200);
+	std::cout << prop.Get(t).TryConvert<int>().value();
 }
