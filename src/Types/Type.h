@@ -1,6 +1,7 @@
 #pragma once
 #include <inttypes.h>
 #include "TypeData.h"
+#include <iostream>
 
 namespace RefLib
 {
@@ -10,63 +11,88 @@ namespace RefLib
 		template<typename T>
 		static Type Get()
 		{
-			return InternalGet<T>();
+			using Undecorated = typename std::remove_cv<std::remove_reference<T>::type>::type;
+
+			TypeFlags flags = Utils::GetFlagsFromType<T>();
+			using NonReference = typename std::remove_reference_t<T>;
+			flags = flags | Utils::GetFlagsFromType<NonReference>();
+
+			return InternalGet<Undecorated>(flags);
 		}
 
 		template<typename T>
-		static bool RegisterType(const std::string&& name)
+		static bool RegisterType(const std::string& name)
 		{
 			Type t = Get<T>();
 			if (t.IsRegistered())
 				return false;
 
-			s_TypeDatas.emplace_back(TypeData(name, t.GetId(), t.GetFlags(), true));
+			s_TypeDatas.emplace_back(CreateTypeData<T>(name, t.GetId(), true));
 			return true;
 		}
 
 	public:
-		Type(const TypeData* data) : m_Data(data) {}
-		Type() : m_Data(nullptr) {}
+		Type(const TypeData* data, const TypeFlags flags) : m_Data(data), m_Flags(flags) {}
+		Type() : m_Data(nullptr), m_Flags(TypeFlags::None) {}
+		Type(const Type& other) = default;
+		Type& operator=(const Type& other) { this->m_Data = other.m_Data; this->m_Flags = other.m_Flags; return *this; }
+		~Type() = default;
 
-		std::string_view GetName() const { return m_Data->GetName(); }
-		TypeId GetId() const { return m_Data->GetId(); }
-		TypeFlags GetFlags() const { return m_Data->GetFlags(); }
-		bool IsRegistered() const { return m_Data->GetIsRegistered(); }
+		std::string_view GetName() const { return m_Data->Name; }
+		TypeId GetId() const { return m_Data->Id; }
+		TypeFlags GetFlags() const { return m_Flags; }
+		bool IsRegistered() const { return m_Data->IsRegistered; }
 
-		static Type Invalid() { return Type(nullptr); }
+		static Type Invalid() { return Type(nullptr, TypeFlags::None); }
 
-		bool IsFlag(TypeFlags flag) { return (bool)(m_Data->GetFlags() & flag); }
+		bool IsFlag(TypeFlags flag) { return (bool)(m_Flags & flag); }
 		bool IsConst() { return IsFlag(TypeFlags::Const); }
 		bool IsVolotile() { return IsFlag(TypeFlags::Volatile); }
-		bool IsLValue() { return IsFlag(TypeFlags::LValueReference); }
-		bool IsRValue() { return IsFlag(TypeFlags::RValueReference); }
+		bool IsLValueRef() { return IsFlag(TypeFlags::LValueReference); }
+		bool IsRValueRef() { return IsFlag(TypeFlags::RValueReference); }
+
+		bool IsPointer() { return m_Data->IsPointer; }
+
+		bool IsAssignableFrom(Type t);
+
+		Type Dereferenced() { return m_Data->DereferenceFunc(); }
 
 		bool operator==(const Type& other) const
 		{
-			return GetId() == other.GetId();
+			return GetId() == other.GetId() && m_Flags == other.GetFlags();
 		}
 
 		bool operator!=(const Type& other) const
 		{
-			return GetId() != other.GetId();
+			return !(*this == other);
 		}
 
 		bool IsValid() { return m_Data != nullptr; }
 
 	private:
 		template<typename T>
-		static Type InternalGet()
+		static Type InternalGet(TypeFlags flags)
 		{
 			static TypeId id = NoneType;
 			if (id == NoneType)
 			{
 				id = s_TypeDatas.size();
 				std::string name = Utils::GetTypeName<T>();
-				TypeFlags flags = Utils::GetFlagsFromType<T>();
-				s_TypeDatas.push_back(new TypeData(name, id, flags));
+				s_TypeDatas.push_back(CreateTypeData<T>(name, id, false));
 			}
 
-			return Type(s_TypeDatas[id]);
+			return Type(s_TypeDatas[id], flags);
+		}
+
+		template<typename T>
+		static TypeData* CreateTypeData(const std::string& name, TypeId id, bool isRegistered)
+		{
+			TypeData* data = new TypeData(name, id);
+			data->IsRegistered = isRegistered;
+			data->IsPointer = std::is_pointer<T>::value;
+			data->DereferenceFunc = []() { return Type::Get<std::remove_pointer_t<T>>(); };
+
+			return data;
 		}
 
 	private:
@@ -74,6 +100,7 @@ namespace RefLib
 
 	private:
 		const TypeData* m_Data;
+		TypeFlags m_Flags;
 	};
 }
 

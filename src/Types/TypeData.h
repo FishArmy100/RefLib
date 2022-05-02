@@ -11,34 +11,22 @@
 namespace RefLib
 {
 	class PropertyData;
-	class Property;
+	class Type;
 
-	class TypeData
+	struct TypeData
 	{
-	public:
-		TypeData(const std::string& name, TypeId id, TypeFlags flags = TypeFlags::None, bool isRegistered = false) : 
-			m_Name(name), m_Id(id), m_Flags(flags), m_IsRegistered(isRegistered) {}
+		TypeData(const std::string& name, TypeId id) : Name(name), Id(id) {}
+		TypeData(const TypeData& other) = default;
+		~TypeData();
 
-		TypeData() : m_Id(NoneType), m_Name(""), m_Flags(TypeFlags::None), m_IsRegistered(false) {}
+		std::string Name;
+		TypeId Id;
+		bool IsPointer = false;
+		bool IsRegistered = false;
 
-		virtual ~TypeData();
-		
-		std::string_view GetName() const { return m_Name; }
-		TypeId GetId() const { return m_Id; }
-		TypeFlags GetFlags() const { return m_Flags; }
-		bool GetIsRegistered() const { return m_IsRegistered; }
+		Type(*DereferenceFunc)() = nullptr;
 
-		Property GetProperty(std::string_view name);
-
-		bool IsValid() { return m_Id != NoneType; }
-
-	private:
-		std::string m_Name;
-		TypeId m_Id;
-		TypeFlags m_Flags;
-		bool m_IsRegistered;
-
-		std::vector<PropertyData*> m_Properties{};
+		std::vector<PropertyData*> Properties;
 	};
 }
 

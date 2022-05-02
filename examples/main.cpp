@@ -38,10 +38,17 @@ private:
 	std::string m_Name;
 };
 
+struct Test
+{
+	Test(int x, int y) : X(x), Y(y) {}
+
+	int X;
+	const int Y;
+};
+
 using namespace RefLib;
 
 int main()
 {
-	Type type = Type::Get<const volatile int>();
-	std::cout << std::boolalpha << type.IsVolotile() << " " << type.IsConst();
+
 }

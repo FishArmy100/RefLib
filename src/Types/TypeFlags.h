@@ -11,8 +11,6 @@ namespace RefLib
 		LValueReference		= 0b00000010,
 		RValueReference		= 0b00000100,
 		Volatile			= 0b00001000,
-		Pointer				= 0b00010000,
-		Invalid				= 0b10000000
 	};
 
 	TypeFlags operator|(TypeFlags lhs, TypeFlags rhs);

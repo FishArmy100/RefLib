@@ -5,9 +5,9 @@
 
 namespace RefLib
 {
-	struct Test
+	struct A
 	{
-		int x;
+		const int a;
 	};
 
 	class PropertyData
@@ -31,11 +31,16 @@ namespace RefLib
 
 			m_SetFunc = [=](Type objT, void* objData, Type valT, void* data)
 			{
+				using SetableType = std::remove_cv_t<std::remove_reference_t<TProp>>&;
+
+				if (std::is_const<TProp>::value)
+					return false;
+
 				if (objT == Type::Get<TClass>() && valT == Type::Get<TProp>())
 				{
 					TClass* castObj = (TClass*)objData;
 					TProp* val = (TProp*)data;
-					(*castObj).*prop = *val;
+					const_cast<SetableType>((*castObj).*prop) = *val; // the const_cast is mostly to remove compiler erros, dont actually do anything
 					return true;
 				}
 				else if(objT == Type::Get<TClass>() && (valT == Type::Get<Variant>() || valT == Type::Get<Variant&>()))
@@ -46,7 +51,7 @@ namespace RefLib
 					if (!convData.has_value())
 						return false;
 
-					(*castObj).*prop = convData.value();
+				 	const_cast<SetableType>((*castObj).*prop) = convData.value(); // the const_cast is mostly to remove compiler erros, dont actually do anything
 
 					return true;
 				}
