@@ -5,6 +5,7 @@
 #include "Reference/Reference.h"
 #include "Variant/Variant.h"
 #include "Property/Property.h"
+#include "Registration/TypeBuilder.h"
 
 struct Position
 {
@@ -50,8 +51,14 @@ using namespace RefLib;
 
 int main()
 {
-	PropertyData prop = PropertyData("x", &Test::X);
+	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
+	builder.AddProperty("X", &Test::X);
+	builder.AddProperty("Y", &Test::Y);
+	builder.Register();
+
+	Property prop = Type::Get<Test>().GetProperty("Hello");
 	Test t = Test(5, 6);
-	prop.Set(t, 200);
+	const int&& value = 200;
+	prop.Set(t, value);
 	std::cout << prop.Get(t).TryConvert<int>().value();
 }

@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="examples\main.cpp" />
+    <ClCompile Include="src\Argument\Argument.cpp" />
     <ClCompile Include="src\Property\PropertyData.cpp" />
     <ClCompile Include="src\Property\Property.cpp" />
     <ClCompile Include="src\Reference\Reference.cpp" />
@@ -158,11 +159,14 @@
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeFlags.cpp" />
     <ClCompile Include="src\Variant\Variant.cpp" />
+    <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Argument\Argument.h" />
     <ClInclude Include="src\Property\PropertyData.h" />
     <ClInclude Include="src\Property\Property.h" />
     <ClInclude Include="src\Reference\Reference.h" />
+    <ClInclude Include="src\Types\MemberContianer.h" />
     <ClInclude Include="src\Types\TypeFlags.h" />
     <ClInclude Include="src\Types\TypeId.h" />
     <ClInclude Include="src\Types\TypeUtils.h" />
@@ -171,6 +175,7 @@
     <ClInclude Include="src\Types\Type.h" />
     <ClInclude Include="src\Types\TypeData.h" />
     <ClInclude Include="src\Variant\Variant.h" />
+    <ClInclude Include="src\Registration\TypeBuilder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

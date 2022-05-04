@@ -22,10 +22,9 @@ namespace RefLib
 
 		Variant Get(Reference ref);
 		
-		template<typename T>
-		bool Set(Reference ref, T&& data)
+		bool Set(Reference ref, Argument arg)
 		{
-			return m_Data->Set(ref, std::forward<T>(data));
+			return m_Data->Set(ref, arg);
 		}
 
 		bool IsValid() { return m_Data != nullptr; }

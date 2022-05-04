@@ -5,6 +5,8 @@
 
 namespace RefLib
 {
+	class Property;
+
 	class Type
 	{
 	public:
@@ -21,18 +23,20 @@ namespace RefLib
 		}
 
 		template<typename T>
-		static bool RegisterType(const std::string& name)
+		static bool RegisterType(const std::string& name, MemberContainer<PropertyData*>& properties)
 		{
 			Type t = Get<T>();
 			if (t.IsRegistered())
 				return false;
 
-			s_TypeDatas.emplace_back(CreateTypeData<T>(name, t.GetId(), true));
+			TypeData* data = CreateTypeData<T>(name, t.GetId(), true);
+			data->Properties = properties;
+			s_TypeDatas[data->Id] = data;
 			return true;
 		}
 
 	public:
-		Type(const TypeData* data, const TypeFlags flags) : m_Data(data), m_Flags(flags) {}
+		Type(TypeData* data, TypeFlags flags) : m_Data(data), m_Flags(flags) {}
 		Type() : m_Data(nullptr), m_Flags(TypeFlags::None) {}
 		Type(const Type& other) = default;
 		Type& operator=(const Type& other) { this->m_Data = other.m_Data; this->m_Flags = other.m_Flags; return *this; }
@@ -50,6 +54,10 @@ namespace RefLib
 		bool IsVolotile() { return IsFlag(TypeFlags::Volatile); }
 		bool IsLValueRef() { return IsFlag(TypeFlags::LValueReference); }
 		bool IsRValueRef() { return IsFlag(TypeFlags::RValueReference); }
+
+		Property GetProperty(const std::string& name);
+		std::vector<Property> GetProperties();
+
 
 		bool IsPointer() { return m_Data->IsPointer; }
 
@@ -99,7 +107,7 @@ namespace RefLib
 		static std::vector<TypeData*> s_TypeDatas;
 
 	private:
-		const TypeData* m_Data;
+		TypeData* m_Data;
 		TypeFlags m_Flags;
 	};
 }

@@ -6,7 +6,7 @@ namespace RefLib
 	TypeData::~TypeData()
 	{
 		for (auto propPtr : Properties)
-			delete propPtr;
+			delete propPtr.second;
 
 		Properties.clear();
 	}

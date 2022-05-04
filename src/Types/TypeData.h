@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include "TypeFlags.h"
+#include "MemberContianer.h"
 
 namespace RefLib
 {
@@ -26,7 +27,7 @@ namespace RefLib
 
 		Type(*DereferenceFunc)() = nullptr;
 
-		std::vector<PropertyData*> Properties;
+		MemberContainer<PropertyData*> Properties;
 	};
 }
 

@@ -2,6 +2,7 @@
 #include "Types/Type.h"
 #include "Reference/Reference.h"
 #include <functional>
+#include "Argument/Argument.h"
 
 namespace RefLib
 {
@@ -29,26 +30,25 @@ namespace RefLib
 				return Variant(); // invalid varient
 			};
 
-			m_SetFunc = [=](Type objT, void* objData, Type valT, void* data)
+			m_SetFunc = [=](Type objT, void* objData, Argument arg)
 			{
 				using SetableType = std::remove_cv_t<std::remove_reference_t<TProp>>&;
 
-				if (std::is_const<TProp>::value)
-					return false;
-
-				if (objT == Type::Get<TClass>() && valT == Type::Get<TProp>())
+				if (Type::Get<TProp>().IsAssignableFrom(arg.GetType()))
 				{
 					TClass* castObj = (TClass*)objData;
-					TProp* val = (TProp*)data;
-					const_cast<SetableType>((*castObj).*prop) = *val; // the const_cast is mostly to remove compiler erros, dont actually do anything
+					const_cast<SetableType>((*castObj).*prop) = arg.Get<TProp>(); // the const_cast is mostly to remove compiler erros, dont actually do anything
 					return true;
 				}
-				else if(objT == Type::Get<TClass>() && (valT == Type::Get<Variant>() || valT == Type::Get<Variant&>()))
+				else if(arg.IsVarient())
 				{
 					TClass* castObj = (TClass*)objData;
-					Variant* val = (Variant*)data;
-					auto convData = (*val).TryConvert<TProp>();
+					Variant& var = arg.Get<Variant>();
+					auto convData = var.TryConvert<TProp>();
 					if (!convData.has_value())
+						return false;
+
+					if (Type::Get<TProp>().IsConst())
 						return false;
 
 				 	const_cast<SetableType>((*castObj).*prop) = convData.value(); // the const_cast is mostly to remove compiler erros, dont actually do anything
@@ -65,10 +65,10 @@ namespace RefLib
 			return m_GetFunc(obj.GetType(), obj.GetRawData());
 		}
 
-		template<typename T>
-		bool Set(Reference obj, T&& value)
+
+		bool Set(Reference obj, Argument arg)
 		{
-			return m_SetFunc(obj.GetType(), obj.GetRawData(), Type::Get<T>(), &value);
+			return m_SetFunc(obj.GetType(), obj.GetRawData(), arg);
 		}
 
 		Type GetDeclaringType() { return m_DeclaringType; }
@@ -81,7 +81,7 @@ namespace RefLib
 		std::string m_Name;
 
 		std::function<Variant(Type, void*)> m_GetFunc;
-		std::function<bool(Type, void*, Type, void*)> m_SetFunc;
+		std::function<bool(Type, void*, Argument)> m_SetFunc;
 	};
 }
 
