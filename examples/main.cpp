@@ -6,6 +6,7 @@
 #include "Variant/Variant.h"
 #include "Property/Property.h"
 #include "Registration/TypeBuilder.h"
+#include "Method/MethodData.h"
 
 struct Position
 {
@@ -45,6 +46,8 @@ struct Test
 
 	int X;
 	const int Y;
+
+	int Hello(int x, std::string y) { return x; }
 };
 
 using namespace RefLib;
@@ -56,9 +59,15 @@ int main()
 	builder.AddProperty("Y", &Test::Y);
 	builder.Register();
 
-	Property prop = Type::Get<Test>().GetProperty("Hello");
+	//Property prop = Type::Get<Test>().GetProperty("X");
+
+	MethodData method = MethodData("Hello", &Test::Hello);
 	Test t = Test(5, 6);
-	const int&& value = 200;
-	prop.Set(t, value);
-	std::cout << prop.Get(t).TryConvert<int>().value();
+	std::vector<Argument> args = { 5, std::string("Hello!") };
+	std::cout << method.CallFunc(t, args).TryConvert<int>().value();
+
+
+	//const int&& value = 200;
+	//prop.Set(t, value);
+	//std::cout << prop.Get(t).TryConvert<int>().value();
 }

@@ -3,6 +3,7 @@
 #include "Reference/Reference.h"
 #include <functional>
 #include "Argument/Argument.h"
+#include "AccessLevel.h"
 
 namespace RefLib
 {
@@ -15,8 +16,9 @@ namespace RefLib
 	{
 	public:
 		template<typename TClass, typename TProp>
-		PropertyData(std::string_view name, TProp TClass::* prop)
-			: m_DeclaringType(Type::Get<TClass>()), m_Type(Type::Get<TProp>()), m_Name(name) 
+		PropertyData(std::string_view name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public)
+			: m_DeclaringType(Type::Get<TClass>()), m_Type(Type::Get<TProp>()), m_Name(name), 
+			  m_AccessLevel(level)
 		{
 			m_GetFunc = [=](Type t, void* data) -> Variant
 			{
@@ -74,11 +76,14 @@ namespace RefLib
 		Type GetDeclaringType() { return m_DeclaringType; }
 		Type GetType() { return m_Type; }
 		std::string_view GetName() { return m_Name; }
+		AccessLevel GetAccessLevel() { return m_AccessLevel; }
 
 	private:
 		Type m_DeclaringType;
 		Type m_Type;
 		std::string m_Name;
+
+		AccessLevel m_AccessLevel;
 
 		std::function<Variant(Type, void*)> m_GetFunc;
 		std::function<bool(Type, void*, Argument)> m_SetFunc;

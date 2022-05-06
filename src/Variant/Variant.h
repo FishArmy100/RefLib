@@ -26,7 +26,8 @@ namespace RefLib
 			m_CopyData(other.m_CopyData),
 			m_IsValid(true)
 		{
-			m_Data = m_CopyData(other.m_Data);
+			if(other.m_IsValid)
+				m_Data = m_CopyData(other.m_Data);
 		}
 
 		Variant& operator=(const Variant& other)
@@ -34,7 +35,11 @@ namespace RefLib
 			if (this == &other)
 				return *this;
 
-			this->m_Data = other.m_CopyData(other.m_Data);
+			if (other.m_IsValid)
+				this->m_Data = other.m_CopyData(other.m_Data);
+			else
+				this->m_Data = nullptr;
+
 			this->m_Type = other.m_Type;
 			this->m_CopyData = other.m_CopyData;
 			this->m_DeleteData = other.m_DeleteData;
@@ -63,7 +68,8 @@ namespace RefLib
 
 		~Variant()
 		{
-			m_DeleteData(m_Data);
+			if(m_Data != nullptr && !IsValid())
+				m_DeleteData(m_Data);
 		}
 
 	private:

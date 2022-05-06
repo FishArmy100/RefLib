@@ -151,10 +151,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="examples\main.cpp" />
+    <ClCompile Include="src\Method\MethodData.cpp" />
+    <ClCompile Include="src\Method\Method.cpp" />
     <ClCompile Include="src\Argument\Argument.cpp" />
     <ClCompile Include="src\Property\PropertyData.cpp" />
     <ClCompile Include="src\Property\Property.cpp" />
     <ClCompile Include="src\Reference\Reference.cpp" />
+    <ClCompile Include="src\TemplateUtils.h" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeFlags.cpp" />
@@ -162,7 +165,11 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Method\MethodData.h" />
+    <ClInclude Include="src\Method\Method.h" />
+    <ClInclude Include="src\AccessLevel.h" />
     <ClInclude Include="src\Argument\Argument.h" />
+    <ClInclude Include="src\Method\ParameterData.h" />
     <ClInclude Include="src\Property\PropertyData.h" />
     <ClInclude Include="src\Property\Property.h" />
     <ClInclude Include="src\Reference\Reference.h" />
