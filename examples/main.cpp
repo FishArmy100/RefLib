@@ -6,7 +6,7 @@
 #include "Variant/Variant.h"
 #include "Property/Property.h"
 #include "Registration/TypeBuilder.h"
-#include "Method/MethodData.h"
+#include "Method/Method.h"
 
 struct Position
 {
@@ -57,14 +57,16 @@ int main()
 	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
 	builder.AddProperty("X", &Test::X);
 	builder.AddProperty("Y", &Test::Y);
+	builder.AddMethod("Hello", &Test::Hello);
 	builder.Register();
 
 	//Property prop = Type::Get<Test>().GetProperty("X");
 
-	MethodData method = MethodData("Hello", &Test::Hello);
+	Method method = Type::Get<Test>().GetMethod("Hello");
 	Test t = Test(5, 6);
-	std::vector<Argument> args = { 5, std::string("Hello!") };
-	std::cout << method.CallFunc(t, args).TryConvert<int>().value();
+	std::string name = "Nate";
+	std::vector<Argument> args = { 5, name };
+	std::cout << method.Invoke(t, args).TryConvert<int>().value();
 
 
 	//const int&& value = 200;

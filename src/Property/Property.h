@@ -24,6 +24,9 @@ namespace RefLib
 		
 		bool Set(Reference ref, Argument arg)
 		{
+			if (!IsValid())
+				return false;
+
 			return m_Data->Set(ref, arg);
 		}
 

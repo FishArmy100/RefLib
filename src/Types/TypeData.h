@@ -12,6 +12,7 @@
 namespace RefLib
 {
 	class PropertyData;
+	class MethodData;
 	class Type;
 
 	struct TypeData
@@ -28,6 +29,7 @@ namespace RefLib
 		Type(*DereferenceFunc)() = nullptr;
 
 		MemberContainer<PropertyData*> Properties;
+		MemberContainer<MethodData*> Methods;
 	};
 }
 

@@ -19,7 +19,8 @@ namespace RefLib
 	{
 		template<typename TClass, typename TReturn>
 		MethodData(const std::string& name, TReturn (TClass::* method)()) :
-			Name(name), ReturnType(Type::Get<TReturn>()), Parameters(std::vector<ParameterData>())
+			Name(name), ReturnType(Type::Get<TReturn>()), 
+			Parameters(std::vector<ParameterData>()), DeclaringType(Type::Get<TClass>())
 		{
 			CallFunc = [=](Reference ref, std::vector<Argument> args)
 			{
@@ -37,7 +38,8 @@ namespace RefLib
 
 		template<typename TClass, typename TReturn, typename... TArgs>
 		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...)) :
-			Name(name), ReturnType(Type::Get<TReturn>())
+			Name(name), ReturnType(Type::Get<TReturn>()), 
+			DeclaringType(Type::Get<TClass>())
 		{
 			std::vector<ParameterData> parameters = std::vector<ParameterData>(sizeof...(TArgs));
 			std::array<Type, sizeof...(TArgs)> types = { Type::Get<TArgs>()... };
@@ -63,12 +65,13 @@ namespace RefLib
 				if (obj == nullptr)
 					return Variant();
 
-				return TestCall(obj, method, args, std::make_integer_sequence<size_t, sizeof...(TArgs)>{}, Containter<TArgs...>{});
+				return Call(obj, method, args, std::make_integer_sequence<size_t, sizeof...(TArgs)>{}, Containter<TArgs...>{});
 			};
 		}
 
 		std::string Name;
 		Type ReturnType;
+		Type DeclaringType;
 		std::vector<ParameterData> Parameters;
 
 		std::function<Variant(Reference, std::vector<Argument>)> CallFunc;
@@ -93,7 +96,7 @@ namespace RefLib
 		struct Containter {};
 
 		template<typename TClass, typename TReturn, size_t... ints, typename... TArgs>
-		Variant TestCall(TClass* instance, TReturn(TClass::* method)(TArgs...), std::vector<Argument>& args, std::integer_sequence<size_t, ints...> int_seq, const Containter<TArgs...>)
+		Variant Call(TClass* instance, TReturn(TClass::* method)(TArgs...), std::vector<Argument>& args, std::integer_sequence<size_t, ints...> int_seq, const Containter<TArgs...>)
 		{
 			return Variant((instance->*method)(((args[ints].Get<typename Utils::TypeGetter<ints, TArgs...>::Type>())) ...));
 		}

@@ -1,5 +1,6 @@
 #include "Type.h"
 #include "Property/Property.h"
+#include "Method/Method.h"
 
 namespace RefLib
 {
@@ -16,6 +17,20 @@ namespace RefLib
 			[](auto& kv) 
 			{ 
 				return Property(kv.second); 
+			});
+	}
+
+	Method Type::GetMethod(const std::string& name)
+	{
+		return Method(this->m_Data->Methods[name]);
+	}
+
+	std::vector<Method> Type::GetMethods()
+	{
+		return Utils::GetMemberVector<MethodData*, Method>(this->m_Data->Methods,
+			[](auto& kv)
+			{
+				return Method(kv.second);
 			});
 	}
 

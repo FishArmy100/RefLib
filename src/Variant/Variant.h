@@ -24,10 +24,12 @@ namespace RefLib
 			m_Type(other.m_Type), 
 			m_DeleteData(other.m_DeleteData),
 			m_CopyData(other.m_CopyData),
-			m_IsValid(true)
+			m_IsValid(other.m_IsValid)
 		{
-			if(other.m_IsValid)
+			if (other.m_IsValid)
 				m_Data = m_CopyData(other.m_Data);
+			else
+				m_Data = nullptr;
 		}
 
 		Variant& operator=(const Variant& other)
@@ -56,6 +58,9 @@ namespace RefLib
 		template<typename T>
 		std::optional<T> TryConvert() const
 		{
+			if (!m_IsValid)
+				return {};
+
 			if (m_Type == Type::Get<T>())
 				return *(T*)m_Data;
 

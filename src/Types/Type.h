@@ -6,6 +6,7 @@
 namespace RefLib
 {
 	class Property;
+	class Method;
 
 	class Type
 	{
@@ -23,7 +24,7 @@ namespace RefLib
 		}
 
 		template<typename T>
-		static bool RegisterType(const std::string& name, MemberContainer<PropertyData*>& properties)
+		static bool RegisterType(const std::string& name, MemberContainer<PropertyData*>& properties, MemberContainer<MethodData*>& methods)
 		{
 			Type t = Get<T>();
 			if (t.IsRegistered())
@@ -31,6 +32,7 @@ namespace RefLib
 
 			TypeData* data = CreateTypeData<T>(name, t.GetId(), true);
 			data->Properties = properties;
+			data->Methods = methods;
 			s_TypeDatas[data->Id] = data;
 			return true;
 		}
@@ -58,6 +60,8 @@ namespace RefLib
 		Property GetProperty(const std::string& name);
 		std::vector<Property> GetProperties();
 
+		Method GetMethod(const std::string& name);
+		std::vector<Method> GetMethods();
 
 		bool IsPointer() { return m_Data->IsPointer; }
 
