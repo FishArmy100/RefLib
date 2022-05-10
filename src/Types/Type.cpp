@@ -1,6 +1,7 @@
 #include "Type.h"
 #include "Property/Property.h"
 #include "Method/Method.h"
+#include "MemberContainers.h"
 
 namespace RefLib
 {
@@ -8,30 +9,35 @@ namespace RefLib
 
 	Property Type::GetProperty(const std::string& name)
 	{
-		return Property(this->m_Data->Properties[name]); 
+		return Property(this->m_Data->Properties->GetProp(name));
 	}
 
-	std::vector<Property> Type::GetProperties()
+	const std::vector<Property>& Type::GetProperties()
 	{
-		return Utils::GetMemberVector<PropertyData*, Property>(this->m_Data->Properties, 
-			[](auto& kv) 
-			{ 
-				return Property(kv.second); 
-			});
+		std::vector<PropertyData>& datas = this->m_Data->Properties->GetAll();
+		std::vector<Property> props = std::vector<Property>(datas.size());
+		for (int i = 0; i < props.size(); i++)
+			props[i] = Property(&(datas[i]));
+		return props;
 	}
 
 	Method Type::GetMethod(const std::string& name)
 	{
-		return Method(this->m_Data->Methods[name]);
+		return Method(this->m_Data->Methods->GetMethod(name));
+	}
+
+	Method Type::GetOverloadedMethod(const std::string& name, Type signature)
+	{
+		return Method(this->m_Data->Methods->GetOverloadedMethod(name, signature));
 	}
 
 	std::vector<Method> Type::GetMethods()
 	{
-		return Utils::GetMemberVector<MethodData*, Method>(this->m_Data->Methods,
-			[](auto& kv)
-			{
-				return Method(kv.second);
-			});
+		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
+		std::vector<Method> methods = std::vector<Method>(datas.size());
+		for (int i = 0; i < methods.size(); i++)
+			methods[i] = Method(&(datas[i]));
+		return methods;
 	}
 
 	bool Type::IsAssignableFrom(Type t)
@@ -40,5 +46,16 @@ namespace RefLib
 			return false;
 
 		return this->GetId() == t.GetId();
+	}
+
+	bool Type::IsConvertableTo(Type type)
+	{
+		if (this->GetId() != type.GetId())
+			return false;
+
+		if (this->IsConst() && (type.IsRef() || type.IsRValueRef()) && !type.IsConst())
+			return false;
+
+		return true;
 	}
 }

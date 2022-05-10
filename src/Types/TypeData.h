@@ -7,12 +7,13 @@
 #include <vector>
 #include <memory>
 #include "TypeFlags.h"
-#include "MemberContianer.h"
 
 namespace RefLib
 {
 	class PropertyData;
 	class MethodData;
+	class PropertyContainer;
+	class MethodContainer;
 	class Type;
 
 	struct TypeData
@@ -28,8 +29,8 @@ namespace RefLib
 
 		Type(*DereferenceFunc)() = nullptr;
 
-		MemberContainer<PropertyData*> Properties;
-		MemberContainer<MethodData*> Methods;
+		PropertyContainer* Properties;
+		MethodContainer* Methods;
 	};
 }
 

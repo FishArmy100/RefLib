@@ -8,9 +8,10 @@ namespace RefLib
 	{
 		None				= 0b00000000,
 		Const				= 0b00000001,
-		LValueReference		= 0b00000010,
+		Reference			= 0b00000010,
 		RValueReference		= 0b00000100,
 		Volatile			= 0b00001000,
+		ConstReference		= Const | Reference
 	};
 
 	TypeFlags operator|(TypeFlags lhs, TypeFlags rhs);
@@ -28,7 +29,7 @@ namespace RefLib
 			TypeFlags flags = TypeFlags::None;
 			flags = ApplyFlagIfTrue(std::is_const_v<T>, flags, TypeFlags::Const);
 			flags = ApplyFlagIfTrue(std::is_volatile_v<T>, flags, TypeFlags::Volatile);
-			flags = ApplyFlagIfTrue(std::is_lvalue_reference_v<T>, flags, TypeFlags::LValueReference);
+			flags = ApplyFlagIfTrue(std::is_lvalue_reference_v<T>, flags, TypeFlags::Reference);
 			flags = ApplyFlagIfTrue(std::is_rvalue_reference_v<T>, flags, TypeFlags::RValueReference);
 			return flags;
 		}

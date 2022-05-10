@@ -15,6 +15,9 @@ namespace RefLib
 	class PropertyData
 	{
 	public:
+		PropertyData() : m_Name(""), m_DeclaringType(Type::Invalid()), m_Type(Type::Invalid()), m_AccessLevel(AccessLevel::Private)
+		{}
+
 		template<typename TClass, typename TProp>
 		PropertyData(std::string_view name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public)
 			: m_DeclaringType(Type::Get<TClass>()), m_Type(Type::Get<TProp>()), m_Name(name), 
@@ -39,13 +42,13 @@ namespace RefLib
 				if (Type::Get<TProp>().IsAssignableFrom(arg.GetType()))
 				{
 					TClass* castObj = (TClass*)objData;
-					const_cast<SetableType>((*castObj).*prop) = arg.Get<TProp>(); // the const_cast is mostly to remove compiler erros, dont actually do anything
+					const_cast<SetableType>((*castObj).*prop) = arg.GetValue<TProp>(); // the const_cast is mostly to remove compiler erros, dont actually do anything
 					return true;
 				}
 				else if(arg.IsVarient())
 				{
 					TClass* castObj = (TClass*)objData;
-					Variant& var = arg.Get<Variant>();
+					Variant& var = arg.GetValue<Variant>();
 					auto convData = var.TryConvert<TProp>();
 					if (!convData.has_value())
 						return false;
@@ -73,10 +76,12 @@ namespace RefLib
 			return m_SetFunc(obj.GetType(), obj.GetRawData(), arg);
 		}
 
-		Type GetDeclaringType() { return m_DeclaringType; }
-		Type GetType() { return m_Type; }
-		std::string_view GetName() { return m_Name; }
-		AccessLevel GetAccessLevel() { return m_AccessLevel; }
+		bool IsValid() { return m_Type != Type::Invalid(); }
+
+		Type GetDeclaringType() const { return m_DeclaringType; }
+		Type GetType() const { return m_Type; }
+		std::string_view GetName() const { return m_Name; }
+		AccessLevel GetAccessLevel() const { return m_AccessLevel; }
 
 	private:
 		Type m_DeclaringType;

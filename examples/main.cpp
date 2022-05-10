@@ -47,7 +47,8 @@ struct Test
 	int X;
 	const int Y;
 
-	int Hello(int x, std::string y) { return x; }
+	int Add(int a, int b) { std::cout << "Version 1 called \n"; return a + b; }
+	float Add(float a, float b) { std::cout << "Version 2 called \n"; return a + b; }
 };
 
 using namespace RefLib;
@@ -57,19 +58,12 @@ int main()
 	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
 	builder.AddProperty("X", &Test::X);
 	builder.AddProperty("Y", &Test::Y);
-	builder.AddMethod("Hello", &Test::Hello);
+	builder.AddMethod("Add", static_cast<int(Test::*)(int,int)>(&Test::Add));
+	builder.AddMethod("Add", static_cast<float(Test::*)(float, float)>(&Test::Add));
 	builder.Register();
 
-	//Property prop = Type::Get<Test>().GetProperty("X");
-
-	Method method = Type::Get<Test>().GetMethod("Hello");
-	Test t = Test(5, 6);
-	std::string name = "Nate";
-	std::vector<Argument> args = { 5, name };
-	std::cout << method.Invoke(t, args).TryConvert<int>().value();
-
-
-	//const int&& value = 200;
-	//prop.Set(t, value);
-	//std::cout << prop.Get(t).TryConvert<int>().value();
+	Test test = Test(1, 2);
+	Type type = Type::Get<Test>();
+	Method m = type.GetOverloadedMethod("Add", Type::Get<float(Test::*)(float, float)>());
+	m.Invoke(test, { 5.f, 5.f });
 }

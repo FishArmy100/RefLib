@@ -9,6 +9,12 @@ namespace RefLib
 		template<typename T, typename Tp = Utils::decay_t<T>>
 		using decay_reference_t = Utils::enable_if_t<!std::is_same<Argument, Tp>::value, T>;
 
+		template<typename T>
+		using arg_value_t = std::enable_if_t<!std::is_rvalue_reference_v<T>, T>;
+
+		template<typename T>
+		using arg_rvalue_t = std::enable_if_t<std::is_rvalue_reference_v<T>, std::remove_reference_t<T>>;
+
 	public:
 		template<typename T, typename = typename decay_reference_t<T>>
 		Argument(T&& arg)
@@ -26,10 +32,17 @@ namespace RefLib
 		}
 
 		template<typename T>
-		inline T& Get()
+		inline arg_value_t<T>& GetValue() const
 		{
 			using TRaw = typename std::remove_reference_t<T>;
 			return (*reinterpret_cast<TRaw*>(const_cast<void*>(m_Data)));
+		}
+
+		template<typename T>
+		inline arg_rvalue_t<T>&& GetValue() const
+		{
+			using TRaw = typename std::remove_reference_t<T>;
+			return std::move(*reinterpret_cast<TRaw*>(const_cast<void*>(m_Data)));
 		}
 
 		~Argument() = default;

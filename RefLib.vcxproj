@@ -158,6 +158,7 @@
     <ClCompile Include="src\Property\Property.cpp" />
     <ClCompile Include="src\Reference\Reference.cpp" />
     <ClCompile Include="src\TemplateUtils.h" />
+    <ClCompile Include="src\Types\MemberContainers.cpp" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeFlags.cpp" />
@@ -173,10 +174,11 @@
     <ClInclude Include="src\Property\PropertyData.h" />
     <ClInclude Include="src\Property\Property.h" />
     <ClInclude Include="src\Reference\Reference.h" />
-    <ClInclude Include="src\Types\MemberContianer.h" />
+    <ClInclude Include="src\Types\MemberContainers.h" />
     <ClInclude Include="src\Types\TypeFlags.h" />
     <ClInclude Include="src\Types\TypeId.h" />
     <ClInclude Include="src\Types\TypeUtils.h" />
+    <ClInclude Include="src\Variant\VarientVoidType.h" />
     <ClInclude Include="src\vendor\rttr\core_prerequisites.h" />
     <ClInclude Include="src\vendor\rttr\type_name.h" />
     <ClInclude Include="src\Types\Type.h" />

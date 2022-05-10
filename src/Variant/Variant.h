@@ -1,6 +1,7 @@
 #pragma once
 #include "Types/Type.h"
 #include <optional>
+#include "VarientVoidType.h"
 
 namespace RefLib
 {
@@ -8,6 +9,9 @@ namespace RefLib
 
 	class Variant
 	{
+	public:
+		static Variant GetVoidVarient();
+
 	public:
 		Variant() : m_Type(Type::Invalid()), m_Data(nullptr), m_IsValid(false),
 					m_CopyData(nullptr), m_DeleteData(nullptr) 
@@ -70,6 +74,7 @@ namespace RefLib
 		Type GetType() const { return m_Type; }
 		void* GetRawData() const { return m_Data; }
 		bool IsValid() { return m_IsValid; }
+		bool IsVoid() { return m_Type == Type::Get<VarientVoidType>(); }
 
 		~Variant()
 		{

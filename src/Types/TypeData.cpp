@@ -5,9 +5,7 @@ namespace RefLib
 {
 	TypeData::~TypeData()
 	{
-		for (auto propPtr : Properties)
-			delete propPtr.second;
-
-		Properties.clear();
+		delete Properties;
+		delete Methods;
 	}
 }

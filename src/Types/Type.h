@@ -24,7 +24,7 @@ namespace RefLib
 		}
 
 		template<typename T>
-		static bool RegisterType(const std::string& name, MemberContainer<PropertyData*>& properties, MemberContainer<MethodData*>& methods)
+		static bool RegisterType(const std::string& name, PropertyContainer* properties, MethodContainer* methods)
 		{
 			Type t = Get<T>();
 			if (t.IsRegistered())
@@ -44,28 +44,30 @@ namespace RefLib
 		Type& operator=(const Type& other) { this->m_Data = other.m_Data; this->m_Flags = other.m_Flags; return *this; }
 		~Type() = default;
 
-		std::string_view GetName() const { return m_Data->Name; }
-		TypeId GetId() const { return m_Data->Id; }
+		std::string_view GetName() const { return IsValid() ? m_Data->Name : ""; }
+		TypeId GetId() const { return IsValid() ? m_Data->Id : NoneType; }
 		TypeFlags GetFlags() const { return m_Flags; }
-		bool IsRegistered() const { return m_Data->IsRegistered; }
+		bool IsRegistered() const { return IsValid() ? m_Data->IsRegistered : false; }
 
 		static Type Invalid() { return Type(nullptr, TypeFlags::None); }
 
 		bool IsFlag(TypeFlags flag) { return (bool)(m_Flags & flag); }
 		bool IsConst() { return IsFlag(TypeFlags::Const); }
 		bool IsVolotile() { return IsFlag(TypeFlags::Volatile); }
-		bool IsLValueRef() { return IsFlag(TypeFlags::LValueReference); }
+		bool IsRef() { return IsFlag(TypeFlags::Reference); }
 		bool IsRValueRef() { return IsFlag(TypeFlags::RValueReference); }
 
 		Property GetProperty(const std::string& name);
-		std::vector<Property> GetProperties();
+		const std::vector<Property>& GetProperties();
 
 		Method GetMethod(const std::string& name);
+		Method GetOverloadedMethod(const std::string& name, Type signature);
 		std::vector<Method> GetMethods();
 
-		bool IsPointer() { return m_Data->IsPointer; }
-
-		bool IsAssignableFrom(Type t);
+		bool IsPointer() { return IsValid() ? m_Data->IsPointer : false; }
+		 
+		bool IsAssignableFrom(Type type); 
+		bool IsConvertableTo(Type type); 
 
 		Type Dereferenced() { return m_Data->DereferenceFunc(); }
 
@@ -79,7 +81,7 @@ namespace RefLib
 			return !(*this == other);
 		}
 
-		bool IsValid() { return m_Data != nullptr; }
+		bool IsValid() const { return m_Data != nullptr; }
 
 	private:
 		template<typename T>
@@ -114,5 +116,27 @@ namespace RefLib
 		TypeData* m_Data;
 		TypeFlags m_Flags;
 	};
+}
+
+namespace std {
+
+	template <>
+	struct hash<RefLib::Type> 
+	{
+		std::size_t operator()(const RefLib::Type& k) const
+		{
+			using std::size_t;
+			using std::hash;
+			using std::string;
+
+			// Compute individual hash values for first,
+			// second and third and combine them using XOR
+			// and bit shifting:
+
+			return ((hash<size_t>()(k.GetId())
+				^ (hash<uint8_t>()(static_cast<uint8_t>(k.GetFlags())) << 1)) >> 1);
+		}
+	};
+
 }
 

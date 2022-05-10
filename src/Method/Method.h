@@ -20,7 +20,7 @@ namespace RefLib
 			if (!IsValid())
 				return Variant();
 
-			return m_Data->CallFunc(ref, args);
+			return m_Data->CallFunc(ref, args, m_Data->Parameters);
 		}
 
 		bool IsValid() { return m_Data != nullptr; }

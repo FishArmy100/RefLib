@@ -8,4 +8,9 @@ namespace RefLib
 	{
 		*this = ref.AsVarient();
 	}
+
+	Variant Variant::GetVoidVarient()
+	{
+		return Variant(VarientVoidType{});
+	}
 }
