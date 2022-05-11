@@ -150,6 +150,8 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Constructor\Constructor.cpp" />
+    <ClCompile Include="src\Constructor\ConstructorData.cpp" />
     <ClCompile Include="examples\main.cpp" />
     <ClCompile Include="src\Method\MethodData.cpp" />
     <ClCompile Include="src\Method\Method.cpp" />
@@ -166,6 +168,8 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Constructor\Constructor.h" />
+    <ClInclude Include="src\Constructor\ConstructorData.h" />
     <ClInclude Include="src\Method\MethodData.h" />
     <ClInclude Include="src\Method\Method.h" />
     <ClInclude Include="src\AccessLevel.h" />

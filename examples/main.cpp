@@ -7,6 +7,7 @@
 #include "Property/Property.h"
 #include "Registration/TypeBuilder.h"
 #include "Method/Method.h"
+#include "Constructor/ConstructorData.h"
 
 struct Position
 {
@@ -55,7 +56,7 @@ using namespace RefLib;
 
 int main()
 {
-	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
+	/*TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
 	builder.AddProperty("X", &Test::X);
 	builder.AddProperty("Y", &Test::Y);
 	builder.AddMethod("Add", static_cast<int(Test::*)(int,int)>(&Test::Add));
@@ -64,6 +65,12 @@ int main()
 
 	Test test = Test(1, 2);
 	Type type = Type::Get<Test>();
-	Method m = type.GetOverloadedMethod("Add", Type::Get<float(Test::*)(float, float)>());
-	m.Invoke(test, { 5.f, 5.f });
+	Method m = type.GetMethod("Add");
+	m.Invoke(test, { 5, 5 });*/
+
+	std::shared_ptr<Test>(*ctor)(int, int) = [](int x, int y) {return std::make_shared<Test>(5, 5); };
+	ConstructorData data = ConstructorData(ctor, AccessLevel::Public);
+
+	std::shared_ptr<Test> test = data.ConstructorFunc({ 5, 5 }).TryConvert<std::shared_ptr<Test>>().value();
+	std::cout << test->X;
 }
