@@ -1,6 +1,7 @@
 #pragma once
 #include "Types/Type.h"
 #include "Variant/Variant.h"
+#include "Argument/Argument.h"
 
 namespace RefLib
 {
@@ -20,22 +21,24 @@ namespace RefLib
 
 		}
 
-		ParameterData() : 
-			Name(""), Index(-1), 
-			ParameterType(Type::Invalid()), 
-			DefaultValue(Variant())
-		{
-			
-		}
+		ParameterData() = default;
 
 		ParameterData(const ParameterData&) = default;
 		~ParameterData() = default;
 
 		bool IsValid() { return Index != -1; }
 
-		std::string Name;
-		int Index;
-		Type ParameterType;
-		Variant DefaultValue;
+		std::string Name = "";
+		int Index = -1;
+		Type ParameterType = Type::Invalid();
+		Variant DefaultValue = Variant();
 	};
+
+	using ParameterList = std::vector<ParameterData>;
+
+	namespace Utils
+	{
+		bool ArgListCanCallParamData(const ParameterList& params, const std::vector<Argument>& args);
+		bool TypeListCanCallParamData(const ParameterList& params, const std::vector<Type>& types);
+	}
 }

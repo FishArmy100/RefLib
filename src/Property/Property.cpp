@@ -27,7 +27,7 @@ namespace RefLib
 		return m_Data->GetName();
 	}
 
-	Variant Property::Get(Reference ref)
+	Variant Property::Get(Instance ref)
 	{
 		if (!IsValid())
 			return Variant();

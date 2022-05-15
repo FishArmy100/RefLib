@@ -1,5 +1,6 @@
 #include "TypeData.h"
 #include "Property/Property.h"
+#include "Constructor/Constructor.h"
 
 namespace RefLib
 {
@@ -7,5 +8,6 @@ namespace RefLib
 	{
 		delete Properties;
 		delete Methods;
+		delete Constructors;
 	}
 }

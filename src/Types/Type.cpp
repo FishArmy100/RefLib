@@ -2,6 +2,9 @@
 #include "Property/Property.h"
 #include "Method/Method.h"
 #include "MemberContainers.h"
+#include "Constructor/Constructor.h"
+#include "Argument/Argument.h"
+#include "Variant/Variant.h"
 
 namespace RefLib
 {
@@ -40,7 +43,56 @@ namespace RefLib
 		return methods;
 	}
 
-	bool Type::IsAssignableFrom(Type t)
+	Constructor Type::GetConstructor(const std::vector<Type>& params)
+	{
+		for (auto& constructorData : *(m_Data->Constructors))
+		{
+			if (Utils::TypeListCanCallParamData(constructorData.Parameters, params))
+			{
+				return Constructor(&constructorData);
+			}
+		}
+
+		return Constructor();
+	}
+
+	std::vector<Constructor> Type::GetConstructors()
+	{
+		std::vector<ConstructorData>& datas = *(m_Data->Constructors);
+		std::vector<Constructor> constructors;
+		for (auto& data : datas)
+			constructors.push_back(Constructor(&data));
+
+		return constructors; 
+	}
+
+	Variant Type::Create(std::vector<Argument> args)
+	{
+		for (auto& constructorData : *(m_Data->Constructors))
+		{
+			if (Utils::ArgListCanCallParamData(constructorData.Parameters, args))
+			{
+				return Constructor(&constructorData).Construct(std::move(args));
+			}
+		}
+
+		return Variant();
+	}
+
+	Variant Type::CreatePtr(std::vector<Argument> args)
+	{
+		for (auto& constructorData : *(m_Data->Constructors))
+		{
+			if (Utils::ArgListCanCallParamData(constructorData.Parameters, args))
+			{
+				return Constructor(&constructorData).ConstructPtr(std::move(args));
+			}
+		}
+
+		return Variant();
+	}
+
+	bool Type::IsAssignableFrom(Type t) const
 	{
 		if (this->IsConst())
 			return false;
@@ -48,7 +100,7 @@ namespace RefLib
 		return this->GetId() == t.GetId();
 	}
 
-	bool Type::IsConvertableTo(Type type)
+	bool Type::IsConvertableTo(Type type) const
 	{
 		if (this->GetId() != type.GetId())
 			return false;

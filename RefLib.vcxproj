@@ -150,15 +150,18 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Enum\EnumDataWrapper.cpp" />
+    <ClCompile Include="src\Enum\Enum.cpp" />
     <ClCompile Include="src\Constructor\Constructor.cpp" />
     <ClCompile Include="src\Constructor\ConstructorData.cpp" />
     <ClCompile Include="examples\main.cpp" />
     <ClCompile Include="src\Method\MethodData.cpp" />
     <ClCompile Include="src\Method\Method.cpp" />
     <ClCompile Include="src\Argument\Argument.cpp" />
+    <ClCompile Include="src\Method\ParameterData.cpp" />
     <ClCompile Include="src\Property\PropertyData.cpp" />
     <ClCompile Include="src\Property\Property.cpp" />
-    <ClCompile Include="src\Reference\Reference.cpp" />
+    <ClCompile Include="src\Instance\Instance.cpp" />
     <ClCompile Include="src\TemplateUtils.h" />
     <ClCompile Include="src\Types\MemberContainers.cpp" />
     <ClCompile Include="src\Types\Type.cpp" />
@@ -168,6 +171,9 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Enum\EnumDataWrapper.h" />
+    <ClInclude Include="src\Enum\EnumData.h" />
+    <ClInclude Include="src\Enum\Enum.h" />
     <ClInclude Include="src\Constructor\Constructor.h" />
     <ClInclude Include="src\Constructor\ConstructorData.h" />
     <ClInclude Include="src\Method\MethodData.h" />
@@ -177,11 +183,13 @@
     <ClInclude Include="src\Method\ParameterData.h" />
     <ClInclude Include="src\Property\PropertyData.h" />
     <ClInclude Include="src\Property\Property.h" />
-    <ClInclude Include="src\Reference\Reference.h" />
+    <ClInclude Include="src\Instance\Instance.h" />
     <ClInclude Include="src\Types\MemberContainers.h" />
     <ClInclude Include="src\Types\TypeFlags.h" />
     <ClInclude Include="src\Types\TypeId.h" />
     <ClInclude Include="src\Types\TypeUtils.h" />
+    <ClInclude Include="src\Utils\Ref.h" />
+    <ClInclude Include="src\Variant\TempVariant.h" />
     <ClInclude Include="src\Variant\VarientVoidType.h" />
     <ClInclude Include="src\vendor\rttr\core_prerequisites.h" />
     <ClInclude Include="src\vendor\rttr\type_name.h" />

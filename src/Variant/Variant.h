@@ -2,10 +2,13 @@
 #include "Types/Type.h"
 #include <optional>
 #include "VarientVoidType.h"
+#include <type_traits>
+#include "TempVariant.h"
+#include <functional>
 
 namespace RefLib
 {
-	class Reference;
+	class Instance;
 
 	class Variant
 	{
@@ -14,7 +17,8 @@ namespace RefLib
 
 	public:
 		Variant() : m_Type(Type::Invalid()), m_Data(nullptr), m_IsValid(false),
-					m_CopyData(nullptr), m_DeleteData(nullptr) 
+					m_CopyData(nullptr), m_DeleteData(nullptr), 
+					m_DeleteDataPtr(nullptr), m_GetDereferencedHealper(nullptr)
 		{}
 
 		template<typename T>
@@ -22,13 +26,36 @@ namespace RefLib
 		{
 			m_DeleteData = [](void* ptr) { delete(T*)ptr; };
 			m_CopyData = [](void* ptr) { return (void*)new T(*(T*)ptr); };
+			m_DeleteDataPtr = [](void* ptr)
+			{
+				if constexpr (std::is_pointer_v<T>)
+				{
+					delete* (T*)ptr;
+					return true;
+				}
+
+				return false;
+			};
+
+			m_GetDereferencedHealper = [=](void*)
+			{
+				if constexpr (std::is_pointer_v<T>)
+				{
+					void* derefData = *(T*)m_Data;
+					return std::optional<TempVariant>(TempVariant::Create<std::remove_pointer_t<T>>(derefData));
+				}
+
+				return std::optional<TempVariant>{}; 
+			};
 		}
 
 		Variant(const Variant& other) : 
 			m_Type(other.m_Type), 
 			m_DeleteData(other.m_DeleteData),
 			m_CopyData(other.m_CopyData),
-			m_IsValid(other.m_IsValid)
+			m_IsValid(other.m_IsValid),
+			m_DeleteDataPtr(other.m_DeleteDataPtr),
+			m_GetDereferencedHealper(other.m_GetDereferencedHealper)
 		{
 			if (other.m_IsValid)
 				m_Data = m_CopyData(other.m_Data);
@@ -50,12 +77,17 @@ namespace RefLib
 			this->m_CopyData = other.m_CopyData;
 			this->m_DeleteData = other.m_DeleteData;
 			this->m_IsValid = other.m_IsValid;
+			this->m_DeleteDataPtr = other.m_DeleteDataPtr;
+			this->m_GetDereferencedHealper = other.m_GetDereferencedHealper;
 
 			return *this;
 		}
 
 		template<>
-		Variant(const Reference ref);
+		Variant(const Instance ref);
+
+		template<>
+		Variant(const TempVariant tv);
 
 		Variant(Variant&&) = delete;
 
@@ -73,8 +105,14 @@ namespace RefLib
 
 		Type GetType() const { return m_Type; }
 		void* GetRawData() const { return m_Data; }
-		bool IsValid() { return m_IsValid; }
-		bool IsVoid() { return m_Type == Type::Get<VarientVoidType>(); }
+		bool IsValid() const { return m_IsValid; }
+		bool IsVoid() const { return m_Type == Type::Get<VarientVoidType>(); }
+
+		bool IsPointer() const { return m_Type.IsPointer(); }
+
+		bool Delete();
+
+		Instance GetDereferenced();
 
 		~Variant()
 		{
@@ -89,6 +127,8 @@ namespace RefLib
 
 		void(*m_DeleteData)(void*);
 		void*(*m_CopyData)(void*);
+		bool(*m_DeleteDataPtr)(void*);
+		std::function<std::optional<TempVariant>(void*)> m_GetDereferencedHealper;
 	};
 }
 

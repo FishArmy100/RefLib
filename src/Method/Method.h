@@ -15,7 +15,7 @@ namespace RefLib
 		Type GetReturnType() { return IsValid() ? m_Data->ReturnType : Type::Invalid(); }
 		const std::vector<ParameterData>& Parameters() { return IsValid() ? m_Data->Parameters : std::vector<ParameterData>(); }
 
-		Variant Invoke(Reference ref, std::vector<Argument> args)
+		Variant Invoke(Instance ref, std::vector<Argument> args)
 		{
 			if (!IsValid())
 				return Variant();

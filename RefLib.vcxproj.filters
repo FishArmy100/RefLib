@@ -31,7 +31,7 @@
     <ClCompile Include="src\Types\TypeData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Reference\Reference.cpp">
+    <ClCompile Include="src\Instance\Instance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Property\Property.cpp">
@@ -70,6 +70,15 @@
     <ClCompile Include="src\Constructor\Constructor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Method\ParameterData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Enum\Enum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Enum\EnumDataWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vendor\rttr\type_name.h">
@@ -90,7 +99,7 @@
     <ClInclude Include="src\Types\TypeData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Reference\Reference.h">
+    <ClInclude Include="src\Instance\Instance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Property\Property.h">
@@ -133,6 +142,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Constructor\Constructor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Ref.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Variant\TempVariant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Enum\Enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Enum\EnumData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Enum\EnumDataWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

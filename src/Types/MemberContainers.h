@@ -6,6 +6,7 @@
 #include "Type.h"
 #include "Method/MethodData.h"
 #include "Property/PropertyData.h"
+#include "Constructor/ConstructorData.h"
 
 namespace RefLib
 {

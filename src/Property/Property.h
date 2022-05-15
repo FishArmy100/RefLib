@@ -7,7 +7,7 @@
 namespace RefLib
 {
 	class PropertyData;
-	class Reference;
+	class Instance;
 	class Variant;
 
 	class Property
@@ -20,9 +20,9 @@ namespace RefLib
 		Type GetDeclaringType();
 		std::string_view GetName();
 
-		Variant Get(Reference ref);
+		Variant Get(Instance ref);
 		
-		bool Set(Reference ref, Argument arg)
+		bool Set(Instance ref, Argument arg)
 		{
 			if (!IsValid())
 				return false;

@@ -3,6 +3,7 @@
 #include "Property/PropertyData.h"
 #include "Method/MethodData.h"
 #include "Types/MemberContainers.h"
+#include "Constructor/ConstructorData.h"
 #include <memory>
 
 namespace RefLib
@@ -25,15 +26,24 @@ namespace RefLib
 			m_Methods.push_back(MethodData(name, method));
 		}
 
+		template<typename... TArgs>
+		void AddConstructor(AccessLevel level = AccessLevel::Public) 
+		{
+			TClass(*ctor)(TArgs...) = [](TArgs... args) { return TClass(args...); };
+			TClass*(*ptrCtor)(TArgs...) = [](TArgs... args) { return new TClass(args...); };
+			m_Constructors.push_back(ConstructorData(ctor, ptrCtor, level)); 
+		}
+
 		bool Register()
 		{
-			return Type::RegisterType<TClass>(m_Name, new PropertyContainer(m_Properties), new MethodContainer(m_Methods));
+			return Type::RegisterType<TClass>(m_Name, new PropertyContainer(m_Properties), new MethodContainer(m_Methods), new std::vector<ConstructorData>(m_Constructors));
 		}
 
 	private:
 		std::string m_Name;
 		std::vector<PropertyData> m_Properties;
 		std::vector<MethodData> m_Methods;
+		std::vector<ConstructorData> m_Constructors;
 	};
 }
 

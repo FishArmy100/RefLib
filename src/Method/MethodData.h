@@ -2,7 +2,7 @@
 #include "ParameterData.h"
 #include <functional>
 #include "Argument/Argument.h"
-#include "Reference/Reference.h"
+#include "Instance/Instance.h"
 #include "TemplateUtils.h"
 #include <array>
 #include <utility>
@@ -32,7 +32,7 @@ namespace RefLib
 			Parameters(std::vector<ParameterData>()), DeclaringType(Type::Get<TClass>()),
 			SignatureType(Type::Get<decltype(method)>())
 		{
-			CallFunc = [=](Reference ref, std::vector<Argument> args, std::vector<ParameterData>& params)
+			CallFunc = [=](Instance ref, std::vector<Argument> args, std::vector<ParameterData>& params)
 			{
 				if (args.size() != 0 || params.size() != 0)
 					return Variant(); // invalid varient
@@ -68,7 +68,7 @@ namespace RefLib
 
 			Parameters = parameters;
 
-			CallFunc = [=](Reference ref, std::vector<Argument> args, std::vector<ParameterData>& params)
+			CallFunc = [=](Instance ref, std::vector<Argument> args, std::vector<ParameterData>& params)
 			{
 				if (args.size() != params.size())
 					return Variant(); // invalid varient
@@ -98,7 +98,7 @@ namespace RefLib
 		std::vector<ParameterData> Parameters;
 		Type SignatureType;
 
-		std::function<Variant(Reference, std::vector<Argument>, std::vector<ParameterData>&)> CallFunc;
+		std::function<Variant(Instance, std::vector<Argument>, std::vector<ParameterData>&)> CallFunc;
 
 
 	private:

@@ -2,11 +2,15 @@
 #include <inttypes.h>
 #include "TypeData.h"
 #include <iostream>
+#include "Utils/Ref.h"
 
 namespace RefLib
 {
 	class Property;
 	class Method;
+	class Constructor;
+	class Variant;
+	class Argument;
 
 	class Type
 	{
@@ -24,7 +28,7 @@ namespace RefLib
 		}
 
 		template<typename T>
-		static bool RegisterType(const std::string& name, PropertyContainer* properties, MethodContainer* methods)
+		static bool RegisterType(const std::string& name, PropertyContainer* properties, MethodContainer* methods, std::vector<ConstructorData>* constructors)
 		{
 			Type t = Get<T>();
 			if (t.IsRegistered())
@@ -33,6 +37,7 @@ namespace RefLib
 			TypeData* data = CreateTypeData<T>(name, t.GetId(), true);
 			data->Properties = properties;
 			data->Methods = methods;
+			data->Constructors = constructors;
 			s_TypeDatas[data->Id] = data;
 			return true;
 		}
@@ -51,11 +56,11 @@ namespace RefLib
 
 		static Type Invalid() { return Type(nullptr, TypeFlags::None); }
 
-		bool IsFlag(TypeFlags flag) { return (bool)(m_Flags & flag); }
-		bool IsConst() { return IsFlag(TypeFlags::Const); }
-		bool IsVolotile() { return IsFlag(TypeFlags::Volatile); }
-		bool IsRef() { return IsFlag(TypeFlags::Reference); }
-		bool IsRValueRef() { return IsFlag(TypeFlags::RValueReference); }
+		bool IsFlag(TypeFlags flag) const { return (bool)(m_Flags & flag); }
+		bool IsConst() const { return IsFlag(TypeFlags::Const); }
+		bool IsVolotile() const { return IsFlag(TypeFlags::Volatile); }
+		bool IsRef() const { return IsFlag(TypeFlags::Reference); }
+		bool IsRValueRef() const { return IsFlag(TypeFlags::RValueReference); }
 
 		Property GetProperty(const std::string& name);
 		const std::vector<Property>& GetProperties();
@@ -64,10 +69,15 @@ namespace RefLib
 		Method GetOverloadedMethod(const std::string& name, Type signature);
 		std::vector<Method> GetMethods();
 
-		bool IsPointer() { return IsValid() ? m_Data->IsPointer : false; }
+		Constructor GetConstructor(const std::vector<Type>& params);
+		std::vector<Constructor> GetConstructors();
+		Variant Create(std::vector<Argument> args);
+		Variant CreatePtr(std::vector<Argument> args); 
+
+		bool IsPointer() const { return IsValid() ? m_Data->IsPointer : false; }
 		 
-		bool IsAssignableFrom(Type type); 
-		bool IsConvertableTo(Type type); 
+		bool IsAssignableFrom(Type type) const; 
+		bool IsConvertableTo(Type type) const; 
 
 		Type Dereferenced() { return m_Data->DereferenceFunc(); }
 

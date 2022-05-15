@@ -1,6 +1,6 @@
 #pragma once
 #include "Types/Type.h"
-#include "Reference/Reference.h"
+#include "Instance/Instance.h"
 #include <functional>
 #include "Argument/Argument.h"
 #include "AccessLevel.h"
@@ -65,13 +65,13 @@ namespace RefLib
 			};
 		}
 
-		Variant Get(Reference obj) 
+		Variant Get(Instance obj) 
 		{
 			return m_GetFunc(obj.GetType(), obj.GetRawData());
 		}
 
 
-		bool Set(Reference obj, Argument arg)
+		bool Set(Instance obj, Argument arg)
 		{
 			return m_SetFunc(obj.GetType(), obj.GetRawData(), arg);
 		}

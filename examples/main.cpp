@@ -2,12 +2,14 @@
 #include "Types/TypeUtils.h"
 #include <type_traits>
 #include "Types/Type.h"
-#include "Reference/Reference.h"
+#include "Instance/Instance.h"
 #include "Variant/Variant.h"
 #include "Property/Property.h"
 #include "Registration/TypeBuilder.h"
 #include "Method/Method.h"
 #include "Constructor/ConstructorData.h"
+#include "Enum/Enum.h"
+#include "Enum/EnumData.h"
 
 struct Position
 {
@@ -56,21 +58,13 @@ using namespace RefLib;
 
 int main()
 {
-	/*TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
+	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
+	builder.AddConstructor<int, int>();
 	builder.AddProperty("X", &Test::X);
 	builder.AddProperty("Y", &Test::Y);
 	builder.AddMethod("Add", static_cast<int(Test::*)(int,int)>(&Test::Add));
 	builder.AddMethod("Add", static_cast<float(Test::*)(float, float)>(&Test::Add));
 	builder.Register();
 
-	Test test = Test(1, 2);
-	Type type = Type::Get<Test>();
-	Method m = type.GetMethod("Add");
-	m.Invoke(test, { 5, 5 });*/
-
-	std::shared_ptr<Test>(*ctor)(int, int) = [](int x, int y) {return std::make_shared<Test>(5, 5); };
-	ConstructorData data = ConstructorData(ctor, AccessLevel::Public);
-
-	std::shared_ptr<Test> test = data.ConstructorFunc({ 5, 5 }).TryConvert<std::shared_ptr<Test>>().value();
-	std::cout << test->X;
+	Enum e = new EnumData()
 }
