@@ -11,6 +11,7 @@ namespace RefLib
 	class Constructor;
 	class Variant;
 	class Argument;
+	class Enum;
 
 	class Type
 	{
@@ -40,6 +41,20 @@ namespace RefLib
 			data->Constructors = constructors;
 			s_TypeDatas[data->Id] = data;
 			return true;
+		}
+
+		template<typename T>
+		static bool RegisterEnum(const std::string& name, EnumDataWrapper* enumData)
+		{
+			static_assert(std::is_enum_v<T>, "Type must be an enum");
+
+			Type t = Get<T>();
+			if (t.IsRegistered())
+				return false;
+
+			TypeData* data = CreateTypeData<T>(name, t.GetId(), true);
+			data->EnumValue = enumData;
+			s_TypeDatas[data->Id] = data;
 		}
 
 	public:
@@ -72,7 +87,10 @@ namespace RefLib
 		Constructor GetConstructor(const std::vector<Type>& params);
 		std::vector<Constructor> GetConstructors();
 		Variant Create(std::vector<Argument> args);
-		Variant CreatePtr(std::vector<Argument> args); 
+		Variant CreatePtr(std::vector<Argument> args);
+
+		bool IsEnum() const { return IsValid() ? m_Data->EnumValue != nullptr : false; }
+		Enum AsEnum() const;
 
 		bool IsPointer() const { return IsValid() ? m_Data->IsPointer : false; }
 		 

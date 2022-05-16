@@ -150,6 +150,7 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Registration\EnumBuilder.cpp" />
     <ClCompile Include="src\Enum\EnumDataWrapper.cpp" />
     <ClCompile Include="src\Enum\Enum.cpp" />
     <ClCompile Include="src\Constructor\Constructor.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Registration\EnumBuilder.h" />
     <ClInclude Include="src\Enum\EnumDataWrapper.h" />
     <ClInclude Include="src\Enum\EnumData.h" />
     <ClInclude Include="src\Enum\Enum.h" />

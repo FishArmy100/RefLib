@@ -9,5 +9,6 @@ namespace RefLib
 		delete Properties;
 		delete Methods;
 		delete Constructors;
+		delete EnumValue;
 	}
 }

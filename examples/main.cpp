@@ -6,6 +6,7 @@
 #include "Variant/Variant.h"
 #include "Property/Property.h"
 #include "Registration/TypeBuilder.h"
+#include "Registration/EnumBuilder.h"
 #include "Method/Method.h"
 #include "Constructor/ConstructorData.h"
 #include "Enum/Enum.h"
@@ -54,6 +55,13 @@ struct Test
 	float Add(float a, float b) { std::cout << "Version 2 called \n"; return a + b; }
 };
 
+enum class TestEnum
+{
+	Hello = 0,
+	Goodbye = 1,
+	HelloGoodbye = 2
+};
+
 using namespace RefLib;
 
 int main()
@@ -66,5 +74,16 @@ int main()
 	builder.AddMethod("Add", static_cast<float(Test::*)(float, float)>(&Test::Add));
 	builder.Register();
 
-	Enum e = new EnumData()
+	EnumBuilder<TestEnum> enumBuilder = EnumBuilder<TestEnum>("TestEnum", 
+		{
+			{ "Hello", TestEnum::Hello },
+			{ "Goodbye", TestEnum::Goodbye }
+		}
+	);
+	enumBuilder.AddValue("HelloGoodbye", TestEnum::HelloGoodbye);
+	enumBuilder.Register();
+
+	Enum e = Type::Get<TestEnum>().AsEnum();
+
+	std::cout << e.GetNameFromValue(TestEnum::HelloGoodbye);
 }

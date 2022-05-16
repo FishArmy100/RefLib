@@ -16,12 +16,14 @@ namespace RefLib
 	class MethodContainer;
 	class ConstructorData;
 	class Type;
+	class EnumDataWrapper;
 
 	struct TypeData
 	{
 		TypeData(const std::string& name, TypeId id) : 
 			Name(name), Id(id), DereferenceFunc(nullptr),
-			Properties(nullptr), Methods(nullptr), Constructors(nullptr)
+			Properties(nullptr), Methods(nullptr), Constructors(nullptr),
+			EnumValue(nullptr)
 		{}
 		TypeData(const TypeData& other) = default;
 		~TypeData();
@@ -36,6 +38,9 @@ namespace RefLib
 		PropertyContainer* Properties;
 		MethodContainer* Methods;
 		std::vector<ConstructorData>* Constructors;
+		std::vector<TypeData>* TypeDatas;
+
+		EnumDataWrapper* EnumValue;
 	};
 }
 

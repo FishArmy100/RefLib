@@ -5,6 +5,7 @@
 #include "Constructor/Constructor.h"
 #include "Argument/Argument.h"
 #include "Variant/Variant.h"
+#include "Enum/Enum.h"
 
 namespace RefLib
 {
@@ -90,6 +91,16 @@ namespace RefLib
 		}
 
 		return Variant();
+	}
+
+	Enum Type::AsEnum() const
+	{
+		if (IsValid() && IsEnum())
+		{
+			return Enum(Ref<EnumDataWrapper>(m_Data->EnumValue));
+		}
+
+		return Enum();
 	}
 
 	bool Type::IsAssignableFrom(Type t) const

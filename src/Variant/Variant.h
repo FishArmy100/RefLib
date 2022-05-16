@@ -89,7 +89,7 @@ namespace RefLib
 		template<>
 		Variant(const TempVariant tv);
 
-		Variant(Variant&&) = delete;
+		Variant(Variant&&) = default;
 
 		template<typename T>
 		std::optional<T> TryConvert() const

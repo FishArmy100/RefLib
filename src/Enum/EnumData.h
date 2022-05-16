@@ -8,7 +8,7 @@
 namespace RefLib
 {
 	template<typename TEnum> //TODO: make sure can only be an enum
-	class EnumData : EnumDataWrapper
+	class EnumData : public EnumDataWrapper
 	{
 	public:
 
