@@ -1,9 +1,9 @@
 #pragma once
-#include "ParameterData.h"
+#include "Misc/ParameterData.h"
 #include <functional>
 #include "Argument/Argument.h"
 #include "Instance/Instance.h"
-#include "TemplateUtils.h"
+#include "Misc/TemplateUtils.h"
 #include <array>
 #include <utility>
 #include <iostream>

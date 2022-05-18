@@ -3,7 +3,7 @@
 #include "Instance/Instance.h"
 #include <functional>
 #include "Argument/Argument.h"
-#include "AccessLevel.h"
+#include "Misc/AccessLevel.h"
 
 namespace RefLib
 {
@@ -16,7 +16,7 @@ namespace RefLib
 	{
 		template<typename TClass, typename TProp>
 		PropertyData(std::string_view name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public)
-			: DeclaringType(Type::Get<TClass>().GetId()), PropType(Type::Get<TProp>()), Name(name),
+			: DeclaringType(Type::Get<TClass>()), PropType(Type::Get<TProp>()), Name(name), 
 			  Level(level)
 		{
 			GetFunc = [=](Instance instance) -> Variant
@@ -64,7 +64,7 @@ namespace RefLib
 			};
 		}
 
-		TypeId DeclaringType;
+		Type DeclaringType;
 		Type PropType;
 		std::string Name;
 

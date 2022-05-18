@@ -21,7 +21,7 @@ namespace RefLib
 
 	Type Property::GetDeclaringType() const
 	{
-		return Type::Get(m_Data->DeclaringType).value();
+		return m_Data->DeclaringType;
 	}
 
 	std::string_view Property::GetName() const

@@ -14,6 +14,7 @@ namespace RefLib
 	class Variant;
 	class Argument;
 	class Enum;
+	class Instance;
 
 	class Type
 	{
@@ -48,8 +49,7 @@ namespace RefLib
 			data->Methods = prototype.Methods;
 			data->Constructors = prototype.Constructors;
 
-			delete s_TypeDatas[data->Id];
-			s_TypeDatas[data->Id] = data;
+			*s_TypeDatas[data->Id] = *data;
 			return true;
 		}
 
@@ -86,6 +86,9 @@ namespace RefLib
 
 		std::optional<Property> GetProperty(const std::string& name);
 		const std::vector<Property>& GetProperties();
+
+		Variant GetPropertyValue(Instance instance, const std::string& propName);
+		bool SetPropertyValue(Instance instance, const std::string& propName, Argument arg);
 
 		Method GetMethod(const std::string& name);
 		Method GetOverloadedMethod(const std::string& name, Type signature);

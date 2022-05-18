@@ -1,7 +1,7 @@
 #pragma once
 #include "Types/Type.h"
-#include "Method/ParameterData.h"
-#include "AccessLevel.h"
+#include "Misc/ParameterData.h"
+#include "Misc/AccessLevel.h"
 #include "Argument/Argument.h"
 #include <array>
 #include <functional>

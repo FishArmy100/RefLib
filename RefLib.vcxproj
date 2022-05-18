@@ -159,11 +159,11 @@
     <ClCompile Include="src\Method\MethodData.cpp" />
     <ClCompile Include="src\Method\Method.cpp" />
     <ClCompile Include="src\Argument\Argument.cpp" />
-    <ClCompile Include="src\Method\ParameterData.cpp" />
+    <ClCompile Include="src\Misc\ParameterData.cpp" />
     <ClCompile Include="src\Property\PropertyData.cpp" />
     <ClCompile Include="src\Property\Property.cpp" />
     <ClCompile Include="src\Instance\Instance.cpp" />
-    <ClCompile Include="src\TemplateUtils.h" />
+    <ClCompile Include="src\Misc\TemplateUtils.h" />
     <ClCompile Include="src\Types\MemberContainers.cpp" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
@@ -180,9 +180,9 @@
     <ClInclude Include="src\Constructor\ConstructorData.h" />
     <ClInclude Include="src\Method\MethodData.h" />
     <ClInclude Include="src\Method\Method.h" />
-    <ClInclude Include="src\AccessLevel.h" />
+    <ClInclude Include="src\Misc\AccessLevel.h" />
     <ClInclude Include="src\Argument\Argument.h" />
-    <ClInclude Include="src\Method\ParameterData.h" />
+    <ClInclude Include="src\Misc\ParameterData.h" />
     <ClInclude Include="src\Property\PropertyData.h" />
     <ClInclude Include="src\Property\Property.h" />
     <ClInclude Include="src\Instance\Instance.h" />

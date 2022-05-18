@@ -5,6 +5,7 @@
 #include "Constructor/Constructor.h"
 #include "Argument/Argument.h"
 #include "Variant/Variant.h"
+#include "Instance/Instance.h"
 #include "Enum/Enum.h"
 
 namespace RefLib
@@ -46,6 +47,24 @@ namespace RefLib
 		for (int i = 0; i < datas.size(); i++)
 			props.push_back(Property(&(datas[i])));
 		return props;
+	}
+
+	Variant Type::GetPropertyValue(Instance instance, const std::string& propName)
+	{
+		std::optional<Property> prop = GetProperty(propName);
+		if (prop.has_value())
+			return prop->Get(instance);
+
+		return Variant();
+	}
+
+	bool Type::SetPropertyValue(Instance instance, const std::string& propName, Argument arg)
+	{
+		std::optional<Property> prop = GetProperty(propName);
+		if (prop.has_value())
+			return prop->Set(instance, arg);
+
+		return false;
 	}
 
 	Method Type::GetMethod(const std::string& name)

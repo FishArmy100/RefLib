@@ -82,8 +82,8 @@ int main()
 	Property prop = t.GetProperty("X").value();
 	std::cout
 		<< "Old value: " << prop.Get(test).TryConvert<int>().value() << "\n"
-		<< std::boolalpha << "Was set: " << prop.Set(test, value) << "\n"
-		<< "New value: " << prop.Get(test).TryConvert<int>().value() << "\n"
+		<< std::boolalpha << "Was set: " << t.SetPropertyValue(test, "X", value) << "\n"
+		<< "New value: " << t.GetPropertyValue(test, "X").TryConvert<int>().value() << "\n"
 		<< (int)prop.GetAccessLevel() << "\n"
 		<< "Type: " << prop.GetType().GetName() << "\n"
 		<< "Declaring type: " << prop.GetDeclaringType().GetName();

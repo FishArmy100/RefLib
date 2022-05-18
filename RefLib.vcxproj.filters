@@ -58,7 +58,7 @@
     <ClCompile Include="src\Method\MethodData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TemplateUtils.h">
+    <ClCompile Include="src\Misc\TemplateUtils.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Types\MemberContainers.cpp">
@@ -70,7 +70,7 @@
     <ClCompile Include="src\Constructor\Constructor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Method\ParameterData.cpp">
+    <ClCompile Include="src\Misc\ParameterData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Enum\Enum.cpp">
@@ -123,7 +123,7 @@
     <ClInclude Include="src\Registration\TypeBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\AccessLevel.h">
+    <ClInclude Include="src\Misc\AccessLevel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Method\Method.h">
@@ -132,7 +132,7 @@
     <ClInclude Include="src\Method\MethodData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Method\ParameterData.h">
+    <ClInclude Include="src\Misc\ParameterData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Variant\VarientVoidType.h">
