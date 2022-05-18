@@ -49,7 +49,6 @@ namespace RefLib
 			};
 		}
 
-		ConstructorData() = delete;
 		ConstructorData(const ConstructorData& other) = default;
 		~ConstructorData() = default;
 

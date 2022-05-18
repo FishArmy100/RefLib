@@ -6,6 +6,6 @@ namespace RefLib
 	{
 		Public		= 2,
 		Protected	= 1,
-		Private		= 1
+		Private		= 0
 	};
 }

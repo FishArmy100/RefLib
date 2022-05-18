@@ -165,5 +165,8 @@
     <ClInclude Include="src\Registration\EnumBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Types\TypeDataPrototype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

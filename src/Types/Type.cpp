@@ -11,17 +11,40 @@ namespace RefLib
 {
 	std::vector<TypeData*> Type::s_TypeDatas{};
 
-	Property Type::GetProperty(const std::string& name)
+	std::optional<Type> Type::Get(const std::string& name)
 	{
-		return Property(this->m_Data->Properties->GetProp(name));
+		for (auto& data : s_TypeDatas)
+		{
+			if (data->Name == name)
+				return Type(data, TypeFlags::None);
+		}
+
+		return {};
+	}
+
+	std::optional<Type> Type::Get(TypeId id)
+	{
+		if (s_TypeDatas.size() > id && id != NoneType)
+			return Type(s_TypeDatas[id], TypeFlags::None);
+
+		return {};
+	}
+
+	std::optional<Property> Type::GetProperty(const std::string& name)
+	{
+		auto propData = this->m_Data->Properties->GetProp(name);
+		if (propData.IsNotNull())
+			return Property(propData);
+
+		return {};
 	}
 
 	const std::vector<Property>& Type::GetProperties()
 	{
 		std::vector<PropertyData>& datas = this->m_Data->Properties->GetAll();
-		std::vector<Property> props = std::vector<Property>(datas.size());
-		for (int i = 0; i < props.size(); i++)
-			props[i] = Property(&(datas[i]));
+		std::vector<Property> props;;
+		for (int i = 0; i < datas.size(); i++)
+			props.push_back(Property(&(datas[i])));
 		return props;
 	}
 
@@ -38,13 +61,13 @@ namespace RefLib
 	std::vector<Method> Type::GetMethods()
 	{
 		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
-		std::vector<Method> methods = std::vector<Method>(datas.size());
-		for (int i = 0; i < methods.size(); i++)
-			methods[i] = Method(&(datas[i]));
+		std::vector<Method> methods;
+		for (int i = 0; i < datas.size(); i++)
+			methods.push_back(Method(&(datas[i])));
 		return methods;
 	}
 
-	Constructor Type::GetConstructor(const std::vector<Type>& params)
+	std::optional<Constructor> Type::GetConstructor(const std::vector<Type>& params)
 	{
 		for (auto& constructorData : *(m_Data->Constructors))
 		{
@@ -54,7 +77,7 @@ namespace RefLib
 			}
 		}
 
-		return Constructor();
+		return {};
 	}
 
 	std::vector<Constructor> Type::GetConstructors()
@@ -93,14 +116,14 @@ namespace RefLib
 		return Variant();
 	}
 
-	Enum Type::AsEnum() const
+	std::optional<Enum> Type::AsEnum() const
 	{
-		if (IsValid() && IsEnum())
+		if (IsEnum())
 		{
 			return Enum(Ref<EnumDataWrapper>(m_Data->EnumValue));
 		}
 
-		return Enum();
+		return {};
 	}
 
 	bool Type::IsAssignableFrom(Type t) const

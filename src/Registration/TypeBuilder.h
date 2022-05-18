@@ -15,9 +15,9 @@ namespace RefLib
 		TypeBuilder(std::string_view name) : m_Name(name), m_Properties({}), m_Methods({}) {}
 
 		template<typename TProp>
-		void AddProperty(const std::string& name, TProp TClass::* prop)
+		void AddProperty(const std::string& name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public) 
 		{
-			m_Properties.push_back(PropertyData(name, prop));
+			m_Properties.push_back(PropertyData(name, prop, level));
 		}
 
 		template<typename TReturn, typename... TArgs>
@@ -36,7 +36,11 @@ namespace RefLib
 
 		bool Register()
 		{
-			return Type::RegisterType<TClass>(m_Name, new PropertyContainer(m_Properties), new MethodContainer(m_Methods), new std::vector<ConstructorData>(m_Constructors));
+			TypeDataPrototype prototype;
+			prototype.Properties = new PropertyContainer(m_Properties);
+			prototype.Methods = new MethodContainer(m_Methods);
+			prototype.Constructors = new ConstructorContainer(m_Constructors);
+			return Type::RegisterType<TClass>(m_Name, prototype);
 		}
 
 	private:

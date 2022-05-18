@@ -8,15 +8,15 @@ namespace RefLib
 		for (auto& p : datas)
 		{
 			this->m_Properties.push_back(p);
-			this->m_PropertyMap.insert(std::make_pair(p.GetName(), p));
+			this->m_PropertyMap.insert(std::make_pair(p.Name, p));
 		}
 	}
 
-	PropertyData* PropertyContainer::GetProp(const std::string& name)
+	Ref<PropertyData> PropertyContainer::GetProp(const std::string& name)
 	{
-		PropertyData* data = &(m_PropertyMap[name]);
-		if (data->IsValid())
-			return data;
+		auto foundIt = m_PropertyMap.find(name);
+		if (foundIt != m_PropertyMap.end())
+			return &foundIt->second;
 
 		return nullptr;
 	}
@@ -27,32 +27,35 @@ namespace RefLib
 		for (auto m : methods)
 		{
 			this->m_Methods.push_back(m);
-			this->m_MethodMap[m.Name][m.SignatureType] = m;
+
+			if (m_MethodMap.find(m.Name) == m_MethodMap.end())
+			{
+				m_MethodMap.insert({ m.Name, std::unordered_map<Type, MethodData>() });
+			}
+
+			auto& overloadMap = m_MethodMap.at(m.Name);
+
+			if (overloadMap.find(m.SignatureType) == overloadMap.end())
+			{
+				overloadMap.insert({ m.SignatureType, m });
+			}
 		}
 	}
 
 	MethodData* MethodContainer::GetMethod(const std::string& name)
 	{
-		auto& overloadMap = m_MethodMap[name];
+		auto& overloadMap = m_MethodMap.at(name);
 		auto it = overloadMap.begin();
 
 		if (it == overloadMap.end())
 			return nullptr;
 
 		auto& pair = *it;
-		MethodData* data = &(pair.second);
-		if (!data->IsValid())
-			return nullptr;
-
-		return data;
+		return &(pair.second);
 	}
 
 	MethodData* MethodContainer::GetOverloadedMethod(const std::string& name, Type signature)
 	{
-		MethodData* data = &(m_MethodMap[name][signature]);
-		if (data->IsValid())
-			return data;
-
-		return nullptr;
+		return &(m_MethodMap.at(name).at(signature));
 	}
 }

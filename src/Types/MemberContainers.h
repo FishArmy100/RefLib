@@ -14,7 +14,7 @@ namespace RefLib
 	{
 	public:
 		PropertyContainer(const std::vector<PropertyData>& datas);
-		PropertyData* GetProp(const std::string& name);
+		Ref<PropertyData> GetProp(const std::string& name);
 		std::vector<PropertyData>& GetAll() { return m_Properties; }
 
 	private:
@@ -35,4 +35,6 @@ namespace RefLib
 		std::map<std::string, std::unordered_map<Type, MethodData>> m_MethodMap;
 		std::vector<MethodData> m_Methods;
 	};
+
+	using ConstructorContainer = std::vector<ConstructorData>;
 }

@@ -18,14 +18,6 @@ namespace RefLib
 	class MethodData
 	{
 	public:
-		MethodData() :
-			Name(""), ReturnType(Type::Invalid()),
-			Parameters({}), DeclaringType(Type::Invalid()),
-			SignatureType(Type::Invalid())
-		{
-
-		}
-
 		template<typename TClass, typename TReturn>
 		MethodData(const std::string& name, TReturn (TClass::* method)()) :
 			Name(name), ReturnType(Type::Get<TReturn>()), 
@@ -60,11 +52,11 @@ namespace RefLib
 			DeclaringType(Type::Get<TClass>()),
 			SignatureType(Type::Get<decltype(method)>())
 		{
-			std::vector<ParameterData> parameters = std::vector<ParameterData>(sizeof...(TArgs));
+			std::vector<ParameterData> parameters;
 			std::array<Type, sizeof...(TArgs)> types = { Type::Get<TArgs>()... };
 
-			for (int i = 0; i < parameters.size(); i++)
-				parameters[i] = ParameterData(i, types[i]);
+			for (int i = 0; i < types.size(); i++)
+				parameters.push_back(ParameterData(i, types[i]));
 
 			Parameters = parameters;
 
@@ -89,8 +81,6 @@ namespace RefLib
 		}
 
 		MethodData(const MethodData& data) = default;
-
-		bool IsValid() { return !(Name == "" && SignatureType == Type::Invalid()); }
 
 		std::string Name;
 		Type ReturnType;

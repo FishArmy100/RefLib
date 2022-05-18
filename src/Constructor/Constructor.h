@@ -8,11 +8,8 @@ namespace RefLib
 	{
 	public:
 		Constructor(ConstructorData* data) : m_Data(data) {}
-		Constructor() : m_Data(nullptr) {}
 		Constructor(const Constructor& other) = default;
 		~Constructor() = default;
-
-		bool IsValid() { return m_Data != nullptr; }
 
 		Variant Construct(std::vector<Argument> args)
 		{
@@ -24,15 +21,12 @@ namespace RefLib
 			return m_Data->PtrConstructorFunc(std::move(args));
 		}
 
-		Type GetCreatedType() { return IsValid() ? m_Data->InstatiatedType : Type::Invalid(); }
-		AccessLevel GetAccessLevel() { return IsValid() ? m_Data->Level : AccessLevel::Private; }
+		Type GetCreatedType() { return m_Data->InstatiatedType; }
+		AccessLevel GetAccessLevel() { return m_Data->Level; }
 
 		const Ref<std::vector<ParameterData>> GetParameters() 
 		{ 
-			if(IsValid())
-				return Ref<std::vector<ParameterData>>(&(m_Data->Parameters)); 
-
-			return {};
+			return Ref<std::vector<ParameterData>>(&(m_Data->Parameters)); 
 		}
 
 	private:

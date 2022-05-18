@@ -36,7 +36,7 @@ namespace RefLib
 		return false;
 	}
 
-	Instance Variant::GetDereferenced()
+	std::optional<Instance> Variant::GetDereferenced()
 	{
 		if (this->IsPointer())
 		{
@@ -45,6 +45,6 @@ namespace RefLib
 				return Instance(opt.value());
 		}
 
-		return Instance();
+		return {};
 	}
 }

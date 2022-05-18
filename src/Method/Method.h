@@ -6,24 +6,18 @@ namespace RefLib
 	class Method
 	{
 	public:
-		Method() : m_Data(nullptr) {}
 		Method(MethodData* data) : m_Data(data) { }
 		Method(const Method& other) = default;
 		~Method() = default;
 
-		std::string_view GetName() { return IsValid() ? m_Data->Name : ""; }
-		Type GetReturnType() { return IsValid() ? m_Data->ReturnType : Type::Invalid(); }
-		const std::vector<ParameterData>& Parameters() { return IsValid() ? m_Data->Parameters : std::vector<ParameterData>(); }
+		std::string_view GetName() { return m_Data->Name; }
+		Type GetReturnType() { return m_Data->ReturnType; }
+		const std::vector<ParameterData>& Parameters() { return m_Data->Parameters; }
 
 		Variant Invoke(Instance ref, std::vector<Argument> args)
 		{
-			if (!IsValid())
-				return Variant();
-
 			return m_Data->CallFunc(ref, args, m_Data->Parameters);
 		}
-
-		bool IsValid() { return m_Data != nullptr; }
 
 	private:
 		MethodData* m_Data;

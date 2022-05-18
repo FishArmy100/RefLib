@@ -187,6 +187,7 @@
     <ClInclude Include="src\Property\Property.h" />
     <ClInclude Include="src\Instance\Instance.h" />
     <ClInclude Include="src\Types\MemberContainers.h" />
+    <ClInclude Include="src\Types\TypeDataPrototype.h" />
     <ClInclude Include="src\Types\TypeFlags.h" />
     <ClInclude Include="src\Types\TypeId.h" />
     <ClInclude Include="src\Types\TypeUtils.h" />

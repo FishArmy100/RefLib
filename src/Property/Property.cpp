@@ -3,35 +3,39 @@
 
 namespace RefLib
 {
-	Type Property::GetType()
+	Property::Property(Ref<PropertyData> data) : m_Data(data)
 	{
-		if (!IsValid())
-			return Type::Invalid();
-
-		return m_Data->GetType();
+		if (data.IsNull())
+			throw std::exception("Cannot create a property with a nullptr");
 	}
 
-	Type Property::GetDeclaringType()
+	AccessLevel Property::GetAccessLevel() const
 	{
-		if (!IsValid())
-			return Type::Invalid();
-
-		return m_Data->GetDeclaringType();
+		return m_Data->Level;
 	}
 
-	std::string_view Property::GetName()
+	Type Property::GetType() const
 	{
-		if (!IsValid())
-			return "";
-
-		return m_Data->GetName();
+		return m_Data->PropType;
 	}
 
-	Variant Property::Get(Instance ref)
+	Type Property::GetDeclaringType() const
 	{
-		if (!IsValid())
-			return Variant();
+		return Type::Get(m_Data->DeclaringType).value();
+	}
 
-		return m_Data->Get(ref); 
+	std::string_view Property::GetName() const
+	{
+		return m_Data->Name;
+	}
+
+	Variant Property::Get(Instance ref) const
+	{
+		return m_Data->GetFunc(ref); 
+	}
+
+	bool Property::Set(Instance ref, Argument arg) const
+	{
+		return m_Data->SetFunc(ref, arg);
 	}
 }

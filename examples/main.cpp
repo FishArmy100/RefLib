@@ -74,16 +74,17 @@ int main()
 	builder.AddMethod("Add", static_cast<float(Test::*)(float, float)>(&Test::Add));
 	builder.Register();
 
-	EnumBuilder<TestEnum> enumBuilder = EnumBuilder<TestEnum>("TestEnum", 
-		{
-			{ "Hello", TestEnum::Hello },
-			{ "Goodbye", TestEnum::Goodbye }
-		}
-	);
-	enumBuilder.AddValue("HelloGoodbye", TestEnum::HelloGoodbye);
-	enumBuilder.Register();
+	Type t = Type::Get<Test>();
+	Test test = Test(5, 6);
 
-	Enum e = Type::Get<TestEnum>().AsEnum();
+	int value = 16;
 
-	std::cout << e.GetNameFromValue(TestEnum::HelloGoodbye);
+	Property prop = t.GetProperty("X").value();
+	std::cout
+		<< "Old value: " << prop.Get(test).TryConvert<int>().value() << "\n"
+		<< std::boolalpha << "Was set: " << prop.Set(test, value) << "\n"
+		<< "New value: " << prop.Get(test).TryConvert<int>().value() << "\n"
+		<< (int)prop.GetAccessLevel() << "\n"
+		<< "Type: " << prop.GetType().GetName() << "\n"
+		<< "Declaring type: " << prop.GetDeclaringType().GetName();
 }

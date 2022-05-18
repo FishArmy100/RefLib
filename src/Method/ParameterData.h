@@ -21,17 +21,13 @@ namespace RefLib
 
 		}
 
-		ParameterData() = default;
-
 		ParameterData(const ParameterData&) = default;
 		~ParameterData() = default;
 
-		bool IsValid() { return Index != -1; }
-
-		std::string Name = "";
-		int Index = -1;
-		Type ParameterType = Type::Invalid();
-		Variant DefaultValue = Variant();
+		std::string Name;
+		int Index;
+		Type ParameterType;
+		Variant DefaultValue;
 	};
 
 	using ParameterList = std::vector<ParameterData>;

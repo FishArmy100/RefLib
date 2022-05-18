@@ -3,6 +3,8 @@
 #include "TypeData.h"
 #include <iostream>
 #include "Utils/Ref.h"
+#include "TypeDataPrototype.h"
+#include <optional>
 
 namespace RefLib
 {
@@ -28,17 +30,25 @@ namespace RefLib
 			return InternalGet<Undecorated>(flags);
 		}
 
+		static std::optional<Type> Get(const std::string& name);
+		static std::optional<Type> Get(TypeId id);
+
 		template<typename T>
-		static bool RegisterType(const std::string& name, PropertyContainer* properties, MethodContainer* methods, std::vector<ConstructorData>* constructors)
+		static bool RegisterType(const std::string& name, TypeDataPrototype prototype)
 		{
+			if (!prototype.IsFullyBuilt())
+				return false;
+
 			Type t = Get<T>();
 			if (t.IsRegistered())
 				return false;
 
 			TypeData* data = CreateTypeData<T>(name, t.GetId(), true);
-			data->Properties = properties;
-			data->Methods = methods;
-			data->Constructors = constructors;
+			data->Properties = prototype.Properties;
+			data->Methods = prototype.Methods;
+			data->Constructors = prototype.Constructors;
+
+			delete s_TypeDatas[data->Id];
 			s_TypeDatas[data->Id] = data;
 			return true;
 		}
@@ -59,17 +69,14 @@ namespace RefLib
 
 	public:
 		Type(TypeData* data, TypeFlags flags) : m_Data(data), m_Flags(flags) {}
-		Type() : m_Data(nullptr), m_Flags(TypeFlags::None) {}
 		Type(const Type& other) = default;
 		Type& operator=(const Type& other) { this->m_Data = other.m_Data; this->m_Flags = other.m_Flags; return *this; }
 		~Type() = default;
 
-		std::string_view GetName() const { return IsValid() ? m_Data->Name : ""; }
-		TypeId GetId() const { return IsValid() ? m_Data->Id : NoneType; }
+		std::string_view GetName() const { return m_Data->Name; }
+		TypeId GetId() const { return m_Data->Id; }
 		TypeFlags GetFlags() const { return m_Flags; }
-		bool IsRegistered() const { return IsValid() ? m_Data->IsRegistered : false; }
-
-		static Type Invalid() { return Type(nullptr, TypeFlags::None); }
+		bool IsRegistered() const { return m_Data->IsRegistered; }
 
 		bool IsFlag(TypeFlags flag) const { return (bool)(m_Flags & flag); }
 		bool IsConst() const { return IsFlag(TypeFlags::Const); }
@@ -77,22 +84,22 @@ namespace RefLib
 		bool IsRef() const { return IsFlag(TypeFlags::Reference); }
 		bool IsRValueRef() const { return IsFlag(TypeFlags::RValueReference); }
 
-		Property GetProperty(const std::string& name);
+		std::optional<Property> GetProperty(const std::string& name);
 		const std::vector<Property>& GetProperties();
 
 		Method GetMethod(const std::string& name);
 		Method GetOverloadedMethod(const std::string& name, Type signature);
 		std::vector<Method> GetMethods();
 
-		Constructor GetConstructor(const std::vector<Type>& params);
+		std::optional<Constructor> GetConstructor(const std::vector<Type>& params);
 		std::vector<Constructor> GetConstructors();
 		Variant Create(std::vector<Argument> args);
 		Variant CreatePtr(std::vector<Argument> args);
 
-		bool IsEnum() const { return IsValid() ? m_Data->EnumValue != nullptr : false; }
-		Enum AsEnum() const;
+		bool IsEnum() const { return m_Data->EnumValue != nullptr; }
+		std::optional<Enum> AsEnum() const;
 
-		bool IsPointer() const { return IsValid() ? m_Data->IsPointer : false; }
+		bool IsPointer() const { return m_Data->IsPointer; }
 		 
 		bool IsAssignableFrom(Type type) const; 
 		bool IsConvertableTo(Type type) const; 
@@ -108,8 +115,6 @@ namespace RefLib
 		{
 			return !(*this == other);
 		}
-
-		bool IsValid() const { return m_Data != nullptr; }
 
 	private:
 		template<typename T>

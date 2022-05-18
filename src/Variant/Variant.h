@@ -16,7 +16,7 @@ namespace RefLib
 		static Variant GetVoidVarient();
 
 	public:
-		Variant() : m_Type(Type::Invalid()), m_Data(nullptr), m_IsValid(false),
+		Variant() : m_Type(Type(nullptr, TypeFlags::None)), m_Data(nullptr), m_IsValid(false),
 					m_CopyData(nullptr), m_DeleteData(nullptr), 
 					m_DeleteDataPtr(nullptr), m_GetDereferencedHealper(nullptr)
 		{}
@@ -112,7 +112,7 @@ namespace RefLib
 
 		bool Delete();
 
-		Instance GetDereferenced();
+		std::optional<Instance> GetDereferenced();
 
 		~Variant()
 		{
