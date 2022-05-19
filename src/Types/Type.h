@@ -31,6 +31,9 @@ namespace RefLib
 			return InternalGet<Undecorated>(flags);
 		}
 
+		template<typename... TArgs>
+		static std::vector<Type> GetMultiple() { return std::vector<Type> { Get<TArgs>()... }; }
+
 		static std::optional<Type> Get(const std::string& name);
 		static std::optional<Type> Get(TypeId id);
 
@@ -90,8 +93,9 @@ namespace RefLib
 		Variant GetPropertyValue(Instance instance, const std::string& propName);
 		bool SetPropertyValue(Instance instance, const std::string& propName, Argument arg);
 
-		Method GetMethod(const std::string& name);
-		Method GetOverloadedMethod(const std::string& name, Type signature);
+		std::optional<Method> GetMethod(const std::string& name);
+		std::optional<Method> GetMethod(const std::string& name, const std::vector<Type>& paramTypes);
+		Variant InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args);
 		std::vector<Method> GetMethods();
 
 		std::optional<Constructor> GetConstructor(const std::vector<Type>& params);

@@ -7,6 +7,7 @@
 #include <array>
 #include <utility>
 #include <iostream>
+#include "Misc/AccessLevel.h"
 
 namespace RefLib
 {
@@ -18,45 +19,22 @@ namespace RefLib
 	class MethodData
 	{
 	public:
-		template<typename TClass, typename TReturn>
-		MethodData(const std::string& name, TReturn (TClass::* method)()) :
-			Name(name), ReturnType(Type::Get<TReturn>()), 
-			Parameters(std::vector<ParameterData>()), DeclaringType(Type::Get<TClass>()),
-			SignatureType(Type::Get<decltype(method)>())
-		{
-			CallFunc = [=](Instance ref, std::vector<Argument> args, std::vector<ParameterData>& params)
-			{
-				if (args.size() != 0 || params.size() != 0)
-					return Variant(); // invalid varient
-
-				TClass* obj = ref.TryConvert<TClass>();
-
-				if (obj == nullptr)
-					return Variant();
-
-				if constexpr (std::is_void_v<TReturn>)
-				{
-					((*obj).*method)();
-					return Variant::GetVoidVarient();
-				}
-				else
-				{
-					return Variant(((*obj).*method)());
-				}
-			};
-		}
-
 		template<typename TClass, typename TReturn, typename... TArgs>
-		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...)) :
+		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public) :
 			Name(name), ReturnType(Type::Get<TReturn>()), 
 			DeclaringType(Type::Get<TClass>()),
-			SignatureType(Type::Get<decltype(method)>())
+			SignatureType(Type::Get<decltype(method)>()),
+			Level(level) 
 		{
 			std::vector<ParameterData> parameters;
-			std::array<Type, sizeof...(TArgs)> types = { Type::Get<TArgs>()... };
 
-			for (int i = 0; i < types.size(); i++)
-				parameters.push_back(ParameterData(i, types[i]));
+			if constexpr (sizeof...(TArgs) > 0)
+			{
+				std::array<Type, sizeof...(TArgs)> types = { Type::Get<TArgs>()... };
+
+				for (int i = 0; i < types.size(); i++)
+					parameters.push_back(ParameterData(i, types[i]));
+			}
 
 			Parameters = parameters;
 
@@ -87,6 +65,7 @@ namespace RefLib
 		Type DeclaringType;
 		std::vector<ParameterData> Parameters;
 		Type SignatureType;
+		AccessLevel Level;
 
 		std::function<Variant(Instance, std::vector<Argument>, std::vector<ParameterData>&)> CallFunc;
 

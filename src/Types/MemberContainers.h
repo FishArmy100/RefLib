@@ -22,19 +22,5 @@ namespace RefLib
 		std::vector<PropertyData> m_Properties;
 	};
 
-	class MethodContainer
-	{
-	public:
-		MethodContainer(const std::vector<MethodData>& methods);
-
-		MethodData* GetMethod(const std::string& name);
-		MethodData* GetOverloadedMethod(const std::string& name, Type signature);
-		std::vector<MethodData>& GetAll() { return m_Methods; }
-
-	private:
-		std::map<std::string, std::unordered_map<Type, MethodData>> m_MethodMap;
-		std::vector<MethodData> m_Methods;
-	};
-
 	using ConstructorContainer = std::vector<ConstructorData>;
 }

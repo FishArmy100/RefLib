@@ -6,13 +6,21 @@ namespace RefLib
 	class Method
 	{
 	public:
-		Method(MethodData* data) : m_Data(data) { }
+		Method(Ref<MethodData> data) : m_Data(data) 
+		{
+			if (data.IsNull())
+				throw std::exception("Cannot have a method data of nullptr");
+		}
+
 		Method(const Method& other) = default;
 		~Method() = default;
 
-		std::string_view GetName() { return m_Data->Name; }
-		Type GetReturnType() { return m_Data->ReturnType; }
-		const std::vector<ParameterData>& Parameters() { return m_Data->Parameters; }
+		std::string_view GetName() const { return m_Data->Name; }
+		Type GetReturnType() const { return m_Data->ReturnType; }
+		Type GetDeclaringType() const { return m_Data->DeclaringType; }
+		const std::vector<ParameterData>& Parameters() const { return m_Data->Parameters; }
+		AccessLevel GetAccessLevel() const { return m_Data->Level; }
+		bool IsVoid() { return m_Data->ReturnType == Type::Get<void>(); }
 
 		Variant Invoke(Instance ref, std::vector<Argument> args)
 		{
@@ -20,7 +28,7 @@ namespace RefLib
 		}
 
 	private:
-		MethodData* m_Data;
+		Ref<MethodData> m_Data;
 	};
 }
 

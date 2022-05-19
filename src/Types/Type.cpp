@@ -7,6 +7,7 @@
 #include "Variant/Variant.h"
 #include "Instance/Instance.h"
 #include "Enum/Enum.h"
+#include "Method/MethodContainer.h"
 
 namespace RefLib
 {
@@ -67,14 +68,25 @@ namespace RefLib
 		return false;
 	}
 
-	Method Type::GetMethod(const std::string& name)
+	std::optional<Method> Type::GetMethod(const std::string& name)
 	{
-		return Method(this->m_Data->Methods->GetMethod(name));
+		Ref<MethodData> methodData = this->m_Data->Methods->GetMethod(name);
+		if (methodData.IsNotNull())
+			return Method(methodData);
+
+		return {};
 	}
 
-	Method Type::GetOverloadedMethod(const std::string& name, Type signature)
+	std::optional<Method> Type::GetMethod(const std::string& name, const std::vector<Type>& paramTypes)
 	{
-		return Method(this->m_Data->Methods->GetOverloadedMethod(name, signature));
+		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
+		for (auto& methodData : datas) 
+		{
+			if (Utils::TypeListCanCallParamData(methodData.Parameters, paramTypes))
+				return Method(&methodData);
+		}
+
+		return {};
 	}
 
 	std::vector<Method> Type::GetMethods()
@@ -84,6 +96,18 @@ namespace RefLib
 		for (int i = 0; i < datas.size(); i++)
 			methods.push_back(Method(&(datas[i])));
 		return methods;
+	}
+
+	Variant Type::InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args)
+	{
+		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
+		for (auto& methodData : datas)
+		{
+			if (Utils::ArgListCanCallParamData(methodData.Parameters, args))
+				return Method(&methodData).Invoke(instance, std::move(args));
+		}
+
+		return Variant();
 	}
 
 	std::optional<Constructor> Type::GetConstructor(const std::vector<Type>& params)

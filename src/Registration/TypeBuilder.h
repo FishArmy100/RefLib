@@ -5,6 +5,7 @@
 #include "Types/MemberContainers.h"
 #include "Constructor/ConstructorData.h"
 #include <memory>
+#include "Method/MethodContainer.h"
 
 namespace RefLib
 {
@@ -21,9 +22,9 @@ namespace RefLib
 		}
 
 		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...))
+		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public)
 		{
-			m_Methods.push_back(MethodData(name, method));
+			m_Methods.push_back(MethodData(name, method, level));
 		}
 
 		template<typename... TArgs>
