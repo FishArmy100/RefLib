@@ -3,6 +3,7 @@
 #include <string_view>
 #include "PropertyData.h"
 #include "Types/Type.h"
+#include "Utils/Ref.h"
 
 namespace RefLib
 {
@@ -13,27 +14,18 @@ namespace RefLib
 	class Property
 	{
 	public:
-		Property(PropertyData* data) : m_Data(data) {}
-		Property() : m_Data(nullptr) {}
+		Property(Ref<PropertyData> data);
 
-		Type GetType();
-		Type GetDeclaringType();
-		std::string_view GetName();
+		Type GetType() const;
+		Type GetDeclaringType() const;
+		std::string_view GetName() const;
+		AccessLevel GetAccessLevel() const;
 
-		Variant Get(Instance ref);
-		
-		bool Set(Instance ref, Argument arg)
-		{
-			if (!IsValid())
-				return false;
-
-			return m_Data->Set(ref, arg);
-		}
-
-		bool IsValid() { return m_Data != nullptr; }
+		Variant Get(Instance ref) const;
+		bool Set(Instance ref, Argument arg) const;
 
 	private:
-		PropertyData* m_Data;
+		Ref<PropertyData> m_Data;
 	};
 }
 

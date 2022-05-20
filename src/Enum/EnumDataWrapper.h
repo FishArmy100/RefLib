@@ -8,10 +8,9 @@ namespace RefLib
 	class EnumDataWrapper
 	{
 	public:
-		EnumDataWrapper(Type type, Type declaring, Type underlying, const std::string& name);
+		EnumDataWrapper(Type type, Type underlying, const std::string& name);
 
 		Type GetType() { return m_Type; }
-		Type GetDeclaringType() { return m_DeclaringType; }
 		Type GetUnderlyingType() { return m_UnderlyingType; }
 		std::string_view GetName() { return m_Name; }
 
@@ -24,7 +23,6 @@ namespace RefLib
 
 	protected:
 		const Type m_Type;
-		const Type m_DeclaringType;
 		const Type m_UnderlyingType;
 		const std::string m_Name;
 	};

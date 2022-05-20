@@ -8,7 +8,7 @@
 #include "Registration/TypeBuilder.h"
 #include "Registration/EnumBuilder.h"
 #include "Method/Method.h"
-#include "Constructor/ConstructorData.h"
+#include "Constructor/Constructor.h"
 #include "Enum/Enum.h"
 #include "Enum/EnumData.h"
 
@@ -47,12 +47,14 @@ private:
 struct Test
 {
 	Test(int x, int y) : X(x), Y(y) {}
+	Test() : X(0), Y(0) {}
 
 	int X;
 	const int Y;
 
-	int Add(int a, int b) { std::cout << "Version 1 called \n"; return a + b; }
-	float Add(float a, float b) { std::cout << "Version 2 called \n"; return a + b; }
+	int Add(int a, int b) { std::cout << "Version int called \n"; return a + b; }
+	float Add(float a, float b) { std::cout << "Version float called \n"; return a + b; }
+	void Print() const { std::cout << "Hello!"; }
 };
 
 enum class TestEnum
@@ -67,23 +69,29 @@ using namespace RefLib;
 int main()
 {
 	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
-	builder.AddConstructor<int, int>();
+	builder.AddConstructor<int, int>({"x", "y"});
+	builder.AddConstructor<>();
 	builder.AddProperty("X", &Test::X);
 	builder.AddProperty("Y", &Test::Y);
-	builder.AddMethod("Add", static_cast<int(Test::*)(int,int)>(&Test::Add));
+	builder.AddMethod("Print", &Test::Print);
+	builder.AddMethod("Add", static_cast<int(Test::*)(int, int)>(&Test::Add), AccessLevel::Public, { "x", "y" });
 	builder.AddMethod("Add", static_cast<float(Test::*)(float, float)>(&Test::Add));
 	builder.Register();
 
-	EnumBuilder<TestEnum> enumBuilder = EnumBuilder<TestEnum>("TestEnum", 
-		{
-			{ "Hello", TestEnum::Hello },
-			{ "Goodbye", TestEnum::Goodbye }
-		}
-	);
-	enumBuilder.AddValue("HelloGoodbye", TestEnum::HelloGoodbye);
-	enumBuilder.Register();
+	Type type = Type::Get<Test>();
+	Variant ptr = type.CreatePtr({ 5, 6 });
+	Instance test = ptr.GetDereferenced().value();
+	Test* rawPtr = ptr.TryConvert<Test*>().value();
 
-	Enum e = Type::Get<TestEnum>().AsEnum();
+	std::cout << std::boolalpha
+		<< "Is a pointer: " << ptr.IsPointer() << "\n"
+		<< "Type pointer name: " << ptr.GetType().GetName() << "\n"
+		<< "Type name: " << test.GetType().GetName() << "\n"
+		<< "Raw pointer X value: " << rawPtr->X << "\n"
+		<< "New set value is 10" << "\n"
+		<< "Set value of reference: " << type.SetPropertyValue(test, "X", { 10 }) << "\n"
+		<< "New raw pointer X value: " << rawPtr->X << "\n";
 
-	std::cout << e.GetNameFromValue(TestEnum::HelloGoodbye);
-}
+	ptr.Delete();
+	std::cout << rawPtr->X;
+} 

@@ -58,10 +58,7 @@
     <ClCompile Include="src\Method\MethodData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TemplateUtils.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Types\MemberContainers.cpp">
+    <ClCompile Include="src\Misc\TemplateUtils.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Constructor\ConstructorData.cpp">
@@ -70,7 +67,7 @@
     <ClCompile Include="src\Constructor\Constructor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Method\ParameterData.cpp">
+    <ClCompile Include="src\Misc\ParameterData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Enum\Enum.cpp">
@@ -80,6 +77,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Registration\EnumBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Method\MethodContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Property\PropertyContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -123,7 +126,7 @@
     <ClInclude Include="src\Registration\TypeBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\AccessLevel.h">
+    <ClInclude Include="src\Misc\AccessLevel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Method\Method.h">
@@ -132,13 +135,10 @@
     <ClInclude Include="src\Method\MethodData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Method\ParameterData.h">
+    <ClInclude Include="src\Misc\ParameterData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Variant\VarientVoidType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Types\MemberContainers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Constructor\ConstructorData.h">
@@ -163,6 +163,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Registration\EnumBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Types\TypeDataPrototype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Method\MethodContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Constructor\ConstructorContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Property\PropertyContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

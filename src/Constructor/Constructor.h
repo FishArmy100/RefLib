@@ -7,12 +7,14 @@ namespace RefLib
 	class Constructor
 	{
 	public:
-		Constructor(ConstructorData* data) : m_Data(data) {}
-		Constructor() : m_Data(nullptr) {}
+		Constructor(Ref<ConstructorData> data) : m_Data(data)  
+		{
+			if (data.IsNull()) 
+				throw std::exception("Cannot contruct a constructor from a nullptr");
+		}
+
 		Constructor(const Constructor& other) = default;
 		~Constructor() = default;
-
-		bool IsValid() { return m_Data != nullptr; }
 
 		Variant Construct(std::vector<Argument> args)
 		{
@@ -24,19 +26,16 @@ namespace RefLib
 			return m_Data->PtrConstructorFunc(std::move(args));
 		}
 
-		Type GetCreatedType() { return IsValid() ? m_Data->InstatiatedType : Type::Invalid(); }
-		AccessLevel GetAccessLevel() { return IsValid() ? m_Data->Level : AccessLevel::Private; }
+		Type GetCreatedType() { return m_Data->InstatiatedType; }
+		AccessLevel GetAccessLevel() { return m_Data->Level; }
 
-		const Ref<std::vector<ParameterData>> GetParameters() 
+		const std::vector<ParameterData>& GetParameters() const
 		{ 
-			if(IsValid())
-				return Ref<std::vector<ParameterData>>(&(m_Data->Parameters)); 
-
-			return {};
+			return m_Data->Parameters; 
 		}
 
 	private:
-		ConstructorData* m_Data;
+		Ref<ConstructorData> m_Data; 
 	};
 }
 

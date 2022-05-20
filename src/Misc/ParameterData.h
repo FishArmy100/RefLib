@@ -7,31 +7,25 @@ namespace RefLib
 {
 	struct ParameterData
 	{
-		ParameterData(const std::string& name, int index, Type type, Variant defaultValue = Variant()) :
-			Name(name), Index(index), ParameterType(type), DefaultValue(defaultValue)
+		ParameterData(const std::string& name, int index, Type type) :
+			Name(name), Index(index), ParameterType(type)
 		{
 
 		}
 
 		ParameterData(int index, Type type) :
 			Index(index), ParameterType(type), 
-			Name("Parameter_" + std::to_string(index)),
-			DefaultValue(Variant())
+			Name("Parameter_" + std::to_string(index))
 		{
 
 		}
 
-		ParameterData() = default;
-
 		ParameterData(const ParameterData&) = default;
 		~ParameterData() = default;
 
-		bool IsValid() { return Index != -1; }
-
-		std::string Name = "";
-		int Index = -1;
-		Type ParameterType = Type::Invalid();
-		Variant DefaultValue = Variant();
+		std::string Name;
+		int Index;
+		Type ParameterType;
 	};
 
 	using ParameterList = std::vector<ParameterData>;

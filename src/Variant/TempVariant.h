@@ -16,7 +16,7 @@ namespace RefLib
 			{
 				if constexpr (std::is_pointer_v<T>)
 				{
-					delete* (T*)ptr;
+					delete *(T*)ptr;
 					return true;
 				}
 

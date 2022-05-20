@@ -17,9 +17,7 @@ namespace RefLib
 													 !std::is_same<TempVariant, Tp>::value, T>;
 
 	public:
-		Instance() = default;
-
-		Instance(const Instance& ref) = default;
+		Instance(const Instance& other) = default;
 		Instance(const Variant & v);
 		Instance(const TempVariant tv);
 
@@ -48,9 +46,9 @@ namespace RefLib
 		bool IsValid() { return m_Data != nullptr; }
 
 	private:
-		Type m_Type = Type::Invalid();
-		void* m_Data = nullptr;
-		std::function<Variant()> m_AsVarientFunc = {};
+		Type m_Type;
+		void* m_Data;
+		std::function<Variant()> m_AsVarientFunc;
 	};
 }
 

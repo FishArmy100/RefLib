@@ -38,7 +38,6 @@ namespace RefLib
 		PropertyContainer* Properties;
 		MethodContainer* Methods;
 		std::vector<ConstructorData>* Constructors;
-		std::vector<TypeData>* TypeDatas;
 
 		EnumDataWrapper* EnumValue;
 	};

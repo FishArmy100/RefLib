@@ -150,6 +150,8 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Property\PropertyContainer.cpp" />
+    <ClCompile Include="src\Method\MethodContainer.cpp" />
     <ClCompile Include="src\Registration\EnumBuilder.cpp" />
     <ClCompile Include="src\Enum\EnumDataWrapper.cpp" />
     <ClCompile Include="src\Enum\Enum.cpp" />
@@ -159,12 +161,11 @@
     <ClCompile Include="src\Method\MethodData.cpp" />
     <ClCompile Include="src\Method\Method.cpp" />
     <ClCompile Include="src\Argument\Argument.cpp" />
-    <ClCompile Include="src\Method\ParameterData.cpp" />
+    <ClCompile Include="src\Misc\ParameterData.cpp" />
     <ClCompile Include="src\Property\PropertyData.cpp" />
     <ClCompile Include="src\Property\Property.cpp" />
     <ClCompile Include="src\Instance\Instance.cpp" />
-    <ClCompile Include="src\TemplateUtils.h" />
-    <ClCompile Include="src\Types\MemberContainers.cpp" />
+    <ClCompile Include="src\Misc\TemplateUtils.h" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeFlags.cpp" />
@@ -172,6 +173,9 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Property\PropertyContainer.h" />
+    <ClInclude Include="src\Constructor\ConstructorContainer.h" />
+    <ClInclude Include="src\Method\MethodContainer.h" />
     <ClInclude Include="src\Registration\EnumBuilder.h" />
     <ClInclude Include="src\Enum\EnumDataWrapper.h" />
     <ClInclude Include="src\Enum\EnumData.h" />
@@ -180,13 +184,13 @@
     <ClInclude Include="src\Constructor\ConstructorData.h" />
     <ClInclude Include="src\Method\MethodData.h" />
     <ClInclude Include="src\Method\Method.h" />
-    <ClInclude Include="src\AccessLevel.h" />
+    <ClInclude Include="src\Misc\AccessLevel.h" />
     <ClInclude Include="src\Argument\Argument.h" />
-    <ClInclude Include="src\Method\ParameterData.h" />
+    <ClInclude Include="src\Misc\ParameterData.h" />
     <ClInclude Include="src\Property\PropertyData.h" />
     <ClInclude Include="src\Property\Property.h" />
     <ClInclude Include="src\Instance\Instance.h" />
-    <ClInclude Include="src\Types\MemberContainers.h" />
+    <ClInclude Include="src\Types\TypeDataPrototype.h" />
     <ClInclude Include="src\Types\TypeFlags.h" />
     <ClInclude Include="src\Types\TypeId.h" />
     <ClInclude Include="src\Types\TypeUtils.h" />

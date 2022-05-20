@@ -1,12 +1,13 @@
 #pragma once
-#include "ParameterData.h"
+#include "Misc/ParameterData.h"
 #include <functional>
 #include "Argument/Argument.h"
 #include "Instance/Instance.h"
-#include "TemplateUtils.h"
+#include "Misc/TemplateUtils.h"
 #include <array>
 #include <utility>
 #include <iostream>
+#include "Misc/AccessLevel.h"
 
 namespace RefLib
 {
@@ -18,53 +19,27 @@ namespace RefLib
 	class MethodData
 	{
 	public:
-		MethodData() :
-			Name(""), ReturnType(Type::Invalid()),
-			Parameters({}), DeclaringType(Type::Invalid()),
-			SignatureType(Type::Invalid())
-		{
-
-		}
-
-		template<typename TClass, typename TReturn>
-		MethodData(const std::string& name, TReturn (TClass::* method)()) :
-			Name(name), ReturnType(Type::Get<TReturn>()), 
-			Parameters(std::vector<ParameterData>()), DeclaringType(Type::Get<TClass>()),
-			SignatureType(Type::Get<decltype(method)>())
-		{
-			CallFunc = [=](Instance ref, std::vector<Argument> args, std::vector<ParameterData>& params)
-			{
-				if (args.size() != 0 || params.size() != 0)
-					return Variant(); // invalid varient
-
-				TClass* obj = ref.TryConvert<TClass>();
-
-				if (obj == nullptr)
-					return Variant();
-
-				if constexpr (std::is_void_v<TReturn>)
-				{
-					((*obj).*method)();
-					return Variant::GetVoidVarient();
-				}
-				else
-				{
-					return Variant(((*obj).*method)());
-				}
-			};
-		}
-
 		template<typename TClass, typename TReturn, typename... TArgs>
-		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...)) :
+		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}) :
 			Name(name), ReturnType(Type::Get<TReturn>()), 
 			DeclaringType(Type::Get<TClass>()),
-			SignatureType(Type::Get<decltype(method)>())
+			SignatureType(Type::Get<decltype(method)>()),
+			Level(level) 
 		{
-			std::vector<ParameterData> parameters = std::vector<ParameterData>(sizeof...(TArgs));
-			std::array<Type, sizeof...(TArgs)> types = { Type::Get<TArgs>()... };
+			std::vector<ParameterData> parameters;
 
-			for (int i = 0; i < parameters.size(); i++)
-				parameters[i] = ParameterData(i, types[i]);
+			if constexpr (sizeof...(TArgs) > 0)
+			{
+				std::array<Type, sizeof...(TArgs)> types = { Type::Get<TArgs>()... };
+
+				for (int i = 0; i < types.size(); i++)
+				{
+					if (paramNames.size() > i)
+						parameters.push_back(ParameterData(paramNames[i], i, types[i]));
+					else
+						parameters.push_back(ParameterData(i, types[i]));
+				}
+			}
 
 			Parameters = parameters;
 
@@ -90,13 +65,12 @@ namespace RefLib
 
 		MethodData(const MethodData& data) = default;
 
-		bool IsValid() { return !(Name == "" && SignatureType == Type::Invalid()); }
-
 		std::string Name;
 		Type ReturnType;
 		Type DeclaringType;
 		std::vector<ParameterData> Parameters;
 		Type SignatureType;
+		AccessLevel Level;
 
 		std::function<Variant(Instance, std::vector<Argument>, std::vector<ParameterData>&)> CallFunc;
 

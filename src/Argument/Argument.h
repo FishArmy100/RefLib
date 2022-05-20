@@ -17,10 +17,9 @@ namespace RefLib
 
 	public:
 		template<typename T, typename = typename decay_reference_t<T>>
-		Argument(T&& arg)
+		Argument(T&& arg) : m_Data(&arg), m_Type(Type::Get<T>())
 		{
-			m_Data = &arg;
-			m_Type = Type::Get<T>();
+
 		}
 
 		Argument(const Argument& other) = default;
