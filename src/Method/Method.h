@@ -18,7 +18,7 @@ namespace RefLib
 		std::string_view GetName() const { return m_Data->Name; }
 		Type GetReturnType() const { return m_Data->ReturnType; }
 		Type GetDeclaringType() const { return m_Data->DeclaringType; }
-		const std::vector<ParameterData>& Parameters() const { return m_Data->Parameters; }
+		const std::vector<ParameterData>& GetParameters() const { return m_Data->Parameters; }
 		AccessLevel GetAccessLevel() const { return m_Data->Level; }
 		bool IsVoid() { return m_Data->ReturnType == Type::Get<void>(); }
 
@@ -26,6 +26,8 @@ namespace RefLib
 		{
 			return m_Data->CallFunc(ref, args, m_Data->Parameters);
 		}
+
+		Variant Invoke(std::vector<Argument> args);
 
 	private:
 		Ref<MethodData> m_Data;

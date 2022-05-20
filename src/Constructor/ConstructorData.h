@@ -11,21 +11,39 @@ namespace RefLib
 	struct ConstructorData
 	{
 		template<typename TClass, typename... TArgs>
-		ConstructorData(TClass(*ctor)(TArgs...), TClass*(*ptrCtor)(TArgs...), AccessLevel level, const std::vector<ParameterData>& parameters = {}) :
+		ConstructorData(TClass(*ctor)(TArgs...), TClass*(*ptrCtor)(TArgs...), AccessLevel level, const std::vector<std::string>& paramNames) :
 			InstatiatedType(Type::Get<TClass>()),
-			Parameters(parameters),
+			Parameters({}),
 			Level(level)
 		{
+			std::vector<Type> types = std::vector<Type>{ Type::Get<TArgs>()... };
+			for (int i = 0; i < types.size(); i++)
+			{
+				if (paramNames.size() > i)
+					Parameters.push_back(ParameterData(paramNames[i], i, types[i]));
+				else
+					Parameters.push_back(ParameterData(i, types[i]));
+			}
+
 			ConstructorFunc = [=](std::vector<Argument> args) -> Variant
 			{
-				std::array<Type, sizeof...(TArgs)> params = { Type::Get<TArgs>()... };
-				if (params.size() != args.size())
-					return Variant(); 
-
-				for (int i = 0; i < params.size(); i++)
+				if constexpr (sizeof...(TArgs) > 0)
 				{
-					if (!args[i].GetType().IsConvertableTo(params[i]))
-						return Variant(); // invalid
+					std::array<Type, sizeof...(TArgs)> params = { Type::Get<TArgs>()... };
+					if (params.size() != args.size())
+						return Variant();
+
+
+					for (int i = 0; i < params.size(); i++)
+					{
+						if (!args[i].GetType().IsConvertableTo(params[i]))
+							return Variant(); // invalid
+					}
+				}
+				else
+				{
+					if (args.size() > 0)
+						return Variant();
 				}
 
 				Container<TArgs...> container;
@@ -34,14 +52,22 @@ namespace RefLib
 
 			PtrConstructorFunc = [=](std::vector<Argument> args) -> Variant
 			{
-				std::array<Type, sizeof...(TArgs)> params = { Type::Get<TArgs>()... };
-				if (params.size() != args.size())
-					return Variant();
-
-				for (int i = 0; i < params.size(); i++)
+				if constexpr (sizeof...(TArgs) > 0)
 				{
-					if (!args[i].GetType().IsConvertableTo(params[i]))
-						return Variant(); // invalid
+					std::array<Type, sizeof...(TArgs)> params = { Type::Get<TArgs>()... };
+					if (params.size() != args.size())
+						return Variant();
+
+					for (int i = 0; i < params.size(); i++)
+					{
+						if (!args[i].GetType().IsConvertableTo(params[i]))
+							return Variant(); // invalid
+					}
+				}
+				else
+				{
+					if (args.size() > 0)
+						return Variant();
 				}
 
 				Container<TArgs...> container;

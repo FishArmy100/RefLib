@@ -20,7 +20,7 @@ namespace RefLib
 	{
 	public:
 		template<typename TClass, typename TReturn, typename... TArgs>
-		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public) :
+		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}) :
 			Name(name), ReturnType(Type::Get<TReturn>()), 
 			DeclaringType(Type::Get<TClass>()),
 			SignatureType(Type::Get<decltype(method)>()),
@@ -33,7 +33,12 @@ namespace RefLib
 				std::array<Type, sizeof...(TArgs)> types = { Type::Get<TArgs>()... };
 
 				for (int i = 0; i < types.size(); i++)
-					parameters.push_back(ParameterData(i, types[i]));
+				{
+					if (paramNames.size() > i)
+						parameters.push_back(ParameterData(paramNames[i], i, types[i]));
+					else
+						parameters.push_back(ParameterData(i, types[i]));
+				}
 			}
 
 			Parameters = parameters;

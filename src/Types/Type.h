@@ -71,7 +71,12 @@ namespace RefLib
 		}
 
 	public:
-		Type(TypeData* data, TypeFlags flags) : m_Data(data), m_Flags(flags) {}
+		Type(TypeData* data, TypeFlags flags) : m_Data(data), m_Flags(flags) 
+		{
+			if (data == nullptr)
+				throw std::exception("Cannot construct type from nullptr");
+		}
+
 		Type(const Type& other) = default;
 		Type& operator=(const Type& other) { this->m_Data = other.m_Data; this->m_Flags = other.m_Flags; return *this; }
 		~Type() = default;
@@ -96,15 +101,17 @@ namespace RefLib
 		std::optional<Method> GetMethod(const std::string& name);
 		std::optional<Method> GetMethod(const std::string& name, const std::vector<Type>& paramTypes);
 		Variant InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args);
+		Variant InvokeMethod(const std::string& name, std::vector<Argument> args);
 		std::vector<Method> GetMethods();
 
 		std::optional<Constructor> GetConstructor(const std::vector<Type>& params);
 		std::vector<Constructor> GetConstructors();
 		Variant Create(std::vector<Argument> args);
 		Variant CreatePtr(std::vector<Argument> args);
+		bool IsDefaultConstructable();
 
-		bool IsEnum() const { return m_Data->EnumValue != nullptr; }
-		std::optional<Enum> AsEnum() const;
+		bool IsEnum() const { return m_Data->EnumValue != nullptr; } 
+		std::optional<Enum> AsEnum() const; 
 
 		bool IsPointer() const { return m_Data->IsPointer; }
 		 

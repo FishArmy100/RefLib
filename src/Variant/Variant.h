@@ -16,7 +16,7 @@ namespace RefLib
 		static Variant GetVoidVarient();
 
 	public:
-		Variant() : m_Type(Type(nullptr, TypeFlags::None)), m_Data(nullptr), m_IsValid(false),
+		Variant() : m_Type({}), m_Data(nullptr), m_IsValid(false),
 					m_CopyData(nullptr), m_DeleteData(nullptr), 
 					m_DeleteDataPtr(nullptr), m_GetDereferencedHealper(nullptr)
 		{}
@@ -103,12 +103,12 @@ namespace RefLib
 			return {};
 		}
 
-		Type GetType() const { return m_Type; }
+		Type GetType() const { return m_Type.value(); }
 		void* GetRawData() const { return m_Data; }
 		bool IsValid() const { return m_IsValid; }
 		bool IsVoid() const { return m_Type == Type::Get<VarientVoidType>(); }
 
-		bool IsPointer() const { return m_Type.IsPointer(); }
+		bool IsPointer() const { return m_Type->IsPointer(); }
 
 		bool Delete();
 
@@ -122,7 +122,7 @@ namespace RefLib
 
 	private:
 		bool m_IsValid;
-		Type m_Type;
+		std::optional<Type> m_Type;
 		void* m_Data;
 
 		void(*m_DeleteData)(void*);

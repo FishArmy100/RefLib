@@ -7,7 +7,12 @@ namespace RefLib
 	class Constructor
 	{
 	public:
-		Constructor(ConstructorData* data) : m_Data(data) {}
+		Constructor(Ref<ConstructorData> data) : m_Data(data)  
+		{
+			if (data.IsNull()) 
+				throw std::exception("Cannot contruct a constructor from a nullptr");
+		}
+
 		Constructor(const Constructor& other) = default;
 		~Constructor() = default;
 
@@ -24,13 +29,13 @@ namespace RefLib
 		Type GetCreatedType() { return m_Data->InstatiatedType; }
 		AccessLevel GetAccessLevel() { return m_Data->Level; }
 
-		const Ref<std::vector<ParameterData>> GetParameters() 
+		const std::vector<ParameterData>& GetParameters() const
 		{ 
-			return Ref<std::vector<ParameterData>>(&(m_Data->Parameters)); 
+			return m_Data->Parameters; 
 		}
 
 	private:
-		ConstructorData* m_Data;
+		Ref<ConstructorData> m_Data; 
 	};
 }
 

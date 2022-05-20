@@ -98,6 +98,21 @@ namespace RefLib
 		return methods;
 	}
 
+	Variant Type::InvokeMethod(const std::string& name, std::vector<Argument> args)
+	{
+		if (!this->IsDefaultConstructable())
+			return false;
+
+		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
+		for (auto& methodData : datas)
+		{
+			if (Utils::ArgListCanCallParamData(methodData.Parameters, args))
+				return Method(&methodData).Invoke(std::move(args));
+		}
+
+		return Variant();
+	}
+
 	Variant Type::InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args)
 	{
 		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
@@ -157,6 +172,17 @@ namespace RefLib
 		}
 
 		return Variant();
+	}
+
+	bool Type::IsDefaultConstructable()
+	{
+		for (auto& constructorData : *m_Data->Constructors)
+		{
+			if (constructorData.Parameters.size() == 0)
+				return true;
+		}
+
+		return false;
 	}
 
 	std::optional<Enum> Type::AsEnum() const
