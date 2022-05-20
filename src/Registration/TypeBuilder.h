@@ -2,10 +2,11 @@
 #include "Types/Type.h"
 #include "Property/PropertyData.h"
 #include "Method/MethodData.h"
-#include "Types/MemberContainers.h"
 #include "Constructor/ConstructorData.h"
 #include <memory>
 #include "Method/MethodContainer.h"
+#include "Property/PropertyContainer.h"
+#include "Constructor/ConstructorContainer.h"
 
 namespace RefLib
 {

@@ -1,12 +1,6 @@
 #pragma once
-#include <map>
-#include <unordered_map>
-#include <string>
-#include <vector>
-#include "Type.h"
-#include "Method/MethodData.h"
 #include "Property/PropertyData.h"
-#include "Constructor/ConstructorData.h"
+#include <map>
 
 namespace RefLib
 {
@@ -21,6 +15,5 @@ namespace RefLib
 		std::map<std::string, PropertyData> m_PropertyMap;
 		std::vector<PropertyData> m_Properties;
 	};
-
-	using ConstructorContainer = std::vector<ConstructorData>;
 }
+

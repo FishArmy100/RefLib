@@ -61,9 +61,6 @@
     <ClCompile Include="src\Misc\TemplateUtils.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Types\MemberContainers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Constructor\ConstructorData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,6 +80,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Method\MethodContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Property\PropertyContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -141,9 +141,6 @@
     <ClInclude Include="src\Variant\VarientVoidType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Types\MemberContainers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Constructor\ConstructorData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -172,6 +169,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Method\MethodContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Constructor\ConstructorContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Property\PropertyContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

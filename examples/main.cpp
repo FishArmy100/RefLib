@@ -77,4 +77,21 @@ int main()
 	builder.AddMethod("Add", static_cast<int(Test::*)(int, int)>(&Test::Add), AccessLevel::Public, { "x", "y" });
 	builder.AddMethod("Add", static_cast<float(Test::*)(float, float)>(&Test::Add));
 	builder.Register();
+
+	Type type = Type::Get<Test>();
+	Variant ptr = type.CreatePtr({ 5, 6 });
+	Instance test = ptr.GetDereferenced().value();
+	Test* rawPtr = ptr.TryConvert<Test*>().value();
+
+	std::cout << std::boolalpha
+		<< "Is a pointer: " << ptr.IsPointer() << "\n"
+		<< "Type pointer name: " << ptr.GetType().GetName() << "\n"
+		<< "Type name: " << test.GetType().GetName() << "\n"
+		<< "Raw pointer X value: " << rawPtr->X << "\n"
+		<< "New set value is 10" << "\n"
+		<< "Set value of reference: " << type.SetPropertyValue(test, "X", { 10 }) << "\n"
+		<< "New raw pointer X value: " << rawPtr->X << "\n";
+
+	ptr.Delete();
+	std::cout << rawPtr->X;
 } 

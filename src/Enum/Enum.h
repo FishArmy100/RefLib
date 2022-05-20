@@ -10,7 +10,6 @@ namespace RefLib
 
 		Type GetType();
 		Type GetUnderlyingType();
-		Type GetDeclaringType();
 		std::string_view GetName();
 
 		Variant GetValueFromName(const std::string& name);

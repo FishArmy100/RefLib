@@ -150,6 +150,7 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Property\PropertyContainer.cpp" />
     <ClCompile Include="src\Method\MethodContainer.cpp" />
     <ClCompile Include="src\Registration\EnumBuilder.cpp" />
     <ClCompile Include="src\Enum\EnumDataWrapper.cpp" />
@@ -165,7 +166,6 @@
     <ClCompile Include="src\Property\Property.cpp" />
     <ClCompile Include="src\Instance\Instance.cpp" />
     <ClCompile Include="src\Misc\TemplateUtils.h" />
-    <ClCompile Include="src\Types\MemberContainers.cpp" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeFlags.cpp" />
@@ -173,6 +173,8 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Property\PropertyContainer.h" />
+    <ClInclude Include="src\Constructor\ConstructorContainer.h" />
     <ClInclude Include="src\Method\MethodContainer.h" />
     <ClInclude Include="src\Registration\EnumBuilder.h" />
     <ClInclude Include="src\Enum\EnumDataWrapper.h" />
@@ -188,7 +190,6 @@
     <ClInclude Include="src\Property\PropertyData.h" />
     <ClInclude Include="src\Property\Property.h" />
     <ClInclude Include="src\Instance\Instance.h" />
-    <ClInclude Include="src\Types\MemberContainers.h" />
     <ClInclude Include="src\Types\TypeDataPrototype.h" />
     <ClInclude Include="src\Types\TypeFlags.h" />
     <ClInclude Include="src\Types\TypeId.h" />
