@@ -150,6 +150,8 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Registration\TypeBuilderBase.h" />
+    <ClCompile Include="src\Types\NestedTypeContainer.cpp" />
     <ClCompile Include="src\Property\PropertyContainer.cpp" />
     <ClCompile Include="src\Method\MethodContainer.cpp" />
     <ClCompile Include="src\Registration\EnumBuilder.cpp" />
@@ -166,6 +168,7 @@
     <ClCompile Include="src\Property\Property.cpp" />
     <ClCompile Include="src\Instance\Instance.cpp" />
     <ClCompile Include="src\Misc\TemplateUtils.h" />
+    <ClCompile Include="src\Types\BaseTypeContainer.cpp" />
     <ClCompile Include="src\Types\Type.cpp" />
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeFlags.cpp" />
@@ -173,6 +176,8 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Types\NestedTypeContainer.h" />
+    <ClInclude Include="src\Types\BaseTypeContainer.h" />
     <ClInclude Include="src\Property\PropertyContainer.h" />
     <ClInclude Include="src\Constructor\ConstructorContainer.h" />
     <ClInclude Include="src\Method\MethodContainer.h" />

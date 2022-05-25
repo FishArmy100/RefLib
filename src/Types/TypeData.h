@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include "TypeFlags.h"
+#include <optional>
 
 namespace RefLib
 {
@@ -17,13 +18,17 @@ namespace RefLib
 	class ConstructorData;
 	class Type;
 	class EnumDataWrapper;
+	enum class AccessLevel;
+	class BaseTypeContainer;
+	class NestedTypeContainer;
 
 	struct TypeData
 	{
 		TypeData(const std::string& name, TypeId id) : 
 			Name(name), Id(id), DereferenceFunc(nullptr),
 			Properties(nullptr), Methods(nullptr), Constructors(nullptr),
-			EnumValue(nullptr)
+			EnumValue(nullptr), BaseTypes(nullptr),
+			NestedTypes(nullptr)
 		{}
 		TypeData(const TypeData& other) = default;
 		~TypeData();
@@ -35,9 +40,13 @@ namespace RefLib
 
 		Type(*DereferenceFunc)() = nullptr;
 
+		std::optional<TypeId> DeclaringType;
+
 		PropertyContainer* Properties;
 		MethodContainer* Methods;
 		std::vector<ConstructorData>* Constructors;
+		BaseTypeContainer* BaseTypes;
+		NestedTypeContainer* NestedTypes;
 
 		EnumDataWrapper* EnumValue;
 	};

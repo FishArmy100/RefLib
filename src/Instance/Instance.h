@@ -11,29 +11,29 @@ namespace RefLib
 	class Instance
 	{
 	private:
-		template<typename T, typename Tp = Utils::decay_t<T>>
+		template<typename TBase, typename Tp = Utils::decay_t<TBase>>
 		using decay_reference_t = Utils::enable_if_t<!std::is_same<Instance, Tp>::value &&
 													 !std::is_same<Variant, Tp>::value &&
-													 !std::is_same<TempVariant, Tp>::value, T>;
+													 !std::is_same<TempVariant, Tp>::value, TBase>;
 
 	public:
 		Instance(const Instance& other) = default;
 		Instance(const Variant & v);
 		Instance(const TempVariant tv);
 
-		template<typename T, typename Tp = decay_reference_t<T>>
-		Instance(T& data) : m_Type(Type::Get<T>()), m_Data(&data)
+		template<typename TBase, typename Tp = decay_reference_t<TBase>>
+		Instance(TBase& data) : m_Type(Type::Get<TBase>()), m_Data(&data)
 		{
-			m_AsVarientFunc = [&]() { return Variant(*(T*)m_Data); };
+			m_AsVarientFunc = [&]() { return Variant(*(TBase*)m_Data); };
 		}
 
 		~Instance() = default;
 
-		template<typename T>
-		T* TryConvert()
+		template<typename TBase>
+		TBase* TryConvert()
 		{
-			if (m_Type == Type::Get<T>())
-				return (T*)m_Data;
+			if (m_Type == Type::Get<TBase>())
+				return (TBase*)m_Data;
 
 			return nullptr;
 		}

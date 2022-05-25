@@ -15,6 +15,7 @@ namespace RefLib
 	class Argument;
 	class Enum;
 	class Instance;
+	struct BaseType;
 
 	class Type
 	{
@@ -38,36 +39,41 @@ namespace RefLib
 		static std::optional<Type> Get(TypeId id);
 
 		template<typename T>
-		static bool RegisterType(const std::string& name, TypeDataPrototype prototype)
+		static Type RegisterType(const std::string& name, TypeDataPrototype prototype, std::optional<TypeId> declaring = {})
 		{
 			if (!prototype.IsFullyBuilt())
-				return false;
+				throw std::exception("Prototype is not fully built");
 
 			Type t = Get<T>();
 			if (t.IsRegistered())
-				return false;
+				throw std::exception("Cannot regester an already regestered type");
 
-			TypeData* data = CreateTypeData<T>(name, t.GetId(), true);
+			TypeData* data = CreateTypeData<T>(name, t.GetId(), true, declaring);
 			data->Properties = prototype.Properties;
 			data->Methods = prototype.Methods;
 			data->Constructors = prototype.Constructors;
+			data->BaseTypes = prototype.BaseTypes;
+			data->NestedTypes = prototype.NestedTypes;
 
 			*s_TypeDatas[data->Id] = *data;
-			return true;
+
+			return Get<T>();
 		}
 
 		template<typename T>
-		static bool RegisterEnum(const std::string& name, EnumDataWrapper* enumData)
+		static Type RegisterEnum(const std::string& name, EnumDataWrapper* enumData, std::optional<TypeId> declaring = {})
 		{
 			static_assert(std::is_enum_v<T>, "Type must be an enum");
 
 			Type t = Get<T>();
 			if (t.IsRegistered())
-				return false;
+				throw std::exception("Cannot regester an already regestered enum");
 
-			TypeData* data = CreateTypeData<T>(name, t.GetId(), true);
+			TypeData* data = CreateTypeData<T>(name, t.GetId(), true, declaring);
 			data->EnumValue = enumData;
 			s_TypeDatas[data->Id] = data;
+
+			return t;
 		}
 
 	public:
@@ -92,23 +98,33 @@ namespace RefLib
 		bool IsRef() const { return IsFlag(TypeFlags::Reference); }
 		bool IsRValueRef() const { return IsFlag(TypeFlags::RValueReference); }
 
-		std::optional<Property> GetProperty(const std::string& name);
-		const std::vector<Property>& GetProperties();
+		std::optional<Property> GetProperty(const std::string& name) const;
+		const std::vector<Property>& GetProperties() const;
 
-		Variant GetPropertyValue(Instance instance, const std::string& propName);
-		bool SetPropertyValue(Instance instance, const std::string& propName, Argument arg);
+		Variant GetPropertyValue(Instance instance, const std::string& propName) const;
+		bool SetPropertyValue(Instance instance, const std::string& propName, Argument arg) const;
 
-		std::optional<Method> GetMethod(const std::string& name);
-		std::optional<Method> GetMethod(const std::string& name, const std::vector<Type>& paramTypes);
-		Variant InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args);
-		Variant InvokeMethod(const std::string& name, std::vector<Argument> args);
-		std::vector<Method> GetMethods();
+		std::optional<Method> GetMethod(const std::string& name) const;
+		std::optional<Method> GetMethod(const std::string& name, const std::vector<Type>& paramTypes) const;
+		Variant InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args) const;
+		Variant InvokeMethod(const std::string& name, std::vector<Argument> args) const;
+		std::vector<Method> GetMethods() const;
 
-		std::optional<Constructor> GetConstructor(const std::vector<Type>& params);
-		std::vector<Constructor> GetConstructors();
-		Variant Create(std::vector<Argument> args);
-		Variant CreatePtr(std::vector<Argument> args);
-		bool IsDefaultConstructable();
+		std::optional<Constructor> GetConstructor(const std::vector<Type>& params) const;
+		std::vector<Constructor> GetConstructors() const;
+		Variant Create(std::vector<Argument> args) const;
+		Variant CreatePtr(std::vector<Argument> args) const;
+		bool IsDefaultConstructable() const;
+
+		std::optional<BaseType> GetBaseType(const std::string& name) const;
+		const std::vector<BaseType>& GetBaseTypes() const;
+		bool IsBaseOf(Type type) const;
+		bool IsDerivedFrom(Type type) const;
+
+		std::optional<Type> GetNestedType(const std::string& name) const;
+		const std::vector<Type>& GetNestedTypes() const;
+		std::optional<Type> GetDeclaringType();
+		bool IsNestedType();
 
 		bool IsEnum() const { return m_Data->EnumValue != nullptr; } 
 		std::optional<Enum> AsEnum() const; 
@@ -118,7 +134,7 @@ namespace RefLib
 		bool IsAssignableFrom(Type type) const; 
 		bool IsConvertableTo(Type type) const; 
 
-		Type Dereferenced() { return m_Data->DereferenceFunc(); }
+		Type Dereferenced() const { return m_Data->DereferenceFunc(); }
 
 		bool operator==(const Type& other) const
 		{
@@ -139,19 +155,20 @@ namespace RefLib
 			{
 				id = s_TypeDatas.size();
 				std::string name = Utils::GetTypeName<T>();
-				s_TypeDatas.push_back(CreateTypeData<T>(name, id, false));
+				s_TypeDatas.push_back(CreateTypeData<T>(name, id, false, {}));
 			}
 
 			return Type(s_TypeDatas[id], flags);
 		}
 
 		template<typename T>
-		static TypeData* CreateTypeData(const std::string& name, TypeId id, bool isRegistered)
+		static TypeData* CreateTypeData(const std::string& name, TypeId id, bool isRegistered, std::optional<TypeId> declaring)
 		{
 			TypeData* data = new TypeData(name, id);
 			data->IsRegistered = isRegistered;
 			data->IsPointer = std::is_pointer<T>::value;
-			data->DereferenceFunc = []() { return Type::Get<std::remove_pointer_t<T>>(); };
+			data->DereferenceFunc = []() { return Type::Get<std::remove_pointer_t<T>>(); }; 
+			data->DeclaringType = declaring;
 
 			return data;
 		}

@@ -11,15 +11,8 @@ namespace RefLib
 	class EnumData : public EnumDataWrapper
 	{
 	public:
-
 		EnumData(const std::string& name, const std::map<std::string, TEnum>& values) : 
-			EnumData(name, Type::Invalid(), values)
-		{
-
-		}
-
-		EnumData(const std::string& name, Type declaring, const std::map<std::string, TEnum>& values) : 
-			EnumDataWrapper(Type::Get<TEnum>(), declaring, Type::Get<std::underlying_type_t<TEnum>>(), name)
+			EnumDataWrapper(Type::Get<TEnum>(), Type::Get<std::underlying_type_t<TEnum>>(), name)
 		{
 			m_ValueMap = values;
 			for (auto [name, value] : m_ValueMap)

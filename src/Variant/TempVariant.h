@@ -7,16 +7,16 @@ namespace RefLib
 	class TempVariant
 	{
 	public:
-		template<typename T>
+		template<typename TBase>
 		static TempVariant Create(void* data)
 		{
-			auto deleteData = [](void* ptr) { delete(T*)ptr; };
-			auto copyData = [](void* ptr) { return (void*)new T(*(T*)ptr); };
+			auto deleteData = [](void* ptr) { delete(TBase*)ptr; };
+			auto copyData = [](void* ptr) { return (void*)new TBase(*(TBase*)ptr); };
 			auto deleteDataPtr = [](void* ptr)
 			{
-				if constexpr (std::is_pointer_v<T>)
+				if constexpr (std::is_pointer_v<TBase>)
 				{
-					delete *(T*)ptr;
+					delete *(TBase*)ptr;
 					return true;
 				}
 
@@ -25,16 +25,16 @@ namespace RefLib
 
 			auto getDereferenced = [](void*)
 			{
-				if constexpr (std::is_pointer_v<T>)
+				if constexpr (std::is_pointer_v<TBase>)
 				{
-					void* derefData = *(T*)Data;
-					return TempVariant::Create<std::remove_pointer_t<T>>(derefData);
+					void* derefData = *(TBase*)Data;
+					return TempVariant::Create<std::remove_pointer_t<TBase>>(derefData);
 				}
 
 				return std::optional<TempVariant>{};
 			};
 
-			Type t = Type::Get<T>();
+			Type t = Type::Get<TBase>();
 			return TempVariant(t, data, deleteData, copyData, deleteDataPtr, getDereferenced);
 		}
 

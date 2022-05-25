@@ -10,5 +10,7 @@ namespace RefLib
 		delete Methods;
 		delete Constructors;
 		delete EnumValue;
+		delete BaseTypes;
+		delete NestedTypes;
 	}
 }

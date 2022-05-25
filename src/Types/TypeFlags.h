@@ -23,14 +23,14 @@ namespace RefLib
 
 		TypeFlags ApplyFlagIfTrue(bool condition, TypeFlags initial, TypeFlags applied);
 
-		template<typename T>
+		template<typename TBase>
 		TypeFlags GetFlagsFromType()
 		{
 			TypeFlags flags = TypeFlags::None;
-			flags = ApplyFlagIfTrue(std::is_const_v<T>, flags, TypeFlags::Const);
-			flags = ApplyFlagIfTrue(std::is_volatile_v<T>, flags, TypeFlags::Volatile);
-			flags = ApplyFlagIfTrue(std::is_lvalue_reference_v<T>, flags, TypeFlags::Reference);
-			flags = ApplyFlagIfTrue(std::is_rvalue_reference_v<T>, flags, TypeFlags::RValueReference);
+			flags = ApplyFlagIfTrue(std::is_const_v<TBase>, flags, TypeFlags::Const);
+			flags = ApplyFlagIfTrue(std::is_volatile_v<TBase>, flags, TypeFlags::Volatile);
+			flags = ApplyFlagIfTrue(std::is_lvalue_reference_v<TBase>, flags, TypeFlags::Reference);
+			flags = ApplyFlagIfTrue(std::is_rvalue_reference_v<TBase>, flags, TypeFlags::RValueReference);
 			return flags;
 		}
 	}

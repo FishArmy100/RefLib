@@ -44,7 +44,12 @@ private:
 	std::string m_Name;
 };
 
-struct Test
+struct TestBase
+{
+
+};
+
+struct Test : public TestBase
 {
 	Test(int x, int y) : X(x), Y(y) {}
 	Test() : X(0), Y(0) {}
@@ -55,13 +60,13 @@ struct Test
 	int Add(int a, int b) { std::cout << "Version int called \n"; return a + b; }
 	float Add(float a, float b) { std::cout << "Version float called \n"; return a + b; }
 	void Print() const { std::cout << "Hello!"; }
-};
 
-enum class TestEnum
-{
-	Hello = 0,
-	Goodbye = 1,
-	HelloGoodbye = 2
+	enum TestNestedEnum
+	{
+		One = 1,
+		Two = 2,
+		Three = 3
+	};
 };
 
 using namespace RefLib;
@@ -69,6 +74,7 @@ using namespace RefLib;
 int main()
 {
 	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
+	builder.AddBaseType<TestBase>();
 	builder.AddConstructor<int, int>({"x", "y"});
 	builder.AddConstructor<>();
 	builder.AddProperty("X", &Test::X);
@@ -76,22 +82,23 @@ int main()
 	builder.AddMethod("Print", &Test::Print);
 	builder.AddMethod("Add", static_cast<int(Test::*)(int, int)>(&Test::Add), AccessLevel::Public, { "x", "y" });
 	builder.AddMethod("Add", static_cast<float(Test::*)(float, float)>(&Test::Add));
+
+	auto nestedBuilder = builder.AddNestedType<Test::TestNestedEnum>("TestNested"); 
+	nestedBuilder->AddValues(
+		{
+			{ "One", Test::TestNestedEnum::One },
+			{ "Two", Test::TestNestedEnum::Two },
+			{ "Three", Test::TestNestedEnum::Three }
+		});
+
 	builder.Register();
 
 	Type type = Type::Get<Test>();
-	Variant ptr = type.CreatePtr({ 5, 6 });
-	Instance test = ptr.GetDereferenced().value();
-	Test* rawPtr = ptr.TryConvert<Test*>().value();
+	Type nestedType = Type::Get<Test::TestNestedEnum>();
 
 	std::cout << std::boolalpha
-		<< "Is a pointer: " << ptr.IsPointer() << "\n"
-		<< "Type pointer name: " << ptr.GetType().GetName() << "\n"
-		<< "Type name: " << test.GetType().GetName() << "\n"
-		<< "Raw pointer X value: " << rawPtr->X << "\n"
-		<< "New set value is 10" << "\n"
-		<< "Set value of reference: " << type.SetPropertyValue(test, "X", { 10 }) << "\n"
-		<< "New raw pointer X value: " << rawPtr->X << "\n";
-
-	ptr.Delete();
-	std::cout << rawPtr->X;
+		<< "Is Test a nested type: " << type.IsNestedType() << "\n"
+		<< "Is TestNestedEnum a nested type: " << nestedType.IsNestedType() << "\n"
+		<< "TestNestedEnum's declaring type: " << nestedType.GetDeclaringType()->GetName() << "\n"
+		<< "Is TestNestedEnum an enum: " << nestedType.IsEnum();
 } 

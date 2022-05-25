@@ -85,6 +85,15 @@
     <ClCompile Include="src\Property\PropertyContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Types\BaseTypeContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Types\NestedTypeContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Registration\TypeBuilderBase.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vendor\rttr\type_name.h">
@@ -175,6 +184,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Property\PropertyContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Types\BaseTypeContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Types\NestedTypeContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

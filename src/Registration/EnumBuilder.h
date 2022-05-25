@@ -1,4 +1,5 @@
 #pragma once
+#include "TypeBuilderBase.h"
 #include "Enum/Enum.h"
 #include "Enum/EnumData.h"
 #include <map>
@@ -6,7 +7,7 @@
 namespace RefLib
 {
 	template<typename TEnum>
-	class EnumBuilder
+	class EnumBuilder : public TypeBuilderBase
 	{
 	static_assert(std::is_enum_v<TEnum>, "Type must be an enum");
 
@@ -29,12 +30,19 @@ namespace RefLib
 			}
 		}
 
-		bool Register()
+		Type Register()
 		{
-			return Type::RegisterEnum<TEnum>(m_Name, new EnumData<TEnum>(m_Name, m_Values));
+			return Type::RegisterEnum<TEnum>(m_Name, new EnumData<TEnum>(m_Name, m_Values), m_DeclaringType);
+		}
+
+	protected:
+		void SetDeclaring(TypeId id) override
+		{
+			m_DeclaringType = id;
 		}
 
 	private:
+		std::optional<TypeId> m_DeclaringType;
 		std::string m_Name;
 		std::map<std::string, TEnum> m_Values;
 	};

@@ -84,7 +84,7 @@ namespace rttr
 
         /////////////////////////////////////////////////////////////////////////////////
 
-        template<typename T>
+        template<typename TBase>
         RTTR_LOCAL RTTR_INLINE const char* f() RTTR_NOEXCEPT
         {
             return extract_type_signature(

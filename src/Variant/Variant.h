@@ -21,16 +21,16 @@ namespace RefLib
 					m_DeleteDataPtr(nullptr), m_GetDereferencedHealper(nullptr)
 		{}
 
-		template<typename T>
-		Variant(const T data) : m_Type(Type::Get<T>()), m_Data(new T(data)), m_IsValid(true)
+		template<typename TBase>
+		Variant(const TBase data) : m_Type(Type::Get<TBase>()), m_Data(new TBase(data)), m_IsValid(true)
 		{
-			m_DeleteData = [](void* ptr) { delete(T*)ptr; };
-			m_CopyData = [](void* ptr) { return (void*)new T(*(T*)ptr); };
+			m_DeleteData = [](void* ptr) { delete(TBase*)ptr; };
+			m_CopyData = [](void* ptr) { return (void*)new TBase(*(TBase*)ptr); };
 			m_DeleteDataPtr = [](void* ptr)
 			{
-				if constexpr (std::is_pointer_v<T>)
+				if constexpr (std::is_pointer_v<TBase>)
 				{
-					delete* (T*)ptr;
+					delete* (TBase*)ptr;
 					return true;
 				}
 
@@ -39,10 +39,10 @@ namespace RefLib
 
 			m_GetDereferencedHealper = [=](void*)
 			{
-				if constexpr (std::is_pointer_v<T>)
+				if constexpr (std::is_pointer_v<TBase>)
 				{
-					void* derefData = *(T*)m_Data;
-					return std::optional<TempVariant>(TempVariant::Create<std::remove_pointer_t<T>>(derefData));
+					void* derefData = *(TBase*)m_Data;
+					return std::optional<TempVariant>(TempVariant::Create<std::remove_pointer_t<TBase>>(derefData));
 				}
 
 				return std::optional<TempVariant>{}; 
@@ -91,14 +91,14 @@ namespace RefLib
 
 		Variant(Variant&&) = default;
 
-		template<typename T>
-		std::optional<T> TryConvert() const
+		template<typename TBase>
+		std::optional<TBase> TryConvert() const
 		{
 			if (!m_IsValid)
 				return {};
 
-			if (m_Type == Type::Get<T>())
-				return *(T*)m_Data;
+			if (m_Type == Type::Get<TBase>())
+				return *(TBase*)m_Data;
 
 			return {};
 		}

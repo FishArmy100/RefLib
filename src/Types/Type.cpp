@@ -1,13 +1,15 @@
 #include "Type.h"
 #include "Property/Property.h"
 #include "Method/Method.h"
-#include "MemberContainers.h"
+#include "Property/PropertyContainer.h"
 #include "Constructor/Constructor.h"
 #include "Argument/Argument.h"
 #include "Variant/Variant.h"
 #include "Instance/Instance.h"
 #include "Enum/Enum.h"
 #include "Method/MethodContainer.h"
+#include "BaseTypeContainer.h"
+#include "NestedTypeContainer.h"
 
 namespace RefLib
 {
@@ -32,7 +34,7 @@ namespace RefLib
 		return {};
 	}
 
-	std::optional<Property> Type::GetProperty(const std::string& name)
+	std::optional<Property> Type::GetProperty(const std::string& name) const
 	{
 		auto propData = this->m_Data->Properties->GetProp(name);
 		if (propData.IsNotNull())
@@ -41,7 +43,7 @@ namespace RefLib
 		return {};
 	}
 
-	const std::vector<Property>& Type::GetProperties()
+	const std::vector<Property>& Type::GetProperties() const
 	{
 		std::vector<PropertyData>& datas = this->m_Data->Properties->GetAll();
 		std::vector<Property> props;;
@@ -50,7 +52,7 @@ namespace RefLib
 		return props;
 	}
 
-	Variant Type::GetPropertyValue(Instance instance, const std::string& propName)
+	Variant Type::GetPropertyValue(Instance instance, const std::string& propName) const
 	{
 		std::optional<Property> prop = GetProperty(propName);
 		if (prop.has_value())
@@ -59,7 +61,7 @@ namespace RefLib
 		return Variant();
 	}
 
-	bool Type::SetPropertyValue(Instance instance, const std::string& propName, Argument arg)
+	bool Type::SetPropertyValue(Instance instance, const std::string& propName, Argument arg) const
 	{
 		std::optional<Property> prop = GetProperty(propName);
 		if (prop.has_value())
@@ -68,7 +70,7 @@ namespace RefLib
 		return false;
 	}
 
-	std::optional<Method> Type::GetMethod(const std::string& name)
+	std::optional<Method> Type::GetMethod(const std::string& name) const
 	{
 		Ref<MethodData> methodData = this->m_Data->Methods->GetMethod(name);
 		if (methodData.IsNotNull())
@@ -77,7 +79,7 @@ namespace RefLib
 		return {};
 	}
 
-	std::optional<Method> Type::GetMethod(const std::string& name, const std::vector<Type>& paramTypes)
+	std::optional<Method> Type::GetMethod(const std::string& name, const std::vector<Type>& paramTypes) const
 	{
 		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
 		for (auto& methodData : datas) 
@@ -89,7 +91,7 @@ namespace RefLib
 		return {};
 	}
 
-	std::vector<Method> Type::GetMethods()
+	std::vector<Method> Type::GetMethods() const
 	{
 		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
 		std::vector<Method> methods;
@@ -98,7 +100,7 @@ namespace RefLib
 		return methods;
 	}
 
-	Variant Type::InvokeMethod(const std::string& name, std::vector<Argument> args)
+	Variant Type::InvokeMethod(const std::string& name, std::vector<Argument> args) const
 	{
 		if (!this->IsDefaultConstructable())
 			return false;
@@ -113,7 +115,7 @@ namespace RefLib
 		return Variant();
 	}
 
-	Variant Type::InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args)
+	Variant Type::InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args) const
 	{
 		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
 		for (auto& methodData : datas)
@@ -125,7 +127,7 @@ namespace RefLib
 		return Variant();
 	}
 
-	std::optional<Constructor> Type::GetConstructor(const std::vector<Type>& params)
+	std::optional<Constructor> Type::GetConstructor(const std::vector<Type>& params) const
 	{
 		for (auto& constructorData : *(m_Data->Constructors))
 		{
@@ -138,7 +140,7 @@ namespace RefLib
 		return {};
 	}
 
-	std::vector<Constructor> Type::GetConstructors()
+	std::vector<Constructor> Type::GetConstructors() const
 	{
 		std::vector<ConstructorData>& datas = *(m_Data->Constructors);
 		std::vector<Constructor> constructors;
@@ -148,7 +150,7 @@ namespace RefLib
 		return constructors; 
 	}
 
-	Variant Type::Create(std::vector<Argument> args)
+	Variant Type::Create(std::vector<Argument> args) const
 	{
 		for (auto& constructorData : *(m_Data->Constructors))
 		{
@@ -161,7 +163,7 @@ namespace RefLib
 		return Variant();
 	}
 
-	Variant Type::CreatePtr(std::vector<Argument> args)
+	Variant Type::CreatePtr(std::vector<Argument> args) const
 	{
 		for (auto& constructorData : *(m_Data->Constructors))
 		{
@@ -174,7 +176,7 @@ namespace RefLib
 		return Variant();
 	}
 
-	bool Type::IsDefaultConstructable()
+	bool Type::IsDefaultConstructable() const
 	{
 		for (auto& constructorData : *m_Data->Constructors)
 		{
@@ -212,5 +214,66 @@ namespace RefLib
 			return false;
 
 		return true;
+	}
+
+	bool Type::IsBaseOf(Type t) const
+	{
+		for (const auto& base : t.GetBaseTypes())
+		{
+			if (base.Data.GetId() == this->GetId())
+				return true;
+
+			if (this->IsBaseOf(base.Data))
+				return true;
+		}
+
+		return false;
+	}
+
+	bool Type::IsDerivedFrom(Type type) const
+	{
+		for (const auto& base : this->GetBaseTypes())
+		{
+			if (base.Data.GetId() == type.GetId())
+				return true;
+
+			if (base.Data.IsDerivedFrom(type))
+				return true;
+		}
+
+		return false;
+	}
+
+	const std::vector<BaseType>& Type::GetBaseTypes() const
+	{
+		return m_Data->BaseTypes->GetBaseTypes();
+	}
+
+	std::optional<Type> Type::GetDeclaringType()
+	{
+		if (IsNestedType())
+			return Type(s_TypeDatas[m_Data->DeclaringType.value()], TypeFlags::None); 
+
+		return {};
+	}
+
+	bool Type::IsNestedType()
+	{
+		return m_Data->DeclaringType.has_value();
+	}
+
+	std::optional<Type> Type::GetNestedType(const std::string& name) const
+	{
+		return m_Data->NestedTypes->GetType(name);
+	}
+
+	const std::vector<Type>& Type::GetNestedTypes() const
+	{
+		return m_Data->NestedTypes->GetTypes();
+	}
+
+	std::optional<BaseType> Type::GetBaseType(const std::string& name) const
+	{
+		return m_Data->BaseTypes->GetBase(name);
 	}
 }
