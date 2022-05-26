@@ -176,6 +176,7 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Registration\TypeRegistrationFactory.h" />
     <ClInclude Include="src\Types\NestedTypeContainer.h" />
     <ClInclude Include="src\Types\BaseTypeContainer.h" />
     <ClInclude Include="src\Property\PropertyContainer.h" />

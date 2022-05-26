@@ -12,93 +12,45 @@
 #include "Enum/Enum.h"
 #include "Enum/EnumData.h"
 
+template<typename T>
 struct Position
 {
-	int x = 0;
-	float y = 0;
-	float z = 0;
+	Position(const T& x, const T& y, const T& z) :
+		X(x), Y(y), Z(z) 
+	{}
+
+	T X;
+	T Y;
+	T Z;
 };
 
-struct Entity 
+namespace RefLib
 {
-	virtual uint64_t GetEntityId() = 0;
-};
-
-class Person : public Entity
-{
-public:
-	Position Pos{};
-
-	Person(const std::string& name, int id) : m_Name(name), m_ID(id) {}
-	Person(const char* name, int id) : m_Name(name), m_ID(id) {}
-
-	uint64_t GetEntityId() override { return m_ID; }
-
-	int GetId() const { return m_ID; }
-	const std::string& GetName() const { return m_Name; }
-
-private:
-	void SayHello() { std::cout << "hello" << std::endl; }
-
-	int m_ID;
-	std::string m_Name;
-};
-
-struct TestBase
-{
-
-};
-
-struct Test : public TestBase
-{
-	Test(int x, int y) : X(x), Y(y) {}
-	Test() : X(0), Y(0) {}
-
-	int X;
-	const int Y;
-
-	int Add(int a, int b) { std::cout << "Version int called \n"; return a + b; }
-	float Add(float a, float b) { std::cout << "Version float called \n"; return a + b; }
-	void Print() const { std::cout << "Hello!"; }
-
-	enum TestNestedEnum
+	template<typename T>
+	struct TypeRegistrationFactory<Position<T>>
 	{
-		One = 1,
-		Two = 2,
-		Three = 3
+		TypeRegistrationFactory() = default;
+		bool operator()()
+		{
+			TypeBuilder<Position<T>> builder = TypeBuilder<Position<T>>("Position<" + (std::string)Type::Get<T>().GetName() + ">");
+			builder.AddConstructor<const T&, const T&, const T&>({ "x", "y", "z" });
+			builder.AddProperty("X", &Position<T>::X);
+			builder.AddProperty("Y", &Position<T>::Y);
+			builder.AddProperty("Z", &Position<T>::Z);
+			builder.Register();
+			return true;
+		}
 	};
-};
+}
 
 using namespace RefLib;
 
 int main()
 {
-	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
-	builder.AddBaseType<TestBase>();
-	builder.AddConstructor<int, int>({"x", "y"});
-	builder.AddConstructor<>();
-	builder.AddProperty("X", &Test::X);
-	builder.AddProperty("Y", &Test::Y);
-	builder.AddMethod("Print", &Test::Print);
-	builder.AddMethod("Add", static_cast<int(Test::*)(int, int)>(&Test::Add), AccessLevel::Public, { "x", "y" });
-	builder.AddMethod("Add", static_cast<float(Test::*)(float, float)>(&Test::Add));
+	Type t = Type::Get<Position<int>>();
+	Variant var = t.Create({ 5, 6, 7 });
 
-	auto nestedBuilder = builder.AddNestedType<Test::TestNestedEnum>("TestNested"); 
-	nestedBuilder->AddValues(
-		{
-			{ "One", Test::TestNestedEnum::One },
-			{ "Two", Test::TestNestedEnum::Two },
-			{ "Three", Test::TestNestedEnum::Three }
-		});
+	Position pos = var.TryConvert<Position<int>>().value();
 
-	builder.Register();
-
-	Type type = Type::Get<Test>();
-	Type nestedType = Type::Get<Test::TestNestedEnum>();
-
-	std::cout << std::boolalpha
-		<< "Is Test a nested type: " << type.IsNestedType() << "\n"
-		<< "Is TestNestedEnum a nested type: " << nestedType.IsNestedType() << "\n"
-		<< "TestNestedEnum's declaring type: " << nestedType.GetDeclaringType()->GetName() << "\n"
-		<< "Is TestNestedEnum an enum: " << nestedType.IsEnum();
+	std::cout << "Type name: " << t.GetName() << ", Values: (" << pos.X << ", " << pos.Y << ", " << pos.Z << ")";
 } 

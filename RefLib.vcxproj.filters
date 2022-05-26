@@ -192,5 +192,8 @@
     <ClInclude Include="src\Types\NestedTypeContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Registration\TypeRegistrationFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

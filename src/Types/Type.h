@@ -5,6 +5,8 @@
 #include "Utils/Ref.h"
 #include "TypeDataPrototype.h"
 #include <optional>
+#include "Registration/TypeRegistrationFactory.h"
+#include <unordered_set>
 
 namespace RefLib
 {
@@ -158,7 +160,22 @@ namespace RefLib
 				s_TypeDatas.push_back(CreateTypeData<T>(name, id, false, {}));
 			}
 
-			return Type(s_TypeDatas[id], flags);
+			Type type = Type(s_TypeDatas[id], flags);
+
+			// gard against stack overflow if try to get the same type while registering it
+			if (!type.IsRegistered() && s_AutoRegisteringTypes.find(id) == s_AutoRegisteringTypes.end())
+			{
+				s_AutoRegisteringTypes.emplace(id);
+				TypeRegistrationFactory<T> factory;
+				bool registered = factory();
+
+				if (registered)
+					std::cout << "Type was registered automatically: " << type.GetName() << "\n";
+
+				s_AutoRegisteringTypes.erase(id);
+			}
+
+			return type;
 		}
 
 		template<typename T>
@@ -175,6 +192,7 @@ namespace RefLib
 
 	private:
 		static std::vector<TypeData*> s_TypeDatas;
+		inline static std::unordered_set<TypeId> s_AutoRegisteringTypes = {};
 
 	private:
 		TypeData* m_Data;
