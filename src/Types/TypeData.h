@@ -28,7 +28,7 @@ namespace RefLib
 			Name(name), Id(id), DereferenceFunc(nullptr),
 			Properties(nullptr), Methods(nullptr), Constructors(nullptr),
 			EnumValue(nullptr), BaseTypes(nullptr),
-			NestedTypes(nullptr)
+			NestedTypes(nullptr), PreRegisteredMethods(nullptr)
 		{}
 		TypeData(const TypeData& other) = default;
 		~TypeData();
@@ -47,6 +47,8 @@ namespace RefLib
 		std::vector<ConstructorData>* Constructors;
 		BaseTypeContainer* BaseTypes;
 		NestedTypeContainer* NestedTypes;
+
+		std::vector<MethodData>* PreRegisteredMethods;
 
 		EnumDataWrapper* EnumValue;
 	};

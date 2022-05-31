@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Registration\TypeRegistrationFactory.h" />
+    <ClInclude Include="src\Types\MethodRegistration.h" />
     <ClInclude Include="src\Types\NestedTypeContainer.h" />
     <ClInclude Include="src\Types\BaseTypeContainer.h" />
     <ClInclude Include="src\Property\PropertyContainer.h" />

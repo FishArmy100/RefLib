@@ -11,46 +11,34 @@
 #include "Constructor/Constructor.h"
 #include "Enum/Enum.h"
 #include "Enum/EnumData.h"
+#include "Types/MethodRegistration.h"
 
-template<typename T>
-struct Position
+struct Test
 {
-	Position(const T& x, const T& y, const T& z) :
-		X(x), Y(y), Z(z) 
-	{}
+	Test() = default;
 
-	T X;
-	T Y;
-	T Z;
-};
-
-namespace RefLib
-{
 	template<typename T>
-	struct TypeRegistrationFactory<Position<T>>
+	void Print(const T& value)
 	{
-		TypeRegistrationFactory() = default;
-		bool operator()()
-		{
-			TypeBuilder<Position<T>> builder = TypeBuilder<Position<T>>("Position<" + (std::string)Type::Get<T>().GetName() + ">");
-			builder.AddConstructor<const T&, const T&, const T&>({ "x", "y", "z" });
-			builder.AddProperty("X", &Position<T>::X);
-			builder.AddProperty("Y", &Position<T>::Y);
-			builder.AddProperty("Z", &Position<T>::Z);
-			builder.Register();
-			return true;
-		}
-	};
-}
+		std::cout << value << "\n";
+	}
+};
 
 using namespace RefLib;
 
 int main()
 {
-	Type t = Type::Get<Position<int>>();
-	Variant var = t.Create({ 5, 6, 7 });
+	Type::RegisterMethod("Print", &Test::Print<int>, { Type::Get<int>().GetId() });
 
-	Position pos = var.TryConvert<Position<int>>().value();
+	TypeBuilder<Test> builder = TypeBuilder<Test>("Test");
+	builder.AddConstructor<>();
+	builder.AddMethod("Print", &Test::Print<std::string>, { Type::Get<std::string>().GetId() });
+	builder.Register();
 
-	std::cout << "Type name: " << t.GetName() << ", Values: (" << pos.X << ", " << pos.Y << ", " << pos.Z << ")";
+	Type::RegisterMethod("Print", &Test::Print<float>, { Type::Get<float>().GetId() });
+
+	Type t = Type::Get<Test>();
+	t.InvokeTemplatedMethod("Print", { Type::Get<int>().GetId() }, { 42 });
+	t.InvokeTemplatedMethod("Print", { Type::Get<std::string>().GetId() }, { std::string("Hello World!") });
+	t.InvokeTemplatedMethod("Print", { Type::Get<float>().GetId() }, { 4.5f });
 } 

@@ -20,7 +20,7 @@ namespace RefLib
 		for (auto& data : s_TypeDatas)
 		{
 			if (data->Name == name)
-				return Type(data, TypeFlags::None);
+				return Type(data->Id, TypeFlags::None);
 		}
 
 		return {};
@@ -29,14 +29,14 @@ namespace RefLib
 	std::optional<Type> Type::Get(TypeId id)
 	{
 		if (s_TypeDatas.size() > id && id != NoneType)
-			return Type(s_TypeDatas[id], TypeFlags::None);
+			return Type(id, TypeFlags::None);
 
 		return {};
 	}
 
 	std::optional<Property> Type::GetProperty(const std::string& name) const
 	{
-		auto propData = this->m_Data->Properties->GetProp(name);
+		auto propData = this->GetData()->Properties->GetProp(name);
 		if (propData.IsNotNull())
 			return Property(propData);
 
@@ -45,7 +45,7 @@ namespace RefLib
 
 	const std::vector<Property>& Type::GetProperties() const
 	{
-		std::vector<PropertyData>& datas = this->m_Data->Properties->GetAll();
+		std::vector<PropertyData>& datas = this->GetData()->Properties->GetAll();
 		std::vector<Property> props;;
 		for (int i = 0; i < datas.size(); i++)
 			props.push_back(Property(&(datas[i])));
@@ -72,20 +72,34 @@ namespace RefLib
 
 	std::optional<Method> Type::GetMethod(const std::string& name) const
 	{
-		Ref<MethodData> methodData = this->m_Data->Methods->GetMethod(name);
-		if (methodData.IsNotNull())
-			return Method(methodData);
-
-		return {};
+		return this->GetData()->Methods->GetMethod(name);
 	}
 
 	std::optional<Method> Type::GetMethod(const std::string& name, const std::vector<Type>& paramTypes) const
 	{
-		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
-		for (auto& methodData : datas) 
+		auto container = this->GetData()->Methods;
+		Ref<std::vector<size_t>> datas = container->GetMethods(name);
+		for (auto& id : *datas.Get())
 		{
-			if (Utils::TypeListCanCallParamData(methodData.Parameters, paramTypes))
-				return Method(&methodData);
+			if (Utils::TypeListCanCallParamData(container->GetMethodData(id)->Parameters, paramTypes))
+				return container->GetMethod(id); 
+		}
+
+		return {};
+	}
+
+	std::optional<Method> Type::GetTemplatedMethod(const std::string& name, const std::vector<TypeId>& templateArgs, const std::vector<Type>& paramTypes) const
+	{
+		auto container = this->GetData()->Methods;
+		Ref<std::vector<size_t>> datas = container->GetTemplatedMethods(name);
+		for (auto& id : *datas.Get())
+		{
+			auto data = container->GetMethodData(id);
+			if (Utils::TypeListCanCallParamData(data->Parameters, paramTypes)&&
+				data->TemplateParams == templateArgs)
+			{
+				return container->GetMethod(id);
+			}
 		}
 
 		return {};
@@ -93,10 +107,11 @@ namespace RefLib
 
 	std::vector<Method> Type::GetMethods() const
 	{
-		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
+		auto containter = this->GetData()->Methods;
+		std::vector<MethodData>& datas = containter->GetAll();
 		std::vector<Method> methods;
 		for (int i = 0; i < datas.size(); i++)
-			methods.push_back(Method(&(datas[i])));
+			methods.push_back(Method(i, containter));
 		return methods;
 	}
 
@@ -105,11 +120,12 @@ namespace RefLib
 		if (!this->IsDefaultConstructable())
 			return false;
 
-		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
-		for (auto& methodData : datas)
+		auto container = this->GetData()->Methods;
+		Ref<std::vector<size_t>> datas = container->GetMethods(name); 
+		for (auto& id : *datas.Get())
 		{
-			if (Utils::ArgListCanCallParamData(methodData.Parameters, args))
-				return Method(&methodData).Invoke(std::move(args));
+			if (Utils::ArgListCanCallParamData(container->GetMethodData(id)->Parameters, args))
+				return Method(id, container).Invoke(std::move(args));
 		}
 
 		return Variant();
@@ -117,11 +133,55 @@ namespace RefLib
 
 	Variant Type::InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args) const
 	{
-		std::vector<MethodData>& datas = this->m_Data->Methods->GetAll();
-		for (auto& methodData : datas)
+		if (this->GetId() != instance.GetType().GetId())
+			return {};
+
+		auto container = this->GetData()->Methods; 
+		Ref<std::vector<size_t>> datas = container->GetMethods(name);
+		for (auto& id : *datas.Get())
 		{
-			if (Utils::ArgListCanCallParamData(methodData.Parameters, args))
-				return Method(&methodData).Invoke(instance, std::move(args));
+			if (Utils::ArgListCanCallParamData(container->GetMethodData(id)->Parameters, args))
+				return Method(id, container).Invoke(instance, std::move(args));
+		}
+
+		return Variant();
+	}
+
+	Variant Type::InvokeTemplatedMethod(Instance instance, const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args) const
+	{
+		if (this->GetId() != instance.GetType().GetId())
+			return {};
+
+		auto container = this->GetData()->Methods;
+		Ref<std::vector<size_t>> datas = container->GetTemplatedMethods(name);
+		for (auto& id : *datas.Get())
+		{
+			auto methodData = container->GetMethodData(id);
+			if (Utils::ArgListCanCallParamData(methodData->Parameters, args) &&
+				methodData->TemplateParams == templateArgs)
+			{
+				return Method(id, container).Invoke(instance, std::move(args));
+			}
+		}
+
+		return Variant();
+	}
+
+	Variant Type::InvokeTemplatedMethod(const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args) const
+	{
+		if (!this->IsDefaultConstructable())
+			return false;
+
+		auto container = this->GetData()->Methods;
+		Ref<std::vector<size_t>> datas = container->GetTemplatedMethods(name);
+		for (auto& id : *datas.Get())
+		{
+			auto methodData = container->GetMethodData(id);
+			if (Utils::ArgListCanCallParamData(methodData->Parameters, args) &&
+				methodData->TemplateParams == templateArgs)
+			{
+				return Method(id, container).Invoke(std::move(args));
+			}
 		}
 
 		return Variant();
@@ -129,7 +189,7 @@ namespace RefLib
 
 	std::optional<Constructor> Type::GetConstructor(const std::vector<Type>& params) const
 	{
-		for (auto& constructorData : *(m_Data->Constructors))
+		for (auto& constructorData : *(GetData()->Constructors))
 		{
 			if (Utils::TypeListCanCallParamData(constructorData.Parameters, params))
 			{
@@ -142,7 +202,7 @@ namespace RefLib
 
 	std::vector<Constructor> Type::GetConstructors() const
 	{
-		std::vector<ConstructorData>& datas = *(m_Data->Constructors);
+		std::vector<ConstructorData>& datas = *(GetData()->Constructors);
 		std::vector<Constructor> constructors;
 		for (auto& data : datas)
 			constructors.push_back(Constructor(&data));
@@ -152,7 +212,7 @@ namespace RefLib
 
 	Variant Type::Create(std::vector<Argument> args) const
 	{
-		for (auto& constructorData : *(m_Data->Constructors))
+		for (auto& constructorData : *(GetData()->Constructors))
 		{
 			if (Utils::ArgListCanCallParamData(constructorData.Parameters, args))
 			{
@@ -165,7 +225,7 @@ namespace RefLib
 
 	Variant Type::CreatePtr(std::vector<Argument> args) const
 	{
-		for (auto& constructorData : *(m_Data->Constructors))
+		for (auto& constructorData : *(GetData()->Constructors))
 		{
 			if (Utils::ArgListCanCallParamData(constructorData.Parameters, args))
 			{
@@ -178,7 +238,7 @@ namespace RefLib
 
 	bool Type::IsDefaultConstructable() const
 	{
-		for (auto& constructorData : *m_Data->Constructors)
+		for (auto& constructorData : *GetData()->Constructors)
 		{
 			if (constructorData.Parameters.size() == 0)
 				return true;
@@ -191,7 +251,7 @@ namespace RefLib
 	{
 		if (IsEnum())
 		{
-			return Enum(Ref<EnumDataWrapper>(m_Data->EnumValue));
+			return Enum(Ref<EnumDataWrapper>(GetData()->EnumValue));
 		}
 
 		return {};
@@ -246,34 +306,46 @@ namespace RefLib
 
 	const std::vector<BaseType>& Type::GetBaseTypes() const
 	{
-		return m_Data->BaseTypes->GetBaseTypes();
+		return GetData()->BaseTypes->GetBaseTypes();
 	}
 
 	std::optional<Type> Type::GetDeclaringType()
 	{
 		if (IsNestedType())
-			return Type(s_TypeDatas[m_Data->DeclaringType.value()], TypeFlags::None); 
+			return Type(GetData()->DeclaringType.value(), TypeFlags::None);
 
 		return {};
 	}
 
 	bool Type::IsNestedType()
 	{
-		return m_Data->DeclaringType.has_value();
+		return GetData()->DeclaringType.has_value();
 	}
 
 	std::optional<Type> Type::GetNestedType(const std::string& name) const
 	{
-		return m_Data->NestedTypes->GetType(name);
+		return GetData()->NestedTypes->GetType(name);
 	}
 
 	const std::vector<Type>& Type::GetNestedTypes() const
 	{
-		return m_Data->NestedTypes->GetTypes();
+		return GetData()->NestedTypes->GetTypes();
 	}
 
 	std::optional<BaseType> Type::GetBaseType(const std::string& name) const
 	{
-		return m_Data->BaseTypes->GetBase(name);
+		return GetData()->BaseTypes->GetBase(name);
+	}
+
+	void Type::AddPreregisteredMethods(Ref<TypeData> data, MethodContainer* container)
+	{
+		if (data->PreRegisteredMethods == nullptr)
+			return;
+
+		for (auto& method : *data->PreRegisteredMethods)
+			container->AddMethod(method);
+
+		delete data->PreRegisteredMethods;
+		data->PreRegisteredMethods = nullptr;
 	}
 }

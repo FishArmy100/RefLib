@@ -54,6 +54,18 @@ namespace RefLib
 			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), AccessLevel::Public, paramNames);
 		}
 
+		template<typename TReturn, typename... TArgs>
+		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<TypeId>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {})
+		{
+			m_Methods.push_back(MethodData(name, method, templateArgs, level, paramNames));
+		}
+
+		template<typename TReturn, typename... TArgs>
+		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, const std::vector<TypeId>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {})
+		{
+			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), templateArgs, level, paramNames);
+		}
+
 		template<typename... TArgs>
 		void AddConstructor(AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {})
 		{

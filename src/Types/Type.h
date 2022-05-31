@@ -53,6 +53,7 @@ namespace RefLib
 			TypeData* data = CreateTypeData<T>(name, t.GetId(), true, declaring);
 			data->Properties = prototype.Properties;
 			data->Methods = prototype.Methods;
+			AddPreregisteredMethods(t.GetData(), data->Methods);
 			data->Constructors = prototype.Constructors;
 			data->BaseTypes = prototype.BaseTypes;
 			data->NestedTypes = prototype.NestedTypes;
@@ -78,21 +79,23 @@ namespace RefLib
 			return t;
 		}
 
+		template<typename TClass, typename TReturn, typename... TArgs>
+		static void RegisterMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), std::vector<TypeId> templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {});
+
 	public:
-		Type(TypeData* data, TypeFlags flags) : m_Data(data), m_Flags(flags) 
+		Type(TypeId id, TypeFlags flags) : m_TypeId(id), m_Flags(flags) 
 		{
-			if (data == nullptr)
-				throw std::exception("Cannot construct type from nullptr");
+
 		}
 
 		Type(const Type& other) = default;
-		Type& operator=(const Type& other) { this->m_Data = other.m_Data; this->m_Flags = other.m_Flags; return *this; }
+		Type& operator=(const Type& other) { this->GetData() = other.GetData(); this->m_Flags = other.m_Flags; return *this; }
 		~Type() = default;
 
-		std::string_view GetName() const { return m_Data->Name; }
-		TypeId GetId() const { return m_Data->Id; }
+		std::string_view GetName() const { return GetData()->Name; }
+		TypeId GetId() const { return GetData()->Id; }
 		TypeFlags GetFlags() const { return m_Flags; }
-		bool IsRegistered() const { return m_Data->IsRegistered; }
+		bool IsRegistered() const { return GetData()->IsRegistered; }
 
 		bool IsFlag(TypeFlags flag) const { return (bool)(m_Flags & flag); }
 		bool IsConst() const { return IsFlag(TypeFlags::Const); }
@@ -108,8 +111,11 @@ namespace RefLib
 
 		std::optional<Method> GetMethod(const std::string& name) const;
 		std::optional<Method> GetMethod(const std::string& name, const std::vector<Type>& paramTypes) const;
+		std::optional<Method> GetTemplatedMethod(const std::string& name, const std::vector<TypeId>& templateArgs, const std::vector<Type>& paramTypes) const;
 		Variant InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args) const;
 		Variant InvokeMethod(const std::string& name, std::vector<Argument> args) const;
+		Variant InvokeTemplatedMethod(Instance instance, const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args) const;
+		Variant InvokeTemplatedMethod(const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args) const;
 		std::vector<Method> GetMethods() const;
 
 		std::optional<Constructor> GetConstructor(const std::vector<Type>& params) const;
@@ -128,15 +134,15 @@ namespace RefLib
 		std::optional<Type> GetDeclaringType();
 		bool IsNestedType();
 
-		bool IsEnum() const { return m_Data->EnumValue != nullptr; } 
+		bool IsEnum() const { return GetData()->EnumValue != nullptr; }
 		std::optional<Enum> AsEnum() const; 
 
-		bool IsPointer() const { return m_Data->IsPointer; }
+		bool IsPointer() const { return GetData()->IsPointer; }
 		 
 		bool IsAssignableFrom(Type type) const; 
 		bool IsConvertableTo(Type type) const; 
 
-		Type Dereferenced() const { return m_Data->DereferenceFunc(); }
+		Type Dereferenced() const { return GetData()->DereferenceFunc(); }
 
 		bool operator==(const Type& other) const
 		{
@@ -160,7 +166,7 @@ namespace RefLib
 				s_TypeDatas.push_back(CreateTypeData<T>(name, id, false, {}));
 			}
 
-			Type type = Type(s_TypeDatas[id], flags);
+			Type type = Type(id, flags);
 
 			// gard against stack overflow if try to get the same type while registering it
 			if (!type.IsRegistered() && s_AutoRegisteringTypes.find(id) == s_AutoRegisteringTypes.end())
@@ -190,12 +196,17 @@ namespace RefLib
 			return data;
 		}
 
+		static void AddPreregisteredMethods(Ref<TypeData> data, MethodContainer* container);
+
+	private:
+		Ref<TypeData> GetData() const { return s_TypeDatas.at(m_TypeId); }
+
 	private:
 		static std::vector<TypeData*> s_TypeDatas;
 		inline static std::unordered_set<TypeId> s_AutoRegisteringTypes = {};
 
 	private:
-		TypeData* m_Data;
+		TypeId m_TypeId;
 		TypeFlags m_Flags;
 	};
 }
