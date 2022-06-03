@@ -2,39 +2,39 @@
 
 namespace RefLib
 {
-	template<typename TBase>
+	template<typename T>
 	class Ref
 	{
 	public:
-		Ref(TBase* data) : m_Data(data) {}
-		Ref(TBase& dataRef) : m_Data(&dataRef) {}
+		Ref(T* data) : m_Data(data) {}
+		Ref(T& dataRef) : m_Data(&dataRef) {}
 		Ref() : m_Data(nullptr) {}
-		Ref(const Ref<TBase>& other) = default;
+		Ref(const Ref<T>& other) = default;
 		~Ref() = default;
 
 		bool IsNull() const { return m_Data == nullptr; }
 		bool IsNotNull() const { return m_Data != nullptr; }
 
-		TBase* Get() { return m_Data; }
-		const TBase* Get() const { return m_Data; }
+		T* Get() { return m_Data; }
+		const T* Get() const { return m_Data; }
 
-		TBase* operator->()
+		T* operator->()
 		{
 			if (m_Data)
 				return m_Data;
 
-			return (TBase*)nullptr; // Tried to access a null value
+			return (T*)nullptr; // Tried to access a null value
 		}
 
-		const TBase* operator->() const
+		const T* operator->() const
 		{
 			if (m_Data)
 				return m_Data;
 
-			return (TBase*)nullptr; // Tried to access a null value
+			return (T*)nullptr; // Tried to access a null value
 		}
 
 	private:
-		TBase* m_Data;
+		T* m_Data;
 	};
 }

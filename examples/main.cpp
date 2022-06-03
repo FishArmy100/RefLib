@@ -11,46 +11,42 @@
 #include "Constructor/Constructor.h"
 #include "Enum/Enum.h"
 #include "Enum/EnumData.h"
+#include "Types/MethodRegistration.h"
+#include "Function/Function.h"
 
 template<typename T>
-struct Position
+void Print(const T& value)
 {
-	Position(const T& x, const T& y, const T& z) :
-		X(x), Y(y), Z(z) 
-	{}
-
-	T X;
-	T Y;
-	T Z;
-};
-
-namespace RefLib
-{
-	template<typename T>
-	struct TypeRegistrationFactory<Position<T>>
-	{
-		TypeRegistrationFactory() = default;
-		bool operator()()
-		{
-			TypeBuilder<Position<T>> builder = TypeBuilder<Position<T>>("Position<" + (std::string)Type::Get<T>().GetName() + ">");
-			builder.AddConstructor<const T&, const T&, const T&>({ "x", "y", "z" });
-			builder.AddProperty("X", &Position<T>::X);
-			builder.AddProperty("Y", &Position<T>::Y);
-			builder.AddProperty("Z", &Position<T>::Z);
-			builder.Register();
-			return true;
-		}
-	};
+	std::cout << value << "\n";
 }
+
+int Add(int x, int y) { return x + y; }
+float Add(float x, float y) { return x + y; }
 
 using namespace RefLib;
 
 int main()
 {
-	Type t = Type::Get<Position<int>>();
-	Variant var = t.Create({ 5, 6, 7 });
+	Function::Register("Add", static_cast<int(*)(int, int)>(&Add), {std::string("x"), std::string("y") });
+	Function::Register("Add", static_cast<float(*)(float, float)>(&Add), { std::string("x"), std::string("y") });
 
-	Position pos = var.TryConvert<Position<int>>().value();
+	Function::Register("Print", &Print<int>, { Type::Get<int>().GetId() }, { "value" });
+	Function::Register("Print", &Print<float>, { Type::Get<float>().GetId() }, { "value" });
+	Function::Register("Print", &Print<std::string>, { Type::Get<std::string>().GetId() }, { "value" });
 
-	std::cout << "Type name: " << t.GetName() << ", Values: (" << pos.X << ", " << pos.Y << ", " << pos.Z << ")";
-} 
+	Function addInt = Function::Get("Add", Type::GetMultiple<int, int>()).value();
+	Function addFloat = Function::Get("Add", Type::GetMultiple<float, float>()).value();
+
+	std::cout
+		<< "Add ints 5 and 12: " << addInt.Invoke({ 5, 12 }).TryConvert<int>().value() << "\n"
+		<< "Add floats 2.3f and 5.2f: " << addFloat.Invoke({ 2.3f, 5.2f }).TryConvert<float>().value() << "\n";
+	
+	std::cout << "Print an int: "; 
+	Function::InvokeTemplate("Print", { Type::Get<int>().GetId() }, { 4 });
+
+	std::cout << "Print an float: ";
+	Function::InvokeTemplate("Print", { Type::Get<float>().GetId() }, { 4.2f });
+
+	std::cout << "Print an std::string: ";
+	Function::InvokeTemplate("Print", { Type::Get<std::string>().GetId() }, { std::string("Hello World!") });
+}

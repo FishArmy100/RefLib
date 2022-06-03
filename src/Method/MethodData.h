@@ -19,6 +19,14 @@ namespace RefLib
 	class MethodData
 	{
 	public:
+
+		template<typename TClass, typename TReturn, typename... TArgs>
+		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<TypeId>& templateParams, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}) :
+			MethodData(name, method, level, paramNames)
+		{
+			TemplateParams = templateParams;
+		}
+
 		template<typename TClass, typename TReturn, typename... TArgs>
 		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}) :
 			Name(name), ReturnType(Type::Get<TReturn>()), 
@@ -65,10 +73,13 @@ namespace RefLib
 
 		MethodData(const MethodData& data) = default;
 
+		bool IsTemplated() const { return TemplateParams.size() > 0; }
+
 		std::string Name;
 		Type ReturnType;
 		Type DeclaringType;
 		std::vector<ParameterData> Parameters;
+		std::vector<TypeId> TemplateParams;
 		Type SignatureType;
 		AccessLevel Level;
 

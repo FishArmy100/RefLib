@@ -94,6 +94,12 @@
     <ClCompile Include="src\Registration\TypeBuilderBase.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Function\Function.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Function\FunctionData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vendor\rttr\type_name.h">
@@ -193,6 +199,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Registration\TypeRegistrationFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Types\MethodRegistration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Function\Function.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Function\FunctionData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

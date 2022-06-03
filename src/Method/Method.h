@@ -1,36 +1,43 @@
 #pragma once
 #include "MethodData.h"
+#include "MethodContainer.h"
 
 namespace RefLib
 {
 	class Method
 	{
 	public:
-		Method(Ref<MethodData> data) : m_Data(data) 
+		Method(size_t id, Ref<MethodContainer> container) : m_Index(id), m_Container(container)
 		{
-			if (data.IsNull())
+			if (container.IsNull())
 				throw std::exception("Cannot have a method data of nullptr");
 		}
 
 		Method(const Method& other) = default;
 		~Method() = default;
 
-		std::string_view GetName() const { return m_Data->Name; }
-		Type GetReturnType() const { return m_Data->ReturnType; }
-		Type GetDeclaringType() const { return m_Data->DeclaringType; }
-		const std::vector<ParameterData>& GetParameters() const { return m_Data->Parameters; }
-		AccessLevel GetAccessLevel() const { return m_Data->Level; }
-		bool IsVoid() { return m_Data->ReturnType == Type::Get<void>(); }
+		std::string_view GetName() const { return  GetData()->Name; }
+		Type GetReturnType() const { return  GetData()->ReturnType; }
+		Type GetDeclaringType() const { return  GetData()->DeclaringType; }
+		const std::vector<ParameterData>& GetParameters() const { return GetData()->Parameters; }
+		const std::vector<TypeId> GetTemplateParams() const { return GetData()->TemplateParams; }
+		bool IsTemplate() { return GetData()->IsTemplated(); }
+		AccessLevel GetAccessLevel() const { return  GetData()->Level; }
+		bool IsVoid() const { return GetData()->ReturnType == Type::Get<void>(); }
 
 		Variant Invoke(Instance ref, std::vector<Argument> args)
 		{
-			return m_Data->CallFunc(ref, args, m_Data->Parameters);
+			return GetData()->CallFunc(ref, args, GetData()->Parameters);
 		}
 
 		Variant Invoke(std::vector<Argument> args);
 
 	private:
-		Ref<MethodData> m_Data;
+		Ref<MethodData> GetData() const { return m_Container->GetAll().at(m_Index); }
+
+	private:
+		size_t m_Index;
+		mutable Ref<MethodContainer> m_Container;
 	};
 }
 
