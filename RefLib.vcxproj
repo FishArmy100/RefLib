@@ -150,6 +150,8 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Function\FunctionData.cpp" />
+    <ClCompile Include="src\Function\Function.cpp" />
     <ClCompile Include="src\Registration\TypeBuilderBase.h" />
     <ClCompile Include="src\Types\NestedTypeContainer.cpp" />
     <ClCompile Include="src\Property\PropertyContainer.cpp" />
@@ -176,6 +178,8 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Function\FunctionData.h" />
+    <ClInclude Include="src\Function\Function.h" />
     <ClInclude Include="src\Registration\TypeRegistrationFactory.h" />
     <ClInclude Include="src\Types\MethodRegistration.h" />
     <ClInclude Include="src\Types\NestedTypeContainer.h" />

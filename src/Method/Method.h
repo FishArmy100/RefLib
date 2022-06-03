@@ -19,7 +19,9 @@ namespace RefLib
 		std::string_view GetName() const { return  GetData()->Name; }
 		Type GetReturnType() const { return  GetData()->ReturnType; }
 		Type GetDeclaringType() const { return  GetData()->DeclaringType; }
-		const std::vector<ParameterData>& GetParameters() const { return  GetData()->Parameters; }
+		const std::vector<ParameterData>& GetParameters() const { return GetData()->Parameters; }
+		const std::vector<TypeId> GetTemplateParams() const { return GetData()->TemplateParams; }
+		bool IsTemplate() { return GetData()->IsTemplated(); }
 		AccessLevel GetAccessLevel() const { return  GetData()->Level; }
 		bool IsVoid() const { return GetData()->ReturnType == Type::Get<void>(); }
 
