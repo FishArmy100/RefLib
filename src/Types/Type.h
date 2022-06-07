@@ -7,6 +7,7 @@
 #include <optional>
 #include "Registration/TypeRegistrationFactory.h"
 #include <unordered_set>
+#include "Attributes/AttributeImpl.h"
 
 namespace RefLib
 {
@@ -41,7 +42,7 @@ namespace RefLib
 		static std::optional<Type> Get(TypeId id);
 
 		template<typename T>
-		static Type RegisterType(const std::string& name, TypeDataPrototype prototype, std::optional<TypeId> declaring = {})
+		static Type RegisterType(const std::string& name, TypeDataPrototype prototype, const std::vector<Variant>& attributes, std::optional<TypeId> declaring = {})
 		{
 			if (!prototype.IsFullyBuilt())
 				throw std::exception("Prototype is not fully built");
@@ -57,6 +58,7 @@ namespace RefLib
 			data->Constructors = prototype.Constructors;
 			data->BaseTypes = prototype.BaseTypes;
 			data->NestedTypes = prototype.NestedTypes;
+			data->Attributes = std::make_shared<AttributeHolder>(attributes);
 
 			*s_TypeDatas[data->Id] = *data;
 
@@ -136,6 +138,8 @@ namespace RefLib
 
 		bool IsEnum() const { return GetData()->EnumValue != nullptr; }
 		std::optional<Enum> AsEnum() const; 
+
+		REFLIB_ATTRIBUTE_HOLDER_OBJECT_IMPL(*GetData()->Attributes); // is used for a bunch of attribute based methods
 
 		bool IsPointer() const { return GetData()->IsPointer; }
 		 

@@ -14,39 +14,29 @@
 #include "Types/MethodRegistration.h"
 #include "Function/Function.h"
 
-template<typename T>
-void Print(const T& value)
+struct Player
 {
-	std::cout << value << "\n";
-}
+	Player(const std::string& name) : Name(name) {}
+	Player(const Player&) = default;
+	~Player() = default;
 
-int Add(int x, int y) { return x + y; }
-float Add(float x, float y) { return x + y; }
+	std::string Name;
+};
+
+struct ComponentAttribute {};
 
 using namespace RefLib;
 
 int main()
 {
-	Function::Register("Add", static_cast<int(*)(int, int)>(&Add), {std::string("x"), std::string("y") });
-	Function::Register("Add", static_cast<float(*)(float, float)>(&Add), { std::string("x"), std::string("y") });
+	auto attribBuilder = TypeBuilder<ComponentAttribute>("ComponentAttribute");
+	attribBuilder.Register();
 
-	Function::Register("Print", &Print<int>, { Type::Get<int>().GetId() }, { "value" });
-	Function::Register("Print", &Print<float>, { Type::Get<float>().GetId() }, { "value" });
-	Function::Register("Print", &Print<std::string>, { Type::Get<std::string>().GetId() }, { "value" });
+	TypeBuilder<Player> builder = TypeBuilder<Player>("Player");
+	builder.AddConstructor<const std::string&>();
+	builder.AddProperty("Name", &Player::Name);
+	builder.AddAttribute<ComponentAttribute>({});
+	builder.Register();
 
-	Function addInt = Function::Get("Add", Type::GetMultiple<int, int>()).value();
-	Function addFloat = Function::Get("Add", Type::GetMultiple<float, float>()).value();
-
-	std::cout
-		<< "Add ints 5 and 12: " << addInt.Invoke({ 5, 12 }).TryConvert<int>().value() << "\n"
-		<< "Add floats 2.3f and 5.2f: " << addFloat.Invoke({ 2.3f, 5.2f }).TryConvert<float>().value() << "\n";
-	
-	std::cout << "Print an int: "; 
-	Function::InvokeTemplate("Print", { Type::Get<int>().GetId() }, { 4 });
-
-	std::cout << "Print an float: ";
-	Function::InvokeTemplate("Print", { Type::Get<float>().GetId() }, { 4.2f });
-
-	std::cout << "Print an std::string: ";
-	Function::InvokeTemplate("Print", { Type::Get<std::string>().GetId() }, { std::string("Hello World!") });
+	std::cout << std::boolalpha << Type::Get<Player>().HasAttribute("ComponentAttribute");
 }

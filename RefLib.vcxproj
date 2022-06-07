@@ -150,6 +150,7 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Attributes\AttributeHolder.cpp" />
     <ClCompile Include="src\Function\FunctionData.cpp" />
     <ClCompile Include="src\Function\Function.cpp" />
     <ClCompile Include="src\Registration\TypeBuilderBase.h" />
@@ -178,6 +179,8 @@
     <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Attributes\AttributeHolder.h" />
+    <ClInclude Include="src\Attributes\AttributeImpl.h" />
     <ClInclude Include="src\Function\FunctionData.h" />
     <ClInclude Include="src\Function\Function.h" />
     <ClInclude Include="src\Registration\TypeRegistrationFactory.h" />

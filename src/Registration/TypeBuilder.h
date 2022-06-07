@@ -104,6 +104,12 @@ namespace RefLib
 			m_NestedTypes.emplace_back(std::move(builderPtr));
 			return Ref<EnumBuilder<T>>((EnumBuilder<T>*)m_NestedTypes.at(m_NestedTypes.size() - 1).get());
 		}
+		
+		template<typename T>
+		void AddAttribute(const T& value)
+		{
+			m_Attributes.push_back(value);
+		}
 
 		Type Register() override
 		{
@@ -122,7 +128,7 @@ namespace RefLib
 			prototype.Constructors = new ConstructorContainer(m_Constructors);
 			prototype.BaseTypes = new BaseTypeContainer(m_BaseTypes);
 			prototype.NestedTypes = new NestedTypeContainer(nestedTypes);
-			return Type::RegisterType<TClass>(m_Name, prototype, m_DeclaringType);
+			return Type::RegisterType<TClass>(m_Name, prototype, m_Attributes, m_DeclaringType);
 		}
 
 	protected:
@@ -139,7 +145,8 @@ namespace RefLib
 		std::vector<MethodData> m_Methods;
 		std::vector<ConstructorData> m_Constructors;
 		std::vector<BaseType> m_BaseTypes;
-		std::vector<std::unique_ptr<TypeBuilderBase>> m_NestedTypes; 
+		std::vector<std::unique_ptr<TypeBuilderBase>> m_NestedTypes;
+		std::vector<Variant> m_Attributes;
 	};
 }
 

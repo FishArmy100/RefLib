@@ -100,6 +100,9 @@
     <ClCompile Include="src\Function\FunctionData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Attributes\AttributeHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vendor\rttr\type_name.h">
@@ -208,6 +211,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Function\FunctionData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Attributes\AttributeHolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Attributes\AttributeImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

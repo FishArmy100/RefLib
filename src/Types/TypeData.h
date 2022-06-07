@@ -8,6 +8,7 @@
 #include <memory>
 #include "TypeFlags.h"
 #include <optional>
+#include "Attributes/AttributeHolder.h"
 
 namespace RefLib
 {
@@ -28,7 +29,8 @@ namespace RefLib
 			Name(name), Id(id), DereferenceFunc(nullptr),
 			Properties(nullptr), Methods(nullptr), Constructors(nullptr),
 			EnumValue(nullptr), BaseTypes(nullptr),
-			NestedTypes(nullptr), PreRegisteredMethods(nullptr)
+			NestedTypes(nullptr), PreRegisteredMethods(nullptr),
+			Attributes(nullptr)
 		{}
 		TypeData(const TypeData& other) = default;
 		~TypeData();
@@ -47,6 +49,7 @@ namespace RefLib
 		std::vector<ConstructorData>* Constructors;
 		BaseTypeContainer* BaseTypes;
 		NestedTypeContainer* NestedTypes;
+		std::shared_ptr<AttributeHolder> Attributes;
 
 		std::vector<MethodData>* PreRegisteredMethods;
 
