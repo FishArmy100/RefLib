@@ -12,7 +12,7 @@ namespace RefLib
 	static_assert(std::is_enum_v<TEnum>, "Type must be an enum");
 
 	public:
-		EnumBuilder(const std::string& name, const std::map<std::string, TEnum>& values) :
+		EnumBuilder(const std::string& name, const std::map<std::string, TEnum>& values = {}) :
 			m_Name(name), m_Values(values)
 		{
 		}
@@ -30,9 +30,15 @@ namespace RefLib
 			}
 		}
 
+		template<typename T>
+		void AddAttribute(const T& attribute)
+		{
+			m_Attributes.emplace_back(attribute); 
+		}
+
 		Type Register()
 		{
-			return Type::RegisterEnum<TEnum>(m_Name, new EnumData<TEnum>(m_Name, m_Values), m_DeclaringType);
+			return Type::RegisterEnum<TEnum>(m_Name, new EnumData<TEnum>(m_Name, m_Values, m_Attributes), m_DeclaringType);
 		}
 
 	protected:
@@ -45,6 +51,7 @@ namespace RefLib
 		std::optional<TypeId> m_DeclaringType;
 		std::string m_Name;
 		std::map<std::string, TEnum> m_Values;
+		std::vector<Variant> m_Attributes;
 	};
 
 }

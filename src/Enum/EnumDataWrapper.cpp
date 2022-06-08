@@ -3,8 +3,8 @@
 
 namespace RefLib
 {
-	EnumDataWrapper::EnumDataWrapper(Type type, Type underlying, const std::string& name) :
-		m_Type(type), m_UnderlyingType(underlying), m_Name(name)
+	EnumDataWrapper::EnumDataWrapper(Type type, Type underlying, const std::string& name, const std::vector<Variant>& attributes) :
+		m_Type(type), m_UnderlyingType(underlying), m_Name(name), m_Attributes(std::make_shared<AttributeHolder>(attributes))
 	{
 
 	}

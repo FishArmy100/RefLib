@@ -4,6 +4,7 @@
 #include <functional>
 #include "Argument/Argument.h"
 #include "Misc/AccessLevel.h"
+#include "Attributes/AttributeHolder.h"
 
 namespace RefLib
 {
@@ -15,9 +16,9 @@ namespace RefLib
 	struct PropertyData
 	{
 		template<typename TClass, typename TProp>
-		PropertyData(std::string_view name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public)
+		PropertyData(std::string_view name, TProp TClass::* prop, AccessLevel level, const std::vector<Variant>& attributes)
 			: DeclaringType(Type::Get<TClass>()), PropType(Type::Get<TProp>()), Name(name), 
-			  Level(level)
+			  Level(level), Attributes(std::make_shared<AttributeHolder>(attributes))
 		{
 			GetFunc = [=](Instance instance) -> Variant
 			{
@@ -69,6 +70,7 @@ namespace RefLib
 		std::string Name;
 
 		AccessLevel Level;
+		std::shared_ptr<AttributeHolder> Attributes;
 
 		std::function<Variant(Instance)> GetFunc;
 		std::function<bool(Instance, Argument)> SetFunc;

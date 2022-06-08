@@ -2,6 +2,7 @@
 #include "FunctionData.h"
 #include <memory>
 #include <map>
+#include "Attributes/AttributeImpl.h"
 
 namespace RefLib
 {
@@ -9,15 +10,15 @@ namespace RefLib
 	{
 	public:
 		template<typename TReturn, typename... TArgs>
-		static void Register(const std::string& name, TReturn(*func)(TArgs...), const std::vector<std::string>& paramNames = {})
+		static void Register(const std::string& name, TReturn(*func)(TArgs...), const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
-			Register(name, func, {}, paramNames);
+			Register(name, func, {}, paramNames, attributes); 
 		}
 
 		template<typename TReturn, typename... TArgs>
-		static void Register(const std::string& name, TReturn(*func)(TArgs...), const std::vector<TypeId>& templateParams, const std::vector<std::string>& paramNames = {})
+		static void Register(const std::string& name, TReturn(*func)(TArgs...), const std::vector<TypeId>& templateParams, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
-			s_FunctionDatas.emplace_back(name, func, templateParams, paramNames);
+			s_FunctionDatas.emplace_back(name, func, templateParams, paramNames, attributes);
 			size_t index = s_FunctionDatas.size() - 1;
 
 			if (s_FunctionDatas[index].IsTemplated())
@@ -36,8 +37,6 @@ namespace RefLib
 		static Variant InvokeTemplate(const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args);
 		static Variant InvokeTemplate(const std::string& name, const std::vector<TypeId>& templateArgs, const std::vector<Type> paramTypes, std::vector<Argument> args);
 
-		
-
 	public:
 		Function() = delete;
 		Function(const Function&) = default;
@@ -49,6 +48,8 @@ namespace RefLib
 		const std::vector<TypeId> GetTemplateParams() const { return GetData()->TemplateParams; }
 		bool IsTemplated() const { return GetData()->IsTemplated(); }
 		Type GetSignatureType() const { return GetData()->SignatureType; }
+
+		REFLIB_ATTRIBUTE_HOLDER_OBJECT_IMPL(*GetData()->Attributes);
 
 	private:
 		Function(size_t index) : m_Index(index) 

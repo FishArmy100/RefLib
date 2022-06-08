@@ -66,7 +66,7 @@ namespace RefLib
 		}
 
 		template<typename T>
-		static Type RegisterEnum(const std::string& name, EnumDataWrapper* enumData, std::optional<TypeId> declaring = {})
+		static Type RegisterEnum(const std::string& name, EnumDataWrapper* enumData, std::optional<TypeId> declaring)
 		{
 			static_assert(std::is_enum_v<T>, "Type must be an enum");
 
@@ -76,6 +76,7 @@ namespace RefLib
 
 			TypeData* data = CreateTypeData<T>(name, t.GetId(), true, declaring);
 			data->EnumValue = enumData;
+			FillEnumTypeData(data, enumData);
 			s_TypeDatas[data->Id] = data;
 
 			return t;
@@ -201,6 +202,7 @@ namespace RefLib
 		}
 
 		static void AddPreregisteredMethods(Ref<TypeData> data, MethodContainer* container);
+		static void FillEnumTypeData(TypeData* typeData, EnumDataWrapper* enumData);
 
 	private:
 		Ref<TypeData> GetData() const { return s_TypeDatas.at(m_TypeId); }

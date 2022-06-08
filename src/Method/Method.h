@@ -1,6 +1,7 @@
 #pragma once
 #include "MethodData.h"
 #include "MethodContainer.h"
+#include "Attributes/AttributeImpl.h"
 
 namespace RefLib
 {
@@ -31,6 +32,8 @@ namespace RefLib
 		}
 
 		Variant Invoke(std::vector<Argument> args);
+
+		REFLIB_ATTRIBUTE_HOLDER_OBJECT_IMPL(*GetData()->Attributes);
 
 	private:
 		Ref<MethodData> GetData() const { return m_Container->GetAll().at(m_Index); }

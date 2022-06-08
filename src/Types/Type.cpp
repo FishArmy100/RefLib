@@ -348,4 +348,14 @@ namespace RefLib
 		delete data->PreRegisteredMethods;
 		data->PreRegisteredMethods = nullptr;
 	}
+
+	void Type::FillEnumTypeData(TypeData* typeData, EnumDataWrapper* enumData)
+	{
+		typeData->Properties = new PropertyContainer({});
+		typeData->Methods = new MethodContainer({});
+		typeData->Constructors = new std::vector<ConstructorData>();
+		typeData->BaseTypes = new BaseTypeContainer({});
+		typeData->NestedTypes = new NestedTypeContainer({});
+		typeData->Attributes = enumData->GetAttributeHolder();
+	}
 }

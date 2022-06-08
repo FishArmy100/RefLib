@@ -5,16 +5,17 @@
 #include "Argument/Argument.h"
 #include <array>
 #include <functional>
+#include "Attributes/AttributeHolder.h"
 
 namespace RefLib
 {
 	struct ConstructorData
 	{
 		template<typename TClass, typename... TArgs>
-		ConstructorData(TClass(*ctor)(TArgs...), TClass*(*ptrCtor)(TArgs...), AccessLevel level, const std::vector<std::string>& paramNames) :
+		ConstructorData(TClass(*ctor)(TArgs...), TClass*(*ptrCtor)(TArgs...), AccessLevel level, const std::vector<std::string>& paramNames, const std::vector<Variant>& attributes) :
 			InstatiatedType(Type::Get<TClass>()),
-			Parameters({}),
-			Level(level)
+			Parameters({}), Level(level),
+			Attributes(std::make_shared<AttributeHolder>(attributes))
 		{
 			std::vector<Type> types = std::vector<Type>{ Type::Get<TArgs>()... };
 			for (int i = 0; i < types.size(); i++)
@@ -81,6 +82,7 @@ namespace RefLib
 		Type InstatiatedType;
 		std::vector<ParameterData> Parameters;
 		AccessLevel Level;
+		std::shared_ptr<AttributeHolder> Attributes;
 		std::function<Variant(std::vector<Argument>)> ConstructorFunc;
 		std::function<Variant(std::vector<Argument>)> PtrConstructorFunc;
 

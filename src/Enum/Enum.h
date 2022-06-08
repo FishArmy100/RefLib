@@ -1,5 +1,6 @@
 #pragma once
 #include "EnumDataWrapper.h"
+#include "Attributes/AttributeImpl.h"
 
 namespace RefLib
 {
@@ -18,6 +19,8 @@ namespace RefLib
 		Ref<const std::vector<std::string>> GetNames();
 
 		std::pair<std::string_view, Variant> GetEnumValueFromIndex(size_t index);
+
+		REFLIB_ATTRIBUTE_HOLDER_OBJECT_IMPL(*m_Wrapper->GetAttributeHolder());
 
 	private:
 		Ref<EnumDataWrapper> m_Wrapper;

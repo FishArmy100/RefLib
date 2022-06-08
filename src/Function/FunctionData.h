@@ -5,15 +5,17 @@
 #include "Argument/Argument.h"
 #include "Misc/ParameterData.h"
 #include <array>
+#include "Attributes/AttributeHolder.h"
 
 namespace RefLib
 {
 	struct FunctionData
 	{
 		template<typename TReturn, typename... TArgs>
-		FunctionData(const std::string& name, TReturn(*func)(TArgs...), const std::vector<TypeId>& templateParams = {}, const std::vector<std::string>& paramNames = {}) :
+		FunctionData(const std::string& name, TReturn(*func)(TArgs...), const std::vector<TypeId>& templateParams, const std::vector<std::string>& paramNames, const std::vector<Variant>& attributes) :
 			Name(name), ReturnType(Type::Get<TReturn>()), TemplateParams(templateParams), 
-			SignatureType(Type::Get<decltype(func)>()), Parameters({})
+			SignatureType(Type::Get<decltype(func)>()), Parameters({}),
+			Attributes(std::make_shared<AttributeHolder>(attributes))
 		{
 			if constexpr (sizeof...(TArgs) > 0)
 			{
@@ -43,6 +45,7 @@ namespace RefLib
 		std::vector<ParameterData> Parameters;
 		std::vector<TypeId> TemplateParams;
 		Type SignatureType;
+		std::shared_ptr<AttributeHolder> Attributes; 
 
 		std::function<Variant(std::vector<Argument>, std::vector<ParameterData>&)> CallFunc;
 

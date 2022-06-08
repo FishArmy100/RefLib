@@ -1,6 +1,7 @@
 #pragma once
 #include "ConstructorData.h"
 #include "Utils/Ref.h"
+#include "Attributes/AttributeImpl.h"
 
 namespace RefLib
 {
@@ -33,6 +34,8 @@ namespace RefLib
 		{ 
 			return m_Data->Parameters; 
 		}
+
+		REFLIB_ATTRIBUTE_HOLDER_OBJECT_IMPL(*m_Data->Attributes);
 
 	private:
 		Ref<ConstructorData> m_Data; 

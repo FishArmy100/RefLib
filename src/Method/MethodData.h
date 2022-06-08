@@ -8,6 +8,7 @@
 #include <utility>
 #include <iostream>
 #include "Misc/AccessLevel.h"
+#include "Attributes/AttributeHolder.h"
 
 namespace RefLib
 {
@@ -21,18 +22,18 @@ namespace RefLib
 	public:
 
 		template<typename TClass, typename TReturn, typename... TArgs>
-		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<TypeId>& templateParams, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}) :
-			MethodData(name, method, level, paramNames)
+		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<TypeId>& templateParams, AccessLevel level, const std::vector<std::string>& paramNames, const std::vector<Variant>& attributes) :
+			MethodData(name, method, level, paramNames, attributes)
 		{
 			TemplateParams = templateParams;
 		}
 
 		template<typename TClass, typename TReturn, typename... TArgs>
-		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}) :
+		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level, const std::vector<std::string>& paramNames, const std::vector<Variant>& attributes) :
 			Name(name), ReturnType(Type::Get<TReturn>()), 
 			DeclaringType(Type::Get<TClass>()),
 			SignatureType(Type::Get<decltype(method)>()),
-			Level(level) 
+			Level(level), Attributes(std::make_shared<AttributeHolder>(attributes))
 		{
 			std::vector<ParameterData> parameters;
 
@@ -82,6 +83,7 @@ namespace RefLib
 		std::vector<TypeId> TemplateParams;
 		Type SignatureType;
 		AccessLevel Level;
+		std::shared_ptr<AttributeHolder> Attributes;
 
 		std::function<Variant(Instance, std::vector<Argument>, std::vector<ParameterData>&)> CallFunc;
 

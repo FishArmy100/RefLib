@@ -11,6 +11,7 @@
 #include "Types/NestedTypeContainer.h"
 #include <type_traits>
 #include "EnumBuilder.h"
+#include "Misc/AccessLevel.h"
 
 namespace RefLib
 {
@@ -25,59 +26,29 @@ namespace RefLib
 		{}
 
 		template<typename TProp>
-		void AddProperty(const std::string& name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public) 
+		void AddProperty(const std::string& name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public, const std::vector<Variant>& attributes = {})
 		{
-			m_Properties.push_back(PropertyData(name, prop, level));
+			m_Properties.push_back(PropertyData(name, prop, level, attributes));
 		}
 
 		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {})
+		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
-			m_Methods.push_back(MethodData(name, method, level, paramNames));
+			m_Methods.emplace_back(name, method, level, paramNames, attributes);
 		}
 
 		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {})
+		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
-			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), level, paramNames);
-		}
-
-		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<std::string>& paramNames)
-		{
-			m_Methods.push_back(MethodData(name, method, AccessLevel::Public, paramNames));
-		}
-
-		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, const std::vector<std::string>& paramNames)
-		{
-			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), AccessLevel::Public, paramNames);
-		}
-
-		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<TypeId>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {})
-		{
-			m_Methods.push_back(MethodData(name, method, templateArgs, level, paramNames));
-		}
-
-		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, const std::vector<TypeId>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {})
-		{
-			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), templateArgs, level, paramNames);
+			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), level, paramNames, attributes);
 		}
 
 		template<typename... TArgs>
-		void AddConstructor(AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {})
+		void AddConstructor(AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
 			TClass(*ctor)(TArgs...) = [](TArgs... args) { return TClass(args...); };
 			TClass*(*ptrCtor)(TArgs...) = [](TArgs... args) { return new TClass(args...); };
-			m_Constructors.push_back(ConstructorData(ctor, ptrCtor, level, paramNames));
-		}
-
-		template<typename... TArgs>
-		void AddConstructor(const std::vector<std::string>& paramNames)
-		{
-			AddConstructor<TArgs...>(AccessLevel::Public, paramNames);
+			m_Constructors.push_back(ConstructorData(ctor, ptrCtor, level, paramNames, attributes));
 		}
 
 		template<typename TBase>

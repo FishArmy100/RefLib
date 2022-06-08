@@ -10,9 +10,11 @@ namespace RefLib
 	template<typename TEnum> //TODO: make sure can only be an enum
 	class EnumData : public EnumDataWrapper
 	{
+		static_assert(std::is_enum_v<TEnum>, "TEnum must be an enum");
+
 	public:
-		EnumData(const std::string& name, const std::map<std::string, TEnum>& values) : 
-			EnumDataWrapper(Type::Get<TEnum>(), Type::Get<std::underlying_type_t<TEnum>>(), name)
+		EnumData(const std::string& name, const std::map<std::string, TEnum>& values, const std::vector<Variant>& attributes) : 
+			EnumDataWrapper(Type::Get<TEnum>(), Type::Get<std::underlying_type_t<TEnum>>(), name, attributes)
 		{
 			m_ValueMap = values;
 			for (auto [name, value] : m_ValueMap)
