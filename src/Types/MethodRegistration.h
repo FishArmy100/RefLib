@@ -7,7 +7,7 @@
 namespace RefLib
 {
 	template<typename TClass, typename TReturn, typename... TArgs>
-	void Type::RegisterMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), std::vector<TypeId> templateArgs, AccessLevel level, const std::vector<std::string>& paramNames)
+	void Type::RegisterMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), std::vector<Type> templateArgs, AccessLevel level, const std::vector<std::string>& paramNames)
 	{
 		Type t = Type::Get<TClass>();
 

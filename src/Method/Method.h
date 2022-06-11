@@ -21,14 +21,14 @@ namespace RefLib
 		Type GetReturnType() const { return  GetData()->ReturnType; }
 		Type GetDeclaringType() const { return  GetData()->DeclaringType; }
 		const std::vector<ParameterData>& GetParameters() const { return GetData()->Parameters; }
-		const std::vector<TypeId> GetTemplateParams() const { return GetData()->TemplateParams; }
+		const std::vector<Type> GetTemplateParams() const { return GetData()->TemplateParams; }
 		bool IsTemplate() { return GetData()->IsTemplated(); }
 		AccessLevel GetAccessLevel() const { return  GetData()->Level; }
 		bool IsVoid() const { return GetData()->ReturnType == Type::Get<void>(); }
 
 		Variant Invoke(Instance ref, std::vector<Argument> args)
 		{
-			return GetData()->CallFunc(ref, args, GetData()->Parameters);
+			return std::move(GetData()->CallFunc(ref, args, GetData()->Parameters));
 		}
 
 		Variant Invoke(std::vector<Argument> args);

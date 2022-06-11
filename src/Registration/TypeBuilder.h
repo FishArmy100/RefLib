@@ -32,15 +32,15 @@ namespace RefLib
 		}
 
 		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
-			m_Methods.emplace_back(name, method, level, paramNames, attributes);
+			m_Methods.emplace_back(name, method, templateArgs, level, paramNames, attributes);
 		}
 
 		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
-			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), level, paramNames, attributes);
+			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), templateArgs, level, paramNames, attributes);
 		}
 
 		template<typename... TArgs>

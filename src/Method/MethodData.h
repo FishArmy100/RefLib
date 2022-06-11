@@ -22,7 +22,7 @@ namespace RefLib
 	public:
 
 		template<typename TClass, typename TReturn, typename... TArgs>
-		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<TypeId>& templateParams, AccessLevel level, const std::vector<std::string>& paramNames, const std::vector<Variant>& attributes) :
+		MethodData(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<Type>& templateParams, AccessLevel level, const std::vector<std::string>& paramNames, const std::vector<Variant>& attributes) :
 			MethodData(name, method, level, paramNames, attributes)
 		{
 			TemplateParams = templateParams;
@@ -68,7 +68,7 @@ namespace RefLib
 				if (obj == nullptr)
 					return Variant();
 
-				return Call(obj, method, args, std::make_integer_sequence<size_t, sizeof...(TArgs)>{}, Containter<TArgs...>{});
+				return std::move(Call(obj, method, args, std::make_integer_sequence<size_t, sizeof...(TArgs)>{}, Containter<TArgs...>{}));
 			};
 		}
 
@@ -80,7 +80,7 @@ namespace RefLib
 		Type ReturnType;
 		Type DeclaringType;
 		std::vector<ParameterData> Parameters;
-		std::vector<TypeId> TemplateParams;
+		std::vector<Type> TemplateParams;
 		Type SignatureType;
 		AccessLevel Level;
 		std::shared_ptr<AttributeHolder> Attributes;
@@ -102,7 +102,7 @@ namespace RefLib
 			}
 			else
 			{
-				return Variant((instance->*method)(((args[ints].GetValue<typename Utils::TypeGetter<ints, TArgs...>::Type>())) ...));
+				return std::move(Variant((instance->*method)(((args[ints].GetValue<typename Utils::TypeGetter<ints, TArgs...>::Type>())) ...)));
 			}
 		}
 	};

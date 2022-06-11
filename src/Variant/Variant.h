@@ -30,7 +30,7 @@ namespace RefLib
 			{
 				if constexpr (std::is_pointer_v<TBase>)
 				{
-					delete* (TBase*)ptr;
+					delete *(TBase*)ptr;
 					return true;
 				}
 
@@ -89,7 +89,8 @@ namespace RefLib
 		template<>
 		Variant(const TempVariant tv);
 
-		Variant(Variant&&) = default;
+		Variant(Variant&& other) noexcept;
+		Variant& operator=(Variant&& other) noexcept;
 
 		template<typename TBase>
 		std::optional<TBase> TryConvert() const
@@ -97,7 +98,7 @@ namespace RefLib
 			if (!m_IsValid)
 				return {};
 
-			if (m_Type == Type::Get<TBase>())
+			if (m_Type.value().GetId() == Type::Get<TBase>().GetId())
 				return *(TBase*)m_Data;
 
 			return {};
@@ -116,7 +117,7 @@ namespace RefLib
 
 		~Variant()
 		{
-			if(m_Data != nullptr && !IsValid())
+			if(m_Data != nullptr)
 				m_DeleteData(m_Data);
 		}
 

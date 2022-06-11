@@ -29,13 +29,13 @@ namespace RefLib
 
 		static std::optional<Function> Get(const std::string& name);
 		static std::optional<Function> Get(const std::string& name, const std::vector<Type>& paramTypes);
-		static std::optional<Function> GetTemplated(const std::string& name, std::vector<TypeId> templateParams);
-		static std::optional<Function> GetTemplated(const std::string& name, const std::vector<TypeId>& templateParams, const std::vector<Type>& paramTypes);
+		static std::optional<Function> GetTemplated(const std::string& name, std::vector<Type> templateParams);
+		static std::optional<Function> GetTemplated(const std::string& name, const std::vector<Type>& templateParams, const std::vector<Type>& paramTypes);
 
 		static Variant Invoke(const std::string& name, std::vector<Argument> args);
 		static Variant Invoke(const std::string& name, const std::vector<Type> paramTypes, std::vector<Argument> args);
-		static Variant InvokeTemplate(const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args);
-		static Variant InvokeTemplate(const std::string& name, const std::vector<TypeId>& templateArgs, const std::vector<Type> paramTypes, std::vector<Argument> args);
+		static Variant InvokeTemplate(const std::string& name, const std::vector<Type>& templateArgs, std::vector<Argument> args);
+		static Variant InvokeTemplate(const std::string& name, const std::vector<Type>& templateArgs, const std::vector<Type> paramTypes, std::vector<Argument> args);
 
 	public:
 		Function() = delete;
@@ -45,7 +45,7 @@ namespace RefLib
 		Variant Invoke(std::vector<Argument> args) const;
 		const std::string& GetName() const { return GetData()->Name; }
 		const ParameterList& GetParameters() const { return GetData()->Parameters; }
-		const std::vector<TypeId> GetTemplateParams() const { return GetData()->TemplateParams; }
+		const std::vector<Type> GetTemplateParams() const { return GetData()->TemplateParams; }
 		bool IsTemplated() const { return GetData()->IsTemplated(); }
 		Type GetSignatureType() const { return GetData()->SignatureType; }
 

@@ -27,7 +27,7 @@ namespace RefLib
 		return {};
 	}
 
-	std::optional<Function> Function::GetTemplated(const std::string& name, std::vector<TypeId> templateParams)
+	std::optional<Function> Function::GetTemplated(const std::string& name, std::vector<Type> templateParams)
 	{
 		auto it = s_TemplatedFunctionMap.find(name);
 		if (it == s_TemplatedFunctionMap.end())
@@ -43,7 +43,7 @@ namespace RefLib
 		return {};
 	}
 
-	std::optional<Function> Function::GetTemplated(const std::string& name, const std::vector<TypeId>& templateParams, const std::vector<Type>& paramTypes)
+	std::optional<Function> Function::GetTemplated(const std::string& name, const std::vector<Type>& templateParams, const std::vector<Type>& paramTypes)
 	{
 		auto it = s_TemplatedFunctionMap.find(name);
 		if (it == s_TemplatedFunctionMap.end())
@@ -80,7 +80,7 @@ namespace RefLib
 		return Variant();
 	}
 
-	Variant Function::InvokeTemplate(const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args)
+	Variant Function::InvokeTemplate(const std::string& name, const std::vector<Type>& templateArgs, std::vector<Argument> args)
 	{
 		auto func = GetTemplated(name, templateArgs);
 		if (func.has_value())
@@ -89,7 +89,7 @@ namespace RefLib
 		return Variant();
 	}
 
-	Variant Function::InvokeTemplate(const std::string& name, const std::vector<TypeId>& templateArgs, const std::vector<Type> paramTypes, std::vector<Argument> args)
+	Variant Function::InvokeTemplate(const std::string& name, const std::vector<Type>& templateArgs, const std::vector<Type> paramTypes, std::vector<Argument> args)
 	{
 		auto func = GetTemplated(name, templateArgs, paramTypes);
 		if (func.has_value())

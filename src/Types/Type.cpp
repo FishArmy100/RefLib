@@ -88,7 +88,7 @@ namespace RefLib
 		return {};
 	}
 
-	std::optional<Method> Type::GetTemplatedMethod(const std::string& name, const std::vector<TypeId>& templateArgs, const std::vector<Type>& paramTypes) const
+	std::optional<Method> Type::GetTemplatedMethod(const std::string& name, const std::vector<Type>& templateArgs, const std::vector<Type>& paramTypes) const
 	{
 		auto container = this->GetData()->Methods;
 		Ref<std::vector<size_t>> datas = container->GetTemplatedMethods(name);
@@ -141,13 +141,13 @@ namespace RefLib
 		for (auto& id : *datas.Get())
 		{
 			if (Utils::ArgListCanCallParamData(container->GetMethodData(id)->Parameters, args))
-				return Method(id, container).Invoke(instance, std::move(args));
+				return std::move(Method(id, container).Invoke(instance, std::move(args)));
 		}
 
 		return Variant();
 	}
 
-	Variant Type::InvokeTemplatedMethod(Instance instance, const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args) const
+	Variant Type::InvokeTemplatedMethod(Instance instance, const std::string& name, const std::vector<Type>& templateArgs, std::vector<Argument> args) const
 	{
 		if (this->GetId() != instance.GetType().GetId())
 			return {};
@@ -167,7 +167,7 @@ namespace RefLib
 		return Variant();
 	}
 
-	Variant Type::InvokeTemplatedMethod(const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args) const
+	Variant Type::InvokeTemplatedMethod(const std::string& name, const std::vector<Type>& templateArgs, std::vector<Argument> args) const
 	{
 		if (!this->IsDefaultConstructable())
 			return false;

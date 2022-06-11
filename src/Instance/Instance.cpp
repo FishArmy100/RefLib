@@ -5,7 +5,7 @@ namespace RefLib
 {
 	Instance::Instance(const Variant& v) : m_Type(v.GetType()), m_Data(v.GetRawData()) 
 	{
-		m_AsVarientFunc = [=]() { return v; };
+		m_AsVarientFunc = [&]() { return v; };
 	}
 
 	Instance::Instance(const TempVariant tv) : m_Type(tv.DataType), m_Data(tv.Data)

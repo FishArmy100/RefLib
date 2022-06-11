@@ -23,6 +23,41 @@ namespace RefLib
 		return Variant(VarientVoidType{});
 	}
 
+	Variant::Variant(Variant&& other) noexcept
+	{
+		m_IsValid = other.m_IsValid;
+		m_Type = other.m_Type;
+		m_Data = other.m_Data;
+		m_DeleteData = other.m_DeleteData;
+		m_CopyData = other.m_CopyData;
+		m_DeleteDataPtr = other.m_DeleteDataPtr;
+		m_GetDereferencedHealper = other.m_GetDereferencedHealper;
+
+		other.m_Data = nullptr;
+		other.m_IsValid = false;
+	}
+
+	Variant& Variant::operator=(Variant&& other) noexcept
+	{
+		if (this == &other)
+			return *this;
+
+		if (m_Data != nullptr)
+			m_DeleteData(m_Data);
+
+		m_IsValid = other.m_IsValid;
+		m_Type = other.m_Type;
+		m_Data = other.m_Data;
+		m_DeleteData = other.m_DeleteData;
+		m_CopyData = other.m_CopyData;
+		m_DeleteDataPtr = other.m_DeleteDataPtr;
+		m_GetDereferencedHealper = other.m_GetDereferencedHealper;
+
+		other.m_Data = nullptr;
+		other.m_IsValid = false; 
+		return *this;
+	}
+
 	bool Variant::Delete()
 	{
 		bool didDelete = m_DeleteDataPtr(m_Data);

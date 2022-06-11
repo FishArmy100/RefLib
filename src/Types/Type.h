@@ -41,6 +41,43 @@ namespace RefLib
 		static std::optional<Type> Get(const std::string& name);
 		static std::optional<Type> Get(TypeId id);
 
+		template<typename TSelectFunc>
+		static std::vector<Type> Select(TSelectFunc func)
+		{
+			std::vector<Type> types;
+			for (auto& data : s_TypeDatas)
+			{
+				Type t = Type(data, TypeFlags::None);
+				if (func(t))
+					types.push_back(t);
+			}
+
+			return types;
+		}
+
+		template<typename TIterFunc>
+		static void Iterate(TIterFunc func)
+		{
+			for (auto& data : s_TypeDatas)
+			{
+				Type t = Type(data, TypeFlags::None);
+				func(t);
+			}
+		}
+
+		template<typename TFindFunc>
+		static std::optional<Type> Find(TFindFunc func)
+		{
+			for (auto& data : s_TypeDatas)
+			{
+				Type t = Type(data, TypeFlags::None);
+				if (func(t))
+					return t;
+			}
+
+			return {};
+		}
+
 		template<typename T>
 		static Type RegisterType(const std::string& name, TypeDataPrototype prototype, const std::vector<Variant>& attributes, std::optional<TypeId> declaring = {})
 		{
@@ -83,7 +120,7 @@ namespace RefLib
 		}
 
 		template<typename TClass, typename TReturn, typename... TArgs>
-		static void RegisterMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), std::vector<TypeId> templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {});
+		static void RegisterMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), std::vector<Type> templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {});
 
 	public:
 		Type(TypeId id, TypeFlags flags) : m_TypeId(id), m_Flags(flags) 
@@ -97,6 +134,7 @@ namespace RefLib
 
 		std::string_view GetName() const { return GetData()->Name; }
 		TypeId GetId() const { return GetData()->Id; }
+		operator TypeId() const { return GetData()->Id; }
 		TypeFlags GetFlags() const { return m_Flags; }
 		bool IsRegistered() const { return GetData()->IsRegistered; }
 
@@ -114,11 +152,11 @@ namespace RefLib
 
 		std::optional<Method> GetMethod(const std::string& name) const;
 		std::optional<Method> GetMethod(const std::string& name, const std::vector<Type>& paramTypes) const;
-		std::optional<Method> GetTemplatedMethod(const std::string& name, const std::vector<TypeId>& templateArgs, const std::vector<Type>& paramTypes) const;
+		std::optional<Method> GetTemplatedMethod(const std::string& name, const std::vector<Type>& templateArgs, const std::vector<Type>& paramTypes) const;
 		Variant InvokeMethod(Instance instance, const std::string& name, std::vector<Argument> args) const;
 		Variant InvokeMethod(const std::string& name, std::vector<Argument> args) const;
-		Variant InvokeTemplatedMethod(Instance instance, const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args) const;
-		Variant InvokeTemplatedMethod(const std::string& name, const std::vector<TypeId>& templateArgs, std::vector<Argument> args) const;
+		Variant InvokeTemplatedMethod(Instance instance, const std::string& name, const std::vector<Type>& templateArgs, std::vector<Argument> args) const;
+		Variant InvokeTemplatedMethod(const std::string& name, const std::vector<Type>& templateArgs, std::vector<Argument> args) const;
 		std::vector<Method> GetMethods() const;
 
 		std::optional<Constructor> GetConstructor(const std::vector<Type>& params) const;
