@@ -15,10 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".gitattributes" />
-    <None Include=".gitignore" />
-    <None Include="LICENSE" />
-    <None Include="README.md" />
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
