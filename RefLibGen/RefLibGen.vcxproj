@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Parsing\AntlrParserVisitor.h" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="vendor\antlr\CPP14Lexer.cpp" />
     <ClCompile Include="vendor\antlr\CPP14Parser.cpp" />
@@ -162,6 +163,8 @@
     <ClCompile Include="vendor\antlr\CPP14ParserListener.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Parsing\FunctionData.h" />
+    <ClInclude Include="src\Parsing\ParameterData.h" />
     <ClInclude Include="src\Test.h" />
     <ClInclude Include="src\vendor\antlr4\antlr4-common.h" />
     <ClInclude Include="src\vendor\antlr4\antlr4-runtime.h" />

@@ -12,9 +12,10 @@ class FunctionDefinitionLisener : public CPP14ParserBaseListener
 public:
 	FunctionDefinitionLisener(Parser& parser) : m_Parser(&parser) {}
 
-	void enterEveryRule(antlr4::ParserRuleContext* context) override 
+	void enterFunctionDefinition(CPP14Parser::FunctionDefinitionContext* context) override
 	{ 
-		std::cout << context->getStart()->getText() << "\n";
+		CPP14Parser::DeclaratorContext* declarator = context->declarator();
+		std::cout << declarator->pointerDeclarator()->getText();
 	}
 
 private:
@@ -33,7 +34,7 @@ int main()
 	/*tree::ParseTree* tree = parser.translationUnit();
 	std::cout << tree->toStringTree(true);*/
 
-	tree::ParseTree* tree = parser.functionDefinition();
+	tree::ParseTree* tree = parser.translationUnit();
 	FunctionDefinitionLisener listener = FunctionDefinitionLisener(parser);
 	tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
 }

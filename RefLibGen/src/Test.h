@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-void main()
+void main(int x)
 {
     std::cout << "Hello World!";
     return;

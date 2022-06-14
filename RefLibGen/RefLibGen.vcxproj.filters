@@ -30,6 +30,9 @@
     <ClCompile Include="vendor\antlr\CPP14ParserListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Parsing\AntlrParserVisitor.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vendor\antlr4\atn\ActionTransition.h">
@@ -546,6 +549,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Parsing\FunctionData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Parsing\ParameterData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

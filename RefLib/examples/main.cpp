@@ -14,7 +14,7 @@
 #include "Types/MethodRegistration.h"
 #include "Function/Function.h"
 
-class [[slighshot(15)]] Player
+class Player
 {
 public:
 	Player(const std::string& name) : m_Name(name) {}
