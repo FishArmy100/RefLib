@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Attributes\AttributeHolder.cpp" />
+    <ClCompile Include="src\Container\ContainerView.cpp" />
     <ClCompile Include="src\Function\FunctionData.cpp" />
     <ClCompile Include="src\Function\Function.cpp" />
     <ClCompile Include="src\Registration\TypeBuilderBase.h" />
@@ -181,6 +182,9 @@
   <ItemGroup>
     <ClInclude Include="src\Attributes\AttributeHolder.h" />
     <ClInclude Include="src\Attributes\AttributeImpl.h" />
+    <ClInclude Include="src\Container\ContainerView.h" />
+    <ClInclude Include="src\Container\ContainerViewIterator.h" />
+    <ClInclude Include="src\Container\IContainerView.h" />
     <ClInclude Include="src\Function\FunctionData.h" />
     <ClInclude Include="src\Function\Function.h" />
     <ClInclude Include="src\Registration\TypeRegistrationFactory.h" />

@@ -10,6 +10,7 @@
 #include "Method/MethodContainer.h"
 #include "BaseTypeContainer.h"
 #include "NestedTypeContainer.h"
+#include "Container/ContainerView.h"
 
 namespace RefLib
 {
@@ -335,6 +336,21 @@ namespace RefLib
 	std::optional<BaseType> Type::GetBaseType(const std::string& name) const
 	{
 		return GetData()->BaseTypes->GetBase(name);
+	}
+
+	std::optional<ContainerView> Type::AsContainer(Instance instance)
+	{
+		if (IsContainer())
+			return GetData()->AsContainerFunc->value()(instance);
+		return {};
+	}
+
+	bool Type::IsContainer()
+	{
+		if (!IsRegistered())
+			return false;
+
+		return GetData()->AsContainerFunc->has_value();
 	}
 
 	void Type::AddPreregisteredMethods(Ref<TypeData> data, MethodContainer* container)

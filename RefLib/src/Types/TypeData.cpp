@@ -1,6 +1,7 @@
 #include "TypeData.h"
 #include "Property/Property.h"
 #include "Constructor/Constructor.h"
+#include "Container/ContainerView.h"
 
 namespace RefLib
 {
@@ -12,5 +13,6 @@ namespace RefLib
 		delete EnumValue;
 		delete BaseTypes;
 		delete NestedTypes;
+		delete AsContainerFunc;
 	}
 }

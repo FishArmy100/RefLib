@@ -9,6 +9,7 @@
 #include "TypeFlags.h"
 #include <optional>
 #include "Attributes/AttributeHolder.h"
+#include <functional>
 
 namespace RefLib
 {
@@ -22,6 +23,8 @@ namespace RefLib
 	enum class AccessLevel;
 	class BaseTypeContainer;
 	class NestedTypeContainer;
+	class Instance;
+	class ContainerView;
 
 	struct TypeData
 	{
@@ -30,7 +33,7 @@ namespace RefLib
 			Properties(nullptr), Methods(nullptr), Constructors(nullptr),
 			EnumValue(nullptr), BaseTypes(nullptr),
 			NestedTypes(nullptr), PreRegisteredMethods(nullptr),
-			Attributes(nullptr)
+			Attributes(nullptr), AsContainerFunc()
 		{}
 		TypeData(const TypeData& other) = default;
 		~TypeData();
@@ -41,6 +44,8 @@ namespace RefLib
 		bool IsRegistered = false;
 
 		Type(*DereferenceFunc)() = nullptr;
+		std::optional<std::function<ContainerView(Instance)>>* AsContainerFunc;
+
 
 		std::optional<TypeId> DeclaringType;
 

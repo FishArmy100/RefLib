@@ -22,7 +22,8 @@ namespace RefLib
 		TypeBuilder(std::string_view name) : 
 			m_Name(name), m_Properties({}), m_Methods({}),
 			m_Constructors({}), m_BaseTypes({}), 
-			m_DeclaringType(std::optional<TypeId>())
+			m_DeclaringType(std::optional<TypeId>()),
+			m_AsContainerFunc()
 		{}
 
 		template<typename TProp>
@@ -82,7 +83,12 @@ namespace RefLib
 			m_Attributes.push_back(value);
 		}
 
-		Type Register() override
+		void SetAsContainer(ContainerView(*func)(TClass&))
+		{
+			m_AsContainerFunc = [=](Instance i) {return func(*i.TryConvert<TClass>()); };
+		}
+
+		Type Register() override 
 		{
 			std::vector<Type> nestedTypes;
 			TypeId id = Type::Get<TClass>().GetId();
@@ -99,6 +105,7 @@ namespace RefLib
 			prototype.Constructors = new ConstructorContainer(m_Constructors);
 			prototype.BaseTypes = new BaseTypeContainer(m_BaseTypes);
 			prototype.NestedTypes = new NestedTypeContainer(nestedTypes);
+			prototype.AsContainerFunc = new std::optional<std::function<ContainerView(Instance)>>(m_AsContainerFunc);
 			return Type::RegisterType<TClass>(m_Name, prototype, m_Attributes, m_DeclaringType);
 		}
 
@@ -118,6 +125,7 @@ namespace RefLib
 		std::vector<BaseType> m_BaseTypes;
 		std::vector<std::unique_ptr<TypeBuilderBase>> m_NestedTypes;
 		std::vector<Variant> m_Attributes;
+		std::optional<std::function<ContainerView(Instance)>> m_AsContainerFunc;
 	};
 }
 

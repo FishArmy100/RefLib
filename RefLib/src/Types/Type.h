@@ -95,6 +95,7 @@ namespace RefLib
 			data->Constructors = prototype.Constructors;
 			data->BaseTypes = prototype.BaseTypes;
 			data->NestedTypes = prototype.NestedTypes;
+			data->AsContainerFunc = prototype.AsContainerFunc;
 			data->Attributes = std::make_shared<AttributeHolder>(attributes);
 
 			*s_TypeDatas[data->Id] = *data;
@@ -129,10 +130,10 @@ namespace RefLib
 		}
 
 		Type(const Type& other) = default;
-		Type& operator=(const Type& other) { this->GetData() = other.GetData(); this->m_Flags = other.m_Flags; return *this; }
+		Type& operator=(const Type& other) { this->m_TypeId = other.m_TypeId; this->m_Flags = other.m_Flags; return *this; }
 		~Type() = default;
 
-		std::string_view GetName() const { return GetData()->Name; }
+		const std::string& GetName() const { return GetData()->Name; }
 		TypeId GetId() const { return GetData()->Id; }
 		operator TypeId() const { return GetData()->Id; }
 		TypeFlags GetFlags() const { return m_Flags; }
@@ -175,7 +176,10 @@ namespace RefLib
 		std::optional<Type> GetDeclaringType();
 		bool IsNestedType();
 
-		bool IsEnum() const { return GetData()->EnumValue != nullptr; }
+		std::optional<ContainerView> AsContainer(Instance instance);
+		bool IsContainer();
+
+		bool IsEnum() const;
 		std::optional<Enum> AsEnum() const; 
 
 		REFLIB_ATTRIBUTE_HOLDER_OBJECT_IMPL(*GetData()->Attributes); // is used for a bunch of attribute based methods
