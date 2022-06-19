@@ -252,7 +252,7 @@ namespace RefLib
 	{
 		if (IsEnum())
 		{
-			return Enum(Ref<EnumDataWrapper>(GetData()->EnumValue));
+			return Enum(Ref<EnumDataWrapper>(GetData()->EnumValue.value()));
 		}
 
 		return {};
@@ -341,37 +341,18 @@ namespace RefLib
 	std::optional<ContainerView> Type::AsContainer(Instance instance)
 	{
 		if (IsContainer())
-			return GetData()->AsContainerFunc->value()(instance);
+			return GetData()->AsContainerFunc.value()(instance);
 		return {};
 	}
 
 	bool Type::IsContainer()
 	{
-		if (!IsRegistered())
-			return false;
-
-		return GetData()->AsContainerFunc->has_value();
+		return GetData()->AsContainerFunc.has_value();
 	}
 
 	void Type::AddPreregisteredMethods(Ref<TypeData> data, MethodContainer* container)
 	{
-		if (data->PreRegisteredMethods == nullptr)
-			return;
-
 		for (auto& method : *data->PreRegisteredMethods)
 			container->AddMethod(method);
-
-		delete data->PreRegisteredMethods;
-		data->PreRegisteredMethods = nullptr;
-	}
-
-	void Type::FillEnumTypeData(TypeData* typeData, EnumDataWrapper* enumData)
-	{
-		typeData->Properties = new PropertyContainer({});
-		typeData->Methods = new MethodContainer({});
-		typeData->Constructors = new std::vector<ConstructorData>();
-		typeData->BaseTypes = new BaseTypeContainer({});
-		typeData->NestedTypes = new NestedTypeContainer({});
-		typeData->Attributes = enumData->GetAttributeHolder();
 	}
 }

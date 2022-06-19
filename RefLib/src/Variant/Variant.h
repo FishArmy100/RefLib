@@ -94,7 +94,7 @@ namespace RefLib
 		template<typename TBase>
 		std::optional<TBase> TryConvert() const
 		{
-			if (!m_IsValid)
+			if (IsValid())
 				return {};
 
 			if (m_Type.value().GetId() == Type::Get<TBase>().GetId())
@@ -105,7 +105,7 @@ namespace RefLib
 
 		Type GetType() const { return m_Type.value(); }
 		void* GetRawData() const { return m_Data; }
-		bool IsValid() const { return m_Data == nullptr; }
+		bool IsValid() const { return m_Data != nullptr; }
 		bool IsVoid() const { return m_Type == Type::Get<VarientVoidType>(); }
 		std::optional<ContainerView> TryGetContainerView();
 		ContainerView GetContainerView() { return TryGetContainerView().value(); }

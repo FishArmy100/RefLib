@@ -101,7 +101,7 @@ int main()
 	//builder.AddMethod("GetName", &Player::GetName, {});
 	//builder.Register();
 
-	Type t = Type::Get<std::vector<int>>(); 
+	Type t = Type::Get<std::vector<int>>();
 	Variant v = t.Create({});
 	t.InvokeMethod(v, "push_back", { 5 });
 	t.InvokeMethod(v, "push_back", { 7 });

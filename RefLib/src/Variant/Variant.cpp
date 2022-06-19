@@ -11,7 +11,7 @@ namespace RefLib
 
 	template<>
 	Variant::Variant(const TempVariant& tv) :
-		m_IsValid(true), m_Type(tv.DataType), m_Data(tv.Data),
+		m_Type(tv.DataType), m_Data(tv.Data),
 		m_DeleteData(tv.DeleteData), m_CopyData(tv.CopyData), 
 		m_DeleteDataPtr(tv.DeleteDataPtr)
 	{
@@ -25,7 +25,6 @@ namespace RefLib
 
 	Variant::Variant(Variant&& other) noexcept
 	{
-		m_IsValid = other.m_IsValid;
 		m_Type = other.m_Type;
 		m_Data = other.m_Data;
 		m_DeleteData = other.m_DeleteData;
@@ -34,7 +33,6 @@ namespace RefLib
 		m_GetDereferencedHealper = other.m_GetDereferencedHealper;
 
 		other.m_Data = nullptr;
-		other.m_IsValid = false;
 	}
 
 	Variant& Variant::operator=(Variant&& other) noexcept
@@ -45,7 +43,6 @@ namespace RefLib
 		if (m_Data != nullptr)
 			m_DeleteData(m_Data);
 
-		this->m_IsValid = other.m_IsValid;
 		this->m_Type = other.m_Type;
 		this->m_Data = other.m_Data;
 		this->m_DeleteData = other.m_DeleteData;
@@ -54,7 +51,6 @@ namespace RefLib
 		this->m_GetDereferencedHealper = other.m_GetDereferencedHealper;
 
 		other.m_Data = nullptr;
-		other.m_IsValid = false; 
 		return *this;
 	}
 

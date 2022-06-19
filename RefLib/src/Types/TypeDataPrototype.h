@@ -12,10 +12,11 @@ namespace RefLib
 	class BaseTypeContainer;
 	class NestedTypeContainer;
 	class ContainerView;
+	class Instance;
 
 	struct TypeDataPrototype
 	{
-		TypeDataPrototype() : Properties(nullptr), Methods(nullptr), Constructors(nullptr), BaseTypes(nullptr), NestedTypes(nullptr), AsContainerFunc(nullptr) {}
+		TypeDataPrototype() : Properties(nullptr), Methods(nullptr), Constructors(nullptr), BaseTypes(nullptr), NestedTypes(nullptr), AsContainerFunc() {}
 		TypeDataPrototype(const TypeDataPrototype& other) = default;
 		~TypeDataPrototype() = default;
 
@@ -24,8 +25,8 @@ namespace RefLib
 		std::vector<ConstructorData>* Constructors;
 		BaseTypeContainer* BaseTypes;
 		NestedTypeContainer* NestedTypes;
-		std::optional<std::function<ContainerView(Instance)>>* AsContainerFunc;
+		std::optional<std::function<ContainerView(Instance)>> AsContainerFunc;
 
-		bool IsFullyBuilt() { return Properties != nullptr && Methods != nullptr && Constructors != nullptr && BaseTypes != nullptr && NestedTypes != nullptr && AsContainerFunc != nullptr; }
+		bool IsFullyBuilt() { return Properties != nullptr && Methods != nullptr && Constructors != nullptr && BaseTypes != nullptr && NestedTypes != nullptr; }
 	};
 }

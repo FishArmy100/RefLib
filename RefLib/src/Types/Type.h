@@ -81,24 +81,18 @@ namespace RefLib
 		template<typename T>
 		static Type RegisterType(const std::string& name, TypeDataPrototype prototype, const std::vector<Variant>& attributes, std::optional<TypeId> declaring = {})
 		{
-			if (!prototype.IsFullyBuilt())
-				throw std::exception("Prototype is not fully built");
-
 			Type t = Get<T>();
 			if (t.IsRegistered())
 				throw std::exception("Cannot regester an already regestered type");
 
-			TypeData* data = CreateTypeData<T>(name, t.GetId(), true, declaring);
-			data->Properties = prototype.Properties;
-			data->Methods = prototype.Methods;
+			bool isPointer = std::is_pointer_v<T>;
+			TypeId id = t.GetId();
+			std::function<Type()> dereferenceFunc = []() {return Type::Get<std::remove_pointer_t<T>>(); };
+			TypeData* data = new TypeData(name, id, isPointer, prototype, attributes, dereferenceFunc, declaring);
 			AddPreregisteredMethods(t.GetData(), data->Methods);
-			data->Constructors = prototype.Constructors;
-			data->BaseTypes = prototype.BaseTypes;
-			data->NestedTypes = prototype.NestedTypes;
-			data->AsContainerFunc = prototype.AsContainerFunc;
-			data->Attributes = std::make_shared<AttributeHolder>(attributes);
 
-			*s_TypeDatas[data->Id] = *data;
+			delete s_TypeDatas[id];
+			s_TypeDatas[id] = data;
 
 			return Get<T>();
 		}
@@ -112,9 +106,9 @@ namespace RefLib
 			if (t.IsRegistered())
 				throw std::exception("Cannot regester an already regestered enum");
 
-			TypeData* data = CreateTypeData<T>(name, t.GetId(), true, declaring);
-			data->EnumValue = enumData;
-			FillEnumTypeData(data, enumData);
+			std::function<Type()> dereferenceFunc = []() {return Type::Get<std::remove_pointer_t<T>>(); };
+			TypeData* data = new TypeData(name, t.GetId(), enumData, dereferenceFunc, declaring);
+			delete s_TypeDatas[data->Id];
 			s_TypeDatas[data->Id] = data;
 
 			return t;
@@ -179,7 +173,7 @@ namespace RefLib
 		std::optional<ContainerView> AsContainer(Instance instance);
 		bool IsContainer();
 
-		bool IsEnum() const;
+		bool IsEnum() const { return GetData()->EnumValue.has_value(); }
 		std::optional<Enum> AsEnum() const; 
 
 		REFLIB_ATTRIBUTE_HOLDER_OBJECT_IMPL(*GetData()->Attributes); // is used for a bunch of attribute based methods
@@ -189,7 +183,7 @@ namespace RefLib
 		bool IsAssignableFrom(Type type) const; 
 		bool IsConvertableTo(Type type) const; 
 
-		Type Dereferenced() const { return GetData()->DereferenceFunc(); }
+		Type GetDereferenced() const { return GetData()->DereferenceFunc(); }
 
 		bool operator==(const Type& other) const
 		{
@@ -210,7 +204,8 @@ namespace RefLib
 			{
 				id = s_TypeDatas.size();
 				std::string name = Utils::GetTypeName<T>();
-				s_TypeDatas.push_back(CreateTypeData<T>(name, id, false, {}));
+				std::function<Type()> dereferenceFunc = []() {return Type::Get<std::remove_pointer_t<T>>(); };
+				s_TypeDatas.push_back(new TypeData(name, id, std::is_pointer_v<T>, dereferenceFunc));
 			}
 
 			Type type = Type(id, flags);
@@ -231,20 +226,7 @@ namespace RefLib
 			return type;
 		}
 
-		template<typename T>
-		static TypeData* CreateTypeData(const std::string& name, TypeId id, bool isRegistered, std::optional<TypeId> declaring)
-		{
-			TypeData* data = new TypeData(name, id);
-			data->IsRegistered = isRegistered;
-			data->IsPointer = std::is_pointer<T>::value;
-			data->DereferenceFunc = []() { return Type::Get<std::remove_pointer_t<T>>(); }; 
-			data->DeclaringType = declaring;
-
-			return data;
-		}
-
 		static void AddPreregisteredMethods(Ref<TypeData> data, MethodContainer* container);
-		static void FillEnumTypeData(TypeData* typeData, EnumDataWrapper* enumData);
 
 	private:
 		Ref<TypeData> GetData() const { return s_TypeDatas.at(m_TypeId); }

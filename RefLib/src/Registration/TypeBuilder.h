@@ -105,7 +105,7 @@ namespace RefLib
 			prototype.Constructors = new ConstructorContainer(m_Constructors);
 			prototype.BaseTypes = new BaseTypeContainer(m_BaseTypes);
 			prototype.NestedTypes = new NestedTypeContainer(nestedTypes);
-			prototype.AsContainerFunc = new std::optional<std::function<ContainerView(Instance)>>(m_AsContainerFunc);
+			prototype.AsContainerFunc = m_AsContainerFunc;
 			return Type::RegisterType<TClass>(m_Name, prototype, m_Attributes, m_DeclaringType);
 		}
 
