@@ -8,7 +8,7 @@
 
 namespace RefLib
 {
-	class PropertyData;
+	struct PropertyData;
 	class Instance;
 	class Variant;
 

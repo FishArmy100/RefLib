@@ -12,11 +12,11 @@ namespace RefLib
 		template<typename TReturn, typename... TArgs>
 		static void Register(const std::string& name, TReturn(*func)(TArgs...), const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
-			Register(name, func, {}, paramNames, attributes); 
+			RegisterTemplated(name, func, {}, paramNames, attributes);  
 		}
 
 		template<typename TReturn, typename... TArgs>
-		static void Register(const std::string& name, TReturn(*func)(TArgs...), const std::vector<TypeId>& templateParams, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		static void RegisterTemplated(const std::string& name, TReturn(*func)(TArgs...), const std::vector<Type>& templateParams, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
 			s_FunctionDatas.emplace_back(name, func, templateParams, paramNames, attributes);
 			size_t index = s_FunctionDatas.size() - 1;

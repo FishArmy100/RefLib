@@ -12,6 +12,7 @@
 #include <type_traits>
 #include "EnumBuilder.h"
 #include "Misc/AccessLevel.h"
+#include "Types/DerivedTypeContainer.h"
 
 namespace RefLib
 {
@@ -27,41 +28,48 @@ namespace RefLib
 		{}
 
 		template<typename TProp>
-		void AddProperty(const std::string& name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public, const std::vector<Variant>& attributes = {})
+		TypeBuilder& AddProperty(const std::string& name, TProp TClass::* prop, AccessLevel level = AccessLevel::Public, const std::vector<Variant>& attributes = {})
 		{
 			m_Properties.push_back(PropertyData(name, prop, level, attributes));
+			return *this;
 		}
 
 		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		TypeBuilder& AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
 			m_Methods.emplace_back(name, method, templateArgs, level, paramNames, attributes);
+			return *this;
 		}
 
 		template<typename TReturn, typename... TArgs>
-		void AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		TypeBuilder& AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
 			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), templateArgs, level, paramNames, attributes);
+			return *this;
 		}
 
 		template<typename... TArgs>
-		void AddConstructor(AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		TypeBuilder& AddConstructor(AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
 			TClass(*ctor)(TArgs...) = [](TArgs... args) { return TClass(args...); };
 			TClass*(*ptrCtor)(TArgs...) = [](TArgs... args) { return new TClass(args...); };
 			m_Constructors.push_back(ConstructorData(ctor, ptrCtor, level, paramNames, attributes));
+			return *this;
 		}
 
 		template<typename TBase>
-		void AddBaseType(AccessLevel level = AccessLevel::Public)
+		TypeBuilder& AddBaseType(AccessLevel level = AccessLevel::Public)
 		{
 			static_assert(std::is_base_of_v<TBase, TClass>, "TBase must be a base of TClass");
 			m_BaseTypes.push_back(BaseType(Type::Get<TBase>(), level));
+			Type::RegisterDerivedType<TBase, TClass>();
+			return *this;
 		}
 
 		template<typename T>
-		std::enable_if_t<!std::is_enum_v<T>, Ref<TypeBuilder<T>>> AddNestedType(const std::string& name)
+		Ref<TypeBuilder<T>> AddNestedClass(const std::string& name)
 		{
+			static_assert(!std::is_enum_v<T>, "Type cannot be an enum");
 			std::string typeName = m_Name + "::" + name;
 			std::unique_ptr<TypeBuilderBase> builderPtr = std::unique_ptr<TypeBuilder<T>>(new TypeBuilder<T>(typeName));
 			m_NestedTypes.emplace_back(std::move(builderPtr));
@@ -69,8 +77,9 @@ namespace RefLib
 		}
 
 		template<typename T>
-		std::enable_if_t<std::is_enum_v<T>, Ref<EnumBuilder<T>>> AddNestedType(const std::string& name)
+		Ref<EnumBuilder<T>> AddNestedEnum(const std::string& name)
 		{
+			static_assert(std::is_enum_v<T>, "Type must be an enum");
 			std::string typeName = m_Name + "::" + name;
 			std::unique_ptr<TypeBuilderBase> builderPtr = std::unique_ptr<EnumBuilder<T>>(new EnumBuilder<T>(typeName, {}));
 			m_NestedTypes.emplace_back(std::move(builderPtr));
@@ -78,14 +87,34 @@ namespace RefLib
 		}
 		
 		template<typename T>
-		void AddAttribute(const T& value)
+		TypeBuilder& AddNestedClass(const std::string& name, void(*func)(TypeBuilder<T>&))
 		{
-			m_Attributes.push_back(value);
+			static_assert(!std::is_enum_v<T>, "Type cannot be an enum");
+			auto builder = AddNestedClass<T>(name);
+			func(*(builder.Get()));
+			return *this;
 		}
 
-		void SetAsContainer(ContainerView(*func)(TClass&))
+		template<typename T>
+		TypeBuilder& AddNestedEnum(const std::string& name, void(*func)(EnumBuilder<T>&))
+		{
+			static_assert(std::is_enum_v<T>, "Type must be an enum");
+			auto builder = AddNestedEnum<T>(name);
+			func(*(builder.Get()));
+			return *this;
+		}
+		
+		template<typename T>
+		TypeBuilder& AddAttribute(const T& value)
+		{
+			m_Attributes.push_back(value);
+			return *this;
+		}
+
+		TypeBuilder& SetAsContainer(ContainerView(*func)(TClass&))
 		{
 			m_AsContainerFunc = [=](Instance i) {return func(*i.TryConvert<TClass>()); };
+			return *this;
 		}
 
 		Type Register() override 
@@ -104,8 +133,9 @@ namespace RefLib
 			prototype.Methods = new MethodContainer(m_Methods);
 			prototype.Constructors = new ConstructorContainer(m_Constructors);
 			prototype.BaseTypes = new BaseTypeContainer(m_BaseTypes);
-			prototype.NestedTypes = new NestedTypeContainer(nestedTypes);
-			prototype.AsContainerFunc = m_AsContainerFunc;
+			prototype.DerivedTypes = new DerivedTypeContainer({});
+			prototype.NestedTypes = new NestedTypeContainer(nestedTypes); 
+			prototype.AsContainerFunc = m_AsContainerFunc; 
 			return Type::RegisterType<TClass>(m_Name, prototype, m_Attributes, m_DeclaringType);
 		}
 

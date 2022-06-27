@@ -11,11 +11,10 @@
 #include "BaseTypeContainer.h"
 #include "NestedTypeContainer.h"
 #include "Container/ContainerView.h"
+#include "DerivedTypeContainer.h"
 
 namespace RefLib
 {
-	std::vector<TypeData*> Type::s_TypeDatas{};
-
 	std::optional<Type> Type::Get(const std::string& name)
 	{
 		for (auto& data : s_TypeDatas)
@@ -44,10 +43,10 @@ namespace RefLib
 		return {};
 	}
 
-	const std::vector<Property>& Type::GetProperties() const
+	std::vector<Property> Type::GetProperties() const
 	{
 		std::vector<PropertyData>& datas = this->GetData()->Properties->GetAll();
-		std::vector<Property> props;;
+		std::vector<Property> props;
 		for (int i = 0; i < datas.size(); i++)
 			props.push_back(Property(&(datas[i])));
 		return props;
@@ -293,12 +292,12 @@ namespace RefLib
 
 	bool Type::IsDerivedFrom(Type type) const
 	{
-		for (const auto& base : this->GetBaseTypes())
+		for (const auto& base : type.GetDerivedTypes())
 		{
-			if (base.Data.GetId() == type.GetId())
+			if (base.GetId() == this->GetId())
 				return true;
 
-			if (base.Data.IsDerivedFrom(type))
+			if (this->IsDerivedFrom(base))
 				return true;
 		}
 
@@ -310,7 +309,7 @@ namespace RefLib
 		return GetData()->BaseTypes->GetBaseTypes();
 	}
 
-	std::optional<Type> Type::GetDeclaringType()
+	std::optional<Type> Type::GetDeclaringType() const
 	{
 		if (IsNestedType())
 			return Type(GetData()->DeclaringType.value(), TypeFlags::None);
@@ -318,7 +317,7 @@ namespace RefLib
 		return {};
 	}
 
-	bool Type::IsNestedType()
+	bool Type::IsNestedType() const
 	{
 		return GetData()->DeclaringType.has_value();
 	}
@@ -326,6 +325,16 @@ namespace RefLib
 	std::optional<Type> Type::GetNestedType(const std::string& name) const
 	{
 		return GetData()->NestedTypes->GetType(name);
+	}
+
+	const std::vector<Type>& Type::GetDerivedTypes() const
+	{
+		return GetData()->DerivedTypes->GetDerivedTypes();
+	}
+
+	std::optional<Type> Type::GetDerivedType(const std::string& name) const
+	{
+		return GetData()->DerivedTypes->GetDerivedType(name); 
 	}
 
 	const std::vector<Type>& Type::GetNestedTypes() const
@@ -338,14 +347,14 @@ namespace RefLib
 		return GetData()->BaseTypes->GetBase(name);
 	}
 
-	std::optional<ContainerView> Type::AsContainer(Instance instance)
+	std::optional<ContainerView> Type::AsContainer(Instance instance) const
 	{
 		if (IsContainer())
 			return GetData()->AsContainerFunc.value()(instance);
 		return {};
 	}
 
-	bool Type::IsContainer()
+	bool Type::IsContainer() const
 	{
 		return GetData()->AsContainerFunc.has_value();
 	}
@@ -354,5 +363,16 @@ namespace RefLib
 	{
 		for (auto& method : *data->PreRegisteredMethods)
 			container->AddMethod(method);
+	}
+
+	void Type::AddDerivedTypeData(TypeId id, Type derived)
+	{
+		s_TypeDatas[id]->DerivedTypes->AddDerivedType(derived);
+	}
+
+	void Type::AppendDerivedTypes(Ref<TypeData> data, DerivedTypeContainer* container)
+	{
+		for (Type t : data->DerivedTypes->GetDerivedTypes())
+			container->AddDerivedType(t);
 	}
 }

@@ -89,6 +89,7 @@ namespace RefLib
 			TypeId id = t.GetId();
 			std::function<Type()> dereferenceFunc = []() {return Type::Get<std::remove_pointer_t<T>>(); };
 			TypeData* data = new TypeData(name, id, isPointer, prototype, attributes, dereferenceFunc, declaring);
+			AppendDerivedTypes(t.GetData(), data->DerivedTypes);
 			AddPreregisteredMethods(t.GetData(), data->Methods);
 
 			delete s_TypeDatas[id];
@@ -117,6 +118,15 @@ namespace RefLib
 		template<typename TClass, typename TReturn, typename... TArgs>
 		static void RegisterMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), std::vector<Type> templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {});
 
+		template<typename T, typename TDerived>
+		static void RegisterDerivedType()
+		{
+			static_assert(std::is_base_of_v<T, TDerived>, "TBase must be a base class of T");
+			TypeId id = Get<T>().GetId();
+			Type derived = Type::Get<TDerived>();
+			AddDerivedTypeData(id, derived); 
+		}
+
 	public:
 		Type(TypeId id, TypeFlags flags) : m_TypeId(id), m_Flags(flags) 
 		{
@@ -140,7 +150,7 @@ namespace RefLib
 		bool IsRValueRef() const { return IsFlag(TypeFlags::RValueReference); }
 
 		std::optional<Property> GetProperty(const std::string& name) const;
-		const std::vector<Property>& GetProperties() const;
+		std::vector<Property> GetProperties() const;
 
 		Variant GetPropertyValue(Instance instance, const std::string& propName) const;
 		bool SetPropertyValue(Instance instance, const std::string& propName, Argument arg) const;
@@ -163,15 +173,18 @@ namespace RefLib
 		std::optional<BaseType> GetBaseType(const std::string& name) const;
 		const std::vector<BaseType>& GetBaseTypes() const;
 		bool IsBaseOf(Type type) const;
+
 		bool IsDerivedFrom(Type type) const;
+		const std::vector<Type>& GetDerivedTypes() const;
+		std::optional<Type> GetDerivedType(const std::string& name) const;
 
 		std::optional<Type> GetNestedType(const std::string& name) const;
 		const std::vector<Type>& GetNestedTypes() const;
-		std::optional<Type> GetDeclaringType();
-		bool IsNestedType();
+		std::optional<Type> GetDeclaringType() const;
+		bool IsNestedType() const;
 
-		std::optional<ContainerView> AsContainer(Instance instance);
-		bool IsContainer();
+		std::optional<ContainerView> AsContainer(Instance instance) const;
+		bool IsContainer() const;
 
 		bool IsEnum() const { return GetData()->EnumValue.has_value(); }
 		std::optional<Enum> AsEnum() const; 
@@ -227,13 +240,15 @@ namespace RefLib
 		}
 
 		static void AddPreregisteredMethods(Ref<TypeData> data, MethodContainer* container);
+		static void AppendDerivedTypes(Ref<TypeData> data, DerivedTypeContainer* container);
+		static void AddDerivedTypeData(TypeId id, Type derived);
 
 	private:
 		Ref<TypeData> GetData() const { return s_TypeDatas.at(m_TypeId); }
 
 	private:
-		static std::vector<TypeData*> s_TypeDatas;
-		inline static std::unordered_set<TypeId> s_AutoRegisteringTypes = {};
+		static inline std::vector<TypeData*> s_TypeDatas{};
+		static inline std::unordered_set<TypeId> s_AutoRegisteringTypes{};
 
 	private:
 		TypeId m_TypeId;

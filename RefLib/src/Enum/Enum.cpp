@@ -37,12 +37,14 @@ namespace RefLib
 		return m_Wrapper->GetNames();
 	}
 
-	std::pair<std::string_view, Variant> Enum::GetEnumValueFromIndex(size_t index)
+	std::optional<std::pair<std::string, Variant>> Enum::GetEnumValueFromIndex(size_t index)
 	{
 		auto names = GetNames();
 		auto values = GetValues();
 
-		if (names->size() < index)
+		if (names->size() > index)
 			return std::make_pair(names->at(index), values->at(index));
+
+		return {};
 	}
 }

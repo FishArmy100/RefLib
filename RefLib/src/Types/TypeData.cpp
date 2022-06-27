@@ -9,6 +9,7 @@
 #include "Variant/Variant.h"
 #include "Method/MethodData.h"
 #include "Enum/EnumDataWrapper.h"
+#include "DerivedTypeContainer.h"
 
 
 namespace RefLib
@@ -17,10 +18,11 @@ namespace RefLib
 		Name(name), Id(id), Properties(new PropertyContainer({})),
 		DeclaringType(), DereferenceFunc(dereferenceFunc), AsContainerFunc(),
 		Methods(new MethodContainer({})), Constructors(new std::vector<ConstructorData>()),
-		BaseTypes(new BaseTypeContainer({})), NestedTypes(new NestedTypeContainer({})),
+		BaseTypes(new BaseTypeContainer({})), DerivedTypes(new DerivedTypeContainer({})),
+		NestedTypes(new NestedTypeContainer({})),
 		Attributes(std::make_unique<AttributeHolder>(std::vector<Variant>())),
 		PreRegisteredMethods(new std::vector<MethodData>()),
-		EnumValue(std::optional<EnumDataWrapper*>()),
+		EnumValue(std::optional<EnumDataWrapper*>()), 
 		IsPointer(isPointer)
 	{
 		IsRegistered = false;
@@ -39,6 +41,7 @@ namespace RefLib
 		Methods = prototype.Methods;
 		Constructors = prototype.Constructors;
 		BaseTypes = prototype.BaseTypes;
+		DerivedTypes = prototype.DerivedTypes;
 		NestedTypes = prototype.NestedTypes;
 		Attributes = std::make_unique<AttributeHolder>(attributes);
 
@@ -65,5 +68,6 @@ namespace RefLib
 
 		delete BaseTypes;
 		delete NestedTypes;
+		delete DerivedTypes;
 	}
 }

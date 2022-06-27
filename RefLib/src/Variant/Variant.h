@@ -94,7 +94,7 @@ namespace RefLib
 		template<typename TBase>
 		std::optional<TBase> TryConvert() const
 		{
-			if (IsValid())
+			if (!IsValid())
 				return {};
 
 			if (m_Type.value().GetId() == Type::Get<TBase>().GetId())
@@ -119,7 +119,7 @@ namespace RefLib
 
 		~Variant()
 		{
-			if(m_Data != nullptr)
+			if(IsValid())
 				m_DeleteData(m_Data);
 		}
 

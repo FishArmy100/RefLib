@@ -8,7 +8,7 @@ namespace RefLib
 	{
 	public:
 		NestedTypeContainer(const std::vector<Type> types);
-		const std::vector<Type> GetTypes() { return m_Types; }
+		const std::vector<Type>& GetTypes() { return m_Types; }
 		std::optional<Type> GetType(const std::string& name);
 
 	private:

@@ -14,11 +14,11 @@
 
 namespace RefLib
 {
-	class PropertyData;
+	struct PropertyData;
 	class MethodData;
 	class PropertyContainer;
 	class MethodContainer;
-	class ConstructorData;
+	struct ConstructorData;
 	class Type;
 	class EnumDataWrapper;
 	enum class AccessLevel;
@@ -50,6 +50,7 @@ namespace RefLib
 		MethodContainer* Methods;
 		std::vector<ConstructorData>* Constructors;
 		BaseTypeContainer* BaseTypes;
+		DerivedTypeContainer* DerivedTypes;
 		NestedTypeContainer* NestedTypes;
 		std::unique_ptr<AttributeHolder> Attributes;
 

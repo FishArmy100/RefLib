@@ -32,6 +32,8 @@ namespace RefLib
 	{
 		if (id < m_Methods.size())
 			return m_Methods.at(id);
+
+		return {};
 	}
 
 	Ref<std::vector<size_t>> MethodContainer::GetMethods(const std::string& name)

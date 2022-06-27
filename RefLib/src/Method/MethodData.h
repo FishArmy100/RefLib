@@ -63,12 +63,13 @@ namespace RefLib
 						return Variant();
 				}
 
-				TClass* obj = ref.TryConvert<TClass>();
+				if (ref.GetType().GetId() == Type::Get<TClass>().GetId() || ref.GetType().IsDerivedFrom(Type::Get<TClass>()))
+				{
+					TClass* obj = (TClass*)ref.GetRawData();
+					return std::move(Call(obj, method, args, std::make_integer_sequence<size_t, sizeof...(TArgs)>{}, Containter<TArgs...>{}));
+				}
 
-				if (obj == nullptr)
-					return Variant();
-
-				return std::move(Call(obj, method, args, std::make_integer_sequence<size_t, sizeof...(TArgs)>{}, Containter<TArgs...>{}));
+				return Variant();
 			};
 		}
 

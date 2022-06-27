@@ -22,7 +22,7 @@ namespace RefLib
 		{
 			GetFunc = [=](Instance instance) -> Variant
 			{
-				if (instance.GetType().GetId() == Type::Get<TClass>().GetId())
+				if (instance.GetType().GetId() == Type::Get<TClass>().GetId() || instance.GetType().IsDerivedFrom(Type::Get<TClass>()))
 				{
 					TClass* castObj = (TClass*)instance.GetRawData();
 					TProp& data = *(castObj).*prop;
@@ -36,13 +36,13 @@ namespace RefLib
 			{
 				using SetableType = std::remove_cv_t<std::remove_reference_t<TProp>>&;
 
-				if (instance.GetType().GetId() != Type::Get<TClass>().GetId())
+				if (instance.GetType().GetId() != Type::Get<TClass>().GetId() && !instance.GetType().IsDerivedFrom(Type::Get<TClass>()))
 					return false;
 
 				if (Type::Get<TProp>().IsAssignableFrom(arg.GetType()))
 				{
 					TClass* castObj = (TClass*)instance.GetRawData();
-					const_cast<SetableType>((*castObj).*prop) = arg.GetValue<TProp>(); // the const_cast is mostly to remove compiler erros, dont actually do anything
+					const_cast<SetableType>((*castObj).*prop) = arg.GetValue<TProp>(); // the const_cast is mostly to remove compiler erros, doesnt actually do anything
 					return true;
 				}
 				else if(arg.IsVarient())
@@ -56,7 +56,7 @@ namespace RefLib
 					if (Type::Get<TProp>().IsConst())
 						return false;
 
-				 	const_cast<SetableType>((*castObj).*prop) = convData.value(); // the const_cast is mostly to remove compiler erros, dont actually do anything
+				 	const_cast<SetableType>((*castObj).*prop) = convData.value(); // the const_cast is mostly to remove compiler erros, doesnt actually do anything
 
 					return true;
 				}

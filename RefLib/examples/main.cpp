@@ -15,17 +15,33 @@
 #include "Function/Function.h"
 #include "Container/ContainerView.h"
 #include "Container/ContainerViewIterator.h"
+#include "Registration/HelperRegistrationMacros.h"
 
-class Player
+struct Dammageable {};
+
+struct Entity
+{
+	enum class EntityType { Friendly, Nutral, Enemy };
+	EntityType EType;
+	float Health;
+
+	void PrintHealth() { std::cout << "Entity health: " << Health << "\n"; }
+	REFLIB_FRIEND
+};
+
+class Player : public Entity
 {
 public:
 	Player(const std::string& name) : m_Name(name) {}
 	Player(const Player&) = default;
 	~Player() = default;
 	const std::string& GetName() const { return m_Name; }
+
 private:
 	std::string m_Name;
+
 	friend int main();
+	REFLIB_FRIEND
 };
 
 namespace RefLib
@@ -94,20 +110,32 @@ using namespace RefLib;
 
 int main()
 {
-	//auto builder = TypeBuilder<Player>("Player");
-	//builder.AddConstructor<const std::string&>();
-	//builder.AddConstructor<const Player&>();
-	//builder.AddProperty("m_Name", &Player::m_Name, AccessLevel::Private);
-	//builder.AddMethod("GetName", &Player::GetName, {});
-	//builder.Register();
+	std::cout << std::boolalpha << Type::Get<Entity>().GetNestedTypes()[0].GetName();
+}
 
-	Type t = Type::Get<std::vector<int>>();
-	Variant v = t.Create({});
-	t.InvokeMethod(v, "push_back", { 5 });
-	t.InvokeMethod(v, "push_back", { 7 });
+REFLIB_REGISTRATION
+{
+	REFLIB_BEGIN_CLASS(Dammageable)
+	REFLIB_END_CLASS() 
 
-	for (Instance i : v.GetContainerView())
-	{
-		std::cout << *i.TryConvert<int>() << "\n";
-	}
+	REFLIB_BEGIN_CLASS(Entity)
+		REFLIB_PROP_BASIC(EType) 
+		REFLIB_PROP_BASIC(Health)
+		REFLIB_METH_BASIC(void, PrintHealth, ())
+		REFLIB_ATTRIBUTE(Dammageable{})
+		REFLIB_BEGIN_NESTED_ENUM(EntityType)
+			REFLIB_ENUM_VAL(Enemy)
+			REFLIB_ENUM_VAL(Nutral)
+			REFLIB_ENUM_VAL(Friendly)
+			REFLIB_ATTRIBUTE(int{3})
+		REFLIB_END_NESTED_ENUM()
+	REFLIB_END_CLASS()
+
+	REFLIB_BEGIN_CLASS(Player)
+		REFLIB_BASE_CLASS(Entity)
+		REFLIB_CTOR(const std::string&)
+		REFLIB_CTOR(const Player&)
+		REFLIB_PROP_ACCESS(m_Name, AccessLevel::Private)
+		REFLIB_CONST_METH_BASIC(const std::string&, GetName, ())
+	REFLIB_END_CLASS()
 }

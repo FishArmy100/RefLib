@@ -17,23 +17,26 @@ namespace RefLib
 		{
 		}
 
-		void AddValue(const std::string& name, TEnum value)
+		EnumBuilder& AddValue(const std::string& name, TEnum value)
 		{
 			m_Values[name] = value; 
+			return *this;
 		}
 
-		void AddValues(const std::map<std::string, TEnum>& values)
+		EnumBuilder& AddValues(const std::map<std::string, TEnum>& values)
 		{
 			for (const auto&[name, value] : values)
 			{
 				m_Values[name] = value;
 			}
+			return *this;
 		}
 
 		template<typename T>
-		void AddAttribute(const T& attribute)
+		EnumBuilder& AddAttribute(const T& attribute)
 		{
-			m_Attributes.emplace_back(attribute); 
+			m_Attributes.emplace_back(attribute);
+			return *this;
 		}
 
 		Type Register()

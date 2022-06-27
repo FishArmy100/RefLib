@@ -35,6 +35,8 @@ namespace RefLib
 				{
 					return Call(args, func, std::make_index_sequence<sizeof...(TArgs)>{});
 				}
+
+				return Variant();
 			};
 		}
 

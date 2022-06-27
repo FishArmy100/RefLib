@@ -150,6 +150,7 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Types\DerivedTypeContainer.cpp" />
     <ClCompile Include="src\Attributes\AttributeHolder.cpp" />
     <ClCompile Include="src\Container\ContainerView.cpp" />
     <ClCompile Include="src\Function\FunctionData.cpp" />
@@ -158,7 +159,6 @@
     <ClCompile Include="src\Types\NestedTypeContainer.cpp" />
     <ClCompile Include="src\Property\PropertyContainer.cpp" />
     <ClCompile Include="src\Method\MethodContainer.cpp" />
-    <ClCompile Include="src\Registration\EnumBuilder.cpp" />
     <ClCompile Include="src\Enum\EnumDataWrapper.cpp" />
     <ClCompile Include="src\Enum\Enum.cpp" />
     <ClCompile Include="src\Constructor\Constructor.cpp" />
@@ -177,9 +177,9 @@
     <ClCompile Include="src\Types\TypeData.cpp" />
     <ClCompile Include="src\Types\TypeFlags.cpp" />
     <ClCompile Include="src\Variant\Variant.cpp" />
-    <ClCompile Include="src\Registration\TypeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Types\DerivedTypeContainer.h" />
     <ClInclude Include="src\Attributes\AttributeHolder.h" />
     <ClInclude Include="src\Attributes\AttributeImpl.h" />
     <ClInclude Include="src\Container\ContainerView.h" />
@@ -187,6 +187,7 @@
     <ClInclude Include="src\Container\IContainerView.h" />
     <ClInclude Include="src\Function\FunctionData.h" />
     <ClInclude Include="src\Function\Function.h" />
+    <ClInclude Include="src\Registration\HelperRegistrationMacros.h" />
     <ClInclude Include="src\Registration\TypeRegistrationFactory.h" />
     <ClInclude Include="src\Types\MethodRegistration.h" />
     <ClInclude Include="src\Types\NestedTypeContainer.h" />

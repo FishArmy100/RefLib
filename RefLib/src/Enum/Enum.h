@@ -18,7 +18,7 @@ namespace RefLib
 		Ref<const std::vector<Variant>> GetValues();
 		Ref<const std::vector<std::string>> GetNames();
 
-		std::pair<std::string_view, Variant> GetEnumValueFromIndex(size_t index);
+		std::optional<std::pair<std::string, Variant>> GetEnumValueFromIndex(size_t index);
 
 		REFLIB_ATTRIBUTE_HOLDER_OBJECT_IMPL(*m_Wrapper->GetAttributeHolder());
 
