@@ -26,6 +26,7 @@ namespace RefLib
 			MethodData(name, method, level, paramNames, attributes)
 		{
 			TemplateParams = templateParams;
+			IsTemplate = true;
 		}
 
 		template<typename TClass, typename TReturn, typename... TArgs>
@@ -33,7 +34,8 @@ namespace RefLib
 			Name(name), ReturnType(Type::Get<TReturn>()), 
 			DeclaringType(Type::Get<TClass>()),
 			SignatureType(Type::Get<decltype(method)>()),
-			Level(level), Attributes(std::make_shared<AttributeHolder>(attributes))
+			Level(level), Attributes(std::make_shared<AttributeHolder>(attributes)),
+			IsTemplate(false)
 		{
 			std::vector<ParameterData> parameters;
 
@@ -75,8 +77,6 @@ namespace RefLib
 
 		MethodData(const MethodData& data) = default;
 
-		bool IsTemplated() const { return TemplateParams.size() > 0; }
-
 		std::string Name;
 		Type ReturnType;
 		Type DeclaringType;
@@ -85,6 +85,7 @@ namespace RefLib
 		Type SignatureType;
 		AccessLevel Level;
 		std::shared_ptr<AttributeHolder> Attributes;
+		bool IsTemplate;
 
 		std::function<Variant(Instance, std::vector<Argument>, std::vector<ParameterData>&)> CallFunc;
 

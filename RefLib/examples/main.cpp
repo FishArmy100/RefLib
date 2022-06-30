@@ -44,82 +44,27 @@ private:
 	REFLIB_FRIEND
 };
 
-namespace RefLib
-{
-	template<typename T>
-	class VectorContainerView : public IContainerView
-	{
-	public:
-		VectorContainerView(std::vector<T>& vec) : m_Vec(vec) {}
-
-		ContainerViewIterator begin() override
-		{
-			return ContainerViewIterator(m_Vec->begin());
-		}
-
-		ContainerViewIterator end() override
-		{
-			return ContainerViewIterator(m_Vec->end());
-		}
-
-		size_t Length() override
-		{
-			return m_Vec->size();
-		}
-
-		Type GetType() override
-		{
-			return Type::Get<std::vector<T>>();
-		}
-
-		Type GetElementType() override
-		{
-			return Type::Get<T>();
-		}
-
-	private:
-		Ref<std::vector<T>> m_Vec;
-	};
-}
-
-namespace RefLib
-{
-	template<typename T>
-	struct TypeRegistrationFactory<std::vector<T>>
-	{
-		bool operator()()
-		{
-			Type contained = Type::Get<T>();
-			auto builder = TypeBuilder<std::vector<T>>("std::vector<" + contained.GetName() + ">");
-			builder.AddConstructor<>();
-			builder.AddMethod("at", static_cast<const T&(std::vector<T>::*)(size_t) const>(&std::vector<T>::at), {}, AccessLevel::Public, { "index" }, {});
-			builder.AddMethod("push_back", static_cast<void(std::vector<T>::*)(const T&)>(&std::vector<T>::push_back), {}, AccessLevel::Public, { "item" }, {});
-			builder.SetAsContainer(
-				[](std::vector<T>& t) -> ContainerView 
-				{
-					return ContainerView(std::make_shared<VectorContainerView<int>>(t));
-				}
-			);
-			builder.Register();
-			return true;
-		}
-	};
-}
-
 using namespace RefLib;
+
+struct Test
+{
+	template<typename T>
+	void Print(const T& val) const { std::cout << val << "\n"; }
+};
 
 int main()
 {
-	std::cout << std::boolalpha << Type::Get<Entity>().GetNestedTypes()[0].GetName();
+	std::map<int, std::string> map;
+	map.insert(std::make_pair(4, std::string("Hello World")));
 }
 
 REFLIB_REGISTRATION
 {
 	REFLIB_BEGIN_CLASS(Dammageable)
-	REFLIB_END_CLASS() 
+	REFLIB_END_CLASS()
 
 	REFLIB_BEGIN_CLASS(Entity)
-		REFLIB_PROP_BASIC(EType) 
+		REFLIB_PROP_BASIC(EType)
 		REFLIB_PROP_BASIC(Health)
 		REFLIB_METH_BASIC(void, PrintHealth, ())
 		REFLIB_ATTRIBUTE(Dammageable{})
@@ -138,4 +83,9 @@ REFLIB_REGISTRATION
 		REFLIB_PROP_ACCESS(m_Name, AccessLevel::Private)
 		REFLIB_CONST_METH_BASIC(const std::string&, GetName, ())
 	REFLIB_END_CLASS()
+
+	REFLIB_BEGIN_CLASS(Test)
+		REFLIB_CONST_METH_TEMP_BASIC(void, Print, (const int&), <int>)
+		REFLIB_CONST_METH_TEMP_BASIC(void, Print, (const float&), <float>)
+	REFLIB_END_CLASS();
 }

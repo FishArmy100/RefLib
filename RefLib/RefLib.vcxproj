@@ -150,6 +150,7 @@
     <None Include="src\vendor\rttr\version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Registration\BasicSTDRegistration.cpp" />
     <ClCompile Include="src\Types\DerivedTypeContainer.cpp" />
     <ClCompile Include="src\Attributes\AttributeHolder.cpp" />
     <ClCompile Include="src\Container\ContainerView.cpp" />

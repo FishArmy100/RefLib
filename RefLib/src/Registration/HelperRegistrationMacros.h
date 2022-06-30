@@ -47,29 +47,29 @@ friend void __Registration_Func__();					\
 
 // ------------------ Register Method ------------------
 #define REFLIB_METH_BASIC(returnType, methodName, params)																	\
-.AddMethod(#methodName, static_cast<returnType(ClassType::*)params>(&ClassType::methodName), {}, AccessLevel::Public, {}, {})	\
+.AddMethod(#methodName, static_cast<returnType(ClassType::*)params>(&ClassType::methodName), AccessLevel::Public, {}, {})	\
 
 #define REFLIB_METH(returnType, methodName, params, accessLevel, paramNames, attributes)												\
-.AddMethod(#methodName, static_cast<returnType(ClassType::*)params>(&ClassType::methodName), {}, accessLevel, paramNames, attributes)		\
+.AddMethod(#methodName, static_cast<returnType(ClassType::*)params>(&ClassType::methodName), accessLevel, paramNames, attributes)		\
 
 #define REFLIB_METH_TEMP_BASIC(returnType, methodName, params, templateArgs)															\
-.AddMethod(#methodName, static_cast<returnType(ClassType::*)params>(&ClassType::methodName), templateArgs, AccessLevel::Public, {}, {})	\
+.AddTemplateMethod(#methodName, static_cast<returnType(ClassType::*)params>(&ClassType::methodName##templateArgs), Type::GetMultiple##templateArgs##(), AccessLevel::Public, {}, {})	\
 
 #define REFLIB_METH_TEMP(returnType, methodName, params, templateArgs, accessLevel, paramNames, attributes)								\
-.AddMethod(#methodName, static_cast<returnType(ClassType::*)params>(&ClassType::methodName), templateArgs, accessLevel, paramNames, attributes)	\
+.AddTemplateMethod(#methodName, static_cast<returnType(ClassType::*)params>(&ClassType::methodName##templateArgs), Type::GetMultiple##templateArgs##(), accessLevel, paramNames, attributes)	\
 
 // const versions
 #define REFLIB_CONST_METH_BASIC(returnType, methodName, params)																		\
-.AddMethod(#methodName, static_cast<returnType(ClassType::*)params const>(&ClassType::methodName), {}, AccessLevel::Public, {}, {})	\
+.AddMethod(#methodName, static_cast<returnType(ClassType::*)params const>(&ClassType::methodName), AccessLevel::Public, {}, {})	\
 
 #define REFLIB_CONST_METH(returnType, methodName, params, accessLevel, paramNames, attributes)													\
-.AddMethod(#methodName, static_cast<returnType(ClassType::*)params const>(&ClassType::methodName), {}, accessLevel, paramNames, attributes)		\
+.AddMethod(#methodName, static_cast<returnType(ClassType::*)params const>(&ClassType::methodName), accessLevel, paramNames, attributes)		\
 
 #define REFLIB_CONST_METH_TEMP_BASIC(returnType, methodName, params, templateArgs)																\
-.AddMethod(#methodName, static_cast<returnType(ClassType::*)params const>(&ClassType::methodName), templateArgs, AccessLevel::Public, {}, {})	\
+.AddTemplateMethod(#methodName, static_cast<returnType(ClassType::*)params const>(&ClassType::methodName##templateArgs), Type::GetMultiple##templateArgs##(), AccessLevel::Public, {}, {})	\
 
 #define REFLIB_CONST_METH_TEMP(returnType, methodName, params, templateArgs, accessLevel, paramNames, attributes)										\
-.AddMethod(#methodName, static_cast<returnType(ClassType::*)params const>(&ClassType::methodName), templateArgs, accessLevel, paramNames, attributes)	\
+.AddTemplateMethod(#methodName, static_cast<returnType(ClassType::*)params const>(&ClassType::methodName##templateArgs), Type::GetMultiple##templateArgs##(), accessLevel, paramNames, attributes)	\
 
 // ------------------ Register Heirarchy ------------------
 #define REFLIB_BASE_CLASS(type)	\

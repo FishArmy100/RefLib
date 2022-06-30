@@ -22,7 +22,7 @@ namespace RefLib
 		Type GetDeclaringType() const { return  GetData()->DeclaringType; }
 		const std::vector<ParameterData>& GetParameters() const { return GetData()->Parameters; }
 		const std::vector<Type> GetTemplateParams() const { return GetData()->TemplateParams; }
-		bool IsTemplate() { return GetData()->IsTemplated(); }
+		bool IsTemplate() { return GetData()->IsTemplate; }
 		AccessLevel GetAccessLevel() const { return  GetData()->Level; }
 		bool IsVoid() const { return GetData()->ReturnType == Type::Get<void>(); }
 

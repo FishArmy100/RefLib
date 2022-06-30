@@ -35,16 +35,30 @@ namespace RefLib
 		}
 
 		template<typename TReturn, typename... TArgs>
-		TypeBuilder& AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		TypeBuilder& AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		{
+			m_Methods.emplace_back(name, method, level, paramNames, attributes); 
+			return *this;
+		}
+
+		template<typename TReturn, typename... TArgs>
+		TypeBuilder& AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		{
+			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), level, paramNames, attributes);
+			return *this;
+		}
+
+		template<typename TReturn, typename... TArgs>
+		TypeBuilder& AddTemplateMethod(const std::string& name, TReturn(TClass::* method)(TArgs...), const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
 			m_Methods.emplace_back(name, method, templateArgs, level, paramNames, attributes);
 			return *this;
 		}
 
 		template<typename TReturn, typename... TArgs>
-		TypeBuilder& AddMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
+		TypeBuilder& AddTemplateMethod(const std::string& name, TReturn(TClass::* method)(TArgs...) const, const std::vector<Type>& templateArgs, AccessLevel level = AccessLevel::Public, const std::vector<std::string>& paramNames = {}, const std::vector<Variant>& attributes = {})
 		{
-			AddMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), templateArgs, level, paramNames, attributes);
+			AddTemplateMethod(name, reinterpret_cast<TReturn(TClass::*)(TArgs...)>(method), templateArgs, level, paramNames, attributes);
 			return *this;
 		}
 

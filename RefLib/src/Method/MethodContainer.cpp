@@ -61,7 +61,7 @@ namespace RefLib
 
 		auto method = Ref(&m_Methods.at(m_Methods.size() - 1));
 
-		if (data.IsTemplated())
+		if (data.IsTemplate)
 			this->m_TemplatedMethodsMap[data.Name].push_back(m_Methods.size() - 1);
 		else
 			this->m_MethodsMap[data.Name].push_back(m_Methods.size() - 1);
