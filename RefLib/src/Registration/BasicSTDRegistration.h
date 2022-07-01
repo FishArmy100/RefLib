@@ -1,3 +1,4 @@
+#pragma once
 #define RTTR_ENABLE_STD
 
 #ifdef RTTR_ENABLE_STD 
@@ -14,7 +15,7 @@
 namespace RefLib
 {
 	// -------------------------- String --------------------------
-
+	template<>
 	struct TypeRegistrationFactory<std::string>
 	{
 		bool operator()()

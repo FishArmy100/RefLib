@@ -99,7 +99,7 @@
     <ClCompile Include="src\Types\DerivedTypeContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Registration\BasicSTDRegistration.cpp">
+    <ClCompile Include="src\Registration\BasicSTDRegistration.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

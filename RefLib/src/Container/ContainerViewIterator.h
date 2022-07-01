@@ -22,16 +22,11 @@ namespace RefLib
 
 			m_Equles = [&](const ContainerViewIterator& other) -> bool
 			{
-				Instance a = m_Iterator;
-				Instance b = other.m_Iterator;
-
-				TIterator* aRef = a.TryConvert<TIterator>();
-				TIterator* bRef = b.TryConvert<TIterator>();
-				if (aRef == nullptr && bRef == nullptr)
-					return true;
-
-				if (!(aRef != nullptr && bRef != nullptr)) // one is null, and the other is not
+				if (m_Iterator.GetType().GetId() != other.m_Iterator.GetType().GetId())
 					return false;
+
+				TIterator* aRef = (TIterator*)m_Iterator.GetRawData();
+				TIterator* bRef = (TIterator*)other.m_Iterator.GetRawData();
 
 				return *aRef == *bRef;
 			};

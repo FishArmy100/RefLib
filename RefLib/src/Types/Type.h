@@ -230,9 +230,6 @@ namespace RefLib
 				TypeRegistrationFactory<T> factory;
 				bool registered = factory();
 
-				if (registered)
-					std::cout << "Type was registered automatically: " << type.GetName() << "\n";
-
 				s_AutoRegisteringTypes.erase(id);
 			}
 

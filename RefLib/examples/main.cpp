@@ -16,6 +16,7 @@
 #include "Container/ContainerView.h"
 #include "Container/ContainerViewIterator.h"
 #include "Registration/HelperRegistrationMacros.h"
+#include "Registration/BasicSTDRegistration.h"
 
 struct Dammageable {};
 
@@ -54,8 +55,16 @@ struct Test
 
 int main()
 {
-	std::map<int, std::string> map;
-	map.insert(std::make_pair(4, std::string("Hello World")));
+	Variant opt = std::optional<int>(5);
+	Type optType = opt.GetType();
+	Variant value = optType.InvokeMethod(opt, "value", {});
+	std::cout << value.TryConvert<int>().value() << "\n";
+
+	Variant map = std::map<int, std::string>({ { 4, "Hello World!" } });
+	std::cout << map.GetType().GetName() << "\n";
+	Type mapType = map.GetType(); 
+	Variant message = mapType.InvokeMethod(map, "at", { 4 });
+	std::cout << message.TryConvert<std::string>().value(); 
 }
 
 REFLIB_REGISTRATION
