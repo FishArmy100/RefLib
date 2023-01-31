@@ -40,8 +40,6 @@ public:
 
 private:
 	std::string m_Name;
-
-	friend int main();
 	REFLIB_FRIEND
 };
 
@@ -55,16 +53,11 @@ struct Test
 
 int main()
 {
-	Variant opt = std::optional<int>(5);
-	Type optType = opt.GetType();
-	Variant value = optType.InvokeMethod(opt, "value", {});
-	std::cout << value.TryConvert<int>().value() << "\n";
-
-	Variant map = std::map<int, std::string>({ { 4, "Hello World!" } });
-	std::cout << map.GetType().GetName() << "\n";
-	Type mapType = map.GetType(); 
-	Variant message = mapType.InvokeMethod(map, "at", { 4 });
-	std::cout << message.TryConvert<std::string>().value(); 
+	Type tPlayer = Type::Get<Player>();
+	Variant bob = tPlayer.Create({ std::string("Bob") });
+	Method meth = tPlayer.GetMethod("GetName").value();
+	Variant name = meth.Invoke(bob, {});
+	std::cout << name.TryConvert<std::string>().value() << "\n";
 }
 
 REFLIB_REGISTRATION
